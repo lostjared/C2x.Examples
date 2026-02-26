@@ -13,7 +13,7 @@ static inline void for_each(int start, int stop, const char *src) {
 	for(int i = start; i < stop; ++i) \
 		printf("%d: %s\n", i, hello);
 
-extern void init();
+extern inline void init();
 
 #endif
 
