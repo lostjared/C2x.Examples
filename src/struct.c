@@ -49,6 +49,10 @@ int main() {
 }
 
 void score_init(Score *s, const char *user_name, int score) {
+	if(s == nullptr) {
+		fprintf(stderr, "Error score is nullptr\n");
+		exit(EXIT_FAILURE);
+	}
 	s->score = score;
 	strncpy(s->user_name, user_name, 255);
 }
@@ -65,10 +69,18 @@ Score *score_add(Score *s, const char *user_name, int score, size_t *size) {
 }
 
 void score_free(Score *s) {
+	if(s == nullptr) {
+                fprintf(stderr, "Error score is nullptr\n");
+                exit(EXIT_FAILURE);
+        }
 	free(s);
 }
 
 void score_print(const Score *s, size_t size) {
+	if(s == nullptr) {
+                fprintf(stderr, "Error score is nullptr\n");
+                exit(EXIT_FAILURE);
+        }
 	for(size_t i = 0; i < size; ++i) {
 		printf("%s: %d\n", s[i].user_name, s[i].score);
 	}
