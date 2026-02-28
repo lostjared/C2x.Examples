@@ -12,7 +12,6 @@ typedef struct List {
 LinkedList *init_node(void *data, size_t bytes) {
 	LinkedList *item = malloc(sizeof(LinkedList));
 	if(!item) {
-		fprintf(stderr, "Could not allcoate list item\n");
 		perror("Error allocate");
 		exit(EXIT_FAILURE);
 	}
@@ -37,9 +36,12 @@ void add_item(LinkedList **llist, void *data, size_t bytes) {
 }
 
 void free_list(LinkedList *lst) {
-	if(lst == nullptr) return;
-	free_list(lst->next);
-	free(lst);
+	while(lst != nullptr) {
+		LinkedList *next = lst->next;
+		free(lst->data);
+		free(lst);
+		lst = next;
+	}
 }
 
 void print_list(const LinkedList *lst) {
