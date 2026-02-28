@@ -35,6 +35,20 @@ void add_item(LinkedList **llist, void *data, size_t bytes) {
 	 *current = init_node(data, bytes);
 }
 
+void remove_item(LinkedList **llist, int index) {
+	LinkedList **current = llist;
+	while(*current != nullptr) {
+		if(*(int *)(*current)->data == index) {
+			LinkedList *e = *current;
+			*current = e->next;
+			free(e->data);
+			free(e);
+			return;
+		}
+		current = &(*current)->next;
+	}
+}
+
 void free_list(LinkedList *lst) {
 	while(lst != nullptr) {
 		LinkedList *next = lst->next;
@@ -52,11 +66,15 @@ void print_list(const LinkedList *lst) {
 }
 
 int main() {
-	LinkedList *root = {};
+	LinkedList *root = nullptr;
 	int arr[3] = { 10, 20, 30 };
 	for(int i = 0; i < 3; ++i) {
 		add_item(&root, &arr[i], sizeof(int));
 	}
+	puts("before remove: ");
+	print_list(root);
+	remove_item(&root, 20);
+	puts("after remove: ");
 	print_list(root);
 	free_list(root);
 	return EXIT_SUCCESS;
