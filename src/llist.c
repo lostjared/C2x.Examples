@@ -35,7 +35,7 @@ void add_item(LinkedList **llist, void *data, size_t bytes) {
 	 *current = init_node(data, bytes);
 }
 
-void remove_item(LinkedList **llist, int index) {
+bool remove_item(LinkedList **llist, int index) {
 	LinkedList **current = llist;
 	while(*current != nullptr) {
 		if(*(int *)(*current)->data == index) {
@@ -43,10 +43,44 @@ void remove_item(LinkedList **llist, int index) {
 			*current = e->next;
 			free(e->data);
 			free(e);
-			return;
+			return true;
 		}
 		current = &(*current)->next;
 	}
+	return false;
+}
+
+bool insert_at_index(LinkedList **llist, void *data, size_t bytes, int target_index) {
+	LinkedList **current = llist;
+	int index = 0;
+	while(*current != nullptr && index < target_index) {
+		current = &(*current)->next;
+		++index;
+	}
+	if(index == target_index) {
+		LinkedList *new_node = init_node(data, bytes);
+		new_node->next = *current;
+		*current = new_node;
+		return true;
+	}
+	return false;
+}
+
+bool remove_index(LinkedList **llist, int by_index) {
+	LinkedList **current = llist;
+	int index = 0;
+	while(*current != nullptr) {
+		if(index == by_index) {
+			LinkedList *e = *current;
+			*current = e->next;
+			free(e->data);
+			free(e);
+			return true;
+		}
+		current = &(*current)->next;
+		++index;
+	}
+	return false;
 }
 
 void free_list(LinkedList *lst) {
@@ -73,7 +107,18 @@ int main() {
 	}
 	puts("before remove: ");
 	print_list(root);
-	remove_item(&root, 20);
+
+	if(insert_at_index(&root, &arr[0], sizeof(int), 1)) {
+			puts("inserted 10 at index 1");
+			print_list(root);
+	}
+
+	if(remove_item(&root, 20)) {
+		puts("removed 20");
+	}
+	if(remove_index(&root, 1)) {
+		puts("removed 10");
+	}
 	puts("after remove: ");
 	print_list(root);
 	free_list(root);
