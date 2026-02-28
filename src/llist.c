@@ -9,7 +9,7 @@ typedef struct List {
 } LinkedList;
 
 LinkedList *init_node(void *data) {
-	LinkedList *item = (LinkedList*)malloc(sizeof(LinkedList));
+	LinkedList *item = malloc(sizeof(LinkedList));
 	if(!item) {
 		fprintf(stderr, "Could not allcoate list item\n");
 		perror("Error allocate");
