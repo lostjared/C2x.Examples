@@ -21,4 +21,5 @@ add_executable(llist-sort-test src/llist-sort.c)
 add_executable(auto-test src/auto.c)
 add_executable(getline-test src/getline/getline.c src/getline/main.c)
 add_executable(embed-test src/embed/embed.c)
+add_executable(if-embed-test src/embed/if-embed.c)
 
