@@ -18,19 +18,24 @@ int main() {
 	Score *s = nullptr;
 	s = score_add(s, "Jared",100,  &size);
 	s = score_add(s,"JPB",1,&size);
-	s = score_add(s, "value", 25, &size);
-	s = score_add(s, "temp", 500, &size);
+	s = score_add(s, "value",255, &size);
+	s = score_add(s, "temp", 250, &size);
 
-	char buffer[256];
-	char int_buffer[256];
+	char buffer[255];
+	char int_buffer[255];
 	bool active = true;
 	while(active) {
 		printf("Enter username: ");
-		if(fgets(buffer, 255, stdin)) {
+		if(fgets(buffer, 254, stdin)) {
 			printf("Enter score: ");
  			if(strlen(buffer) > 0)
-				buffer[strlen(buffer)-1] = '\0';
-			if(fgets(int_buffer, 255, stdin)) {
+				buffer[strcspn(buffer, "\n")] = 0;
+
+			if(strcmp(buffer, "exit") == 0) {
+				active = false;
+				break;
+			}
+			if(fgets(int_buffer, 254, stdin)) {
 				int value = atoi(int_buffer);
 				if(value > 0) 
 					s = score_add(s, buffer, value, &size);
@@ -50,11 +55,12 @@ int main() {
 
 void score_init(Score *s, const char *user_name, int score) {
 	if(s == nullptr) {
-		fprintf(stderr, "Error score is nullptr\n");
+		fprintf(stderr, "error score is nullptr\n");
 		exit(EXIT_FAILURE);
 	}
 	s->score = score;
-	strncpy(s->user_name, user_name, 255);
+	memset(s->user_name, 0, sizeof(s->user_name));
+	strncpy(s->user_name, user_name, sizeof(s->user_name)-1);
 }
 
 int score_compare(const void *a, const void *b) {

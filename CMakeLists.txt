@@ -3,7 +3,9 @@ project(c2x VERSION 1.0.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_FLAGS "-Wall -O2 -fsanitize=undefined")
+set(CMAKE_C_FLAGS "-Wall -O2 -fsanitize=address -Warray-bounds=2 -Wvla-parameter")
+
+
 add_executable(helloworld src/helloworld.c)
 add_executable(hash-test src/hash.c)
 add_executable(sort-test src/sort.c)
