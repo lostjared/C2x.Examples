@@ -24,7 +24,8 @@ add_executable(auto-test src/auto.c)
 add_executable(getline-test src/getline/getline.c src/getline/main.c)
 add_executable(embed-test src/embed/embed.c)
 add_executable(if-embed-test src/embed/if-embed.c)
+add_executable(quine-embed-test src/embed/quine.c)
 add_executable(nodiscard-test  src/no-discard.c)
 add_executable(static-arg-test src/static-arg.c)
-
+add_executable(restrict-test src/restrict.c)
 
