@@ -15,5 +15,11 @@ static inline void for_each(int start, int stop, const char *src) {
 
 extern inline void init();
 
+inline void print(const char buffer[static 1]) {
+	for(int i = 0; i < 3; ++i) {
+		puts(buffer);
+	}
+}
+
 #endif
 
