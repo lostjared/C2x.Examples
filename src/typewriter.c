@@ -3,9 +3,9 @@
 #include<unistd.h>
 
 void output_file(useconds_t duration, FILE *restrict fptr, FILE  *restrict output) {
-	while(!feof(fptr)) {
-		char c[1024] = {0};
-		size_t bytes = fread(&c, sizeof(char), 1024, fptr);
+	size_t bytes = 0;
+	char c[4096];
+	while((bytes = fread(c, sizeof(char), 1024, fptr)) > 0) {	
 		for(size_t i = 0; i < bytes; ++i) {
 			fputc(c[i],output);
 			fflush(output);
@@ -14,6 +14,7 @@ void output_file(useconds_t duration, FILE *restrict fptr, FILE  *restrict outpu
 	}
 	fflush(output);
 }
+
 
 int main(int argc, char *argv[argc+1]) {
 	if(argc != 3) {
