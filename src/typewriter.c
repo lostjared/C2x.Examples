@@ -26,7 +26,8 @@ int main(int argc, char *argv[argc+1]) {
 		fprintf(stderr, "Could not open file %s\n", argv[1]);
 		return EXIT_FAILURE;
 	}
-	useconds_t t = (useconds_t) atoi(argv[2]);
+	char *endptr;
+	useconds_t t = (useconds_t)strtoul(argv[2], &endptr, 10);
 	if(t > 0) {
 		output_file(t, fptr, stdout);
 	}
