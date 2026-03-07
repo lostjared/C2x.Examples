@@ -4,8 +4,9 @@
 
 void output_file(useconds_t duration, FILE *restrict fptr, FILE  *restrict output) {
 	size_t bytes = 0;
-	char c[4096];
-	while((bytes = fread(c, sizeof(char), 1024, fptr)) > 0) {	
+	static constexpr int buf_size = 4096;
+	char c[buf_size];
+	while((bytes = fread(c, sizeof(char), buf_size, fptr)) > 0) {	
 		for(size_t i = 0; i < bytes; ++i) {
 			fputc(c[i],output);
 			fflush(output);
