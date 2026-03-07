@@ -4,11 +4,13 @@
 
 void output_file(useconds_t duration, FILE *restrict fptr, FILE  *restrict output) {
 	while(!feof(fptr)) {
-		char c;
-		fread(&c, 1, 1, fptr);
-		fwrite(&c, 1, 1, output);
-		fflush(output);
-		usleep(duration);
+		char c[1024] = {0};
+		size_t bytes = fread(&c, sizeof(char), 1024, fptr);
+		for(size_t i = 0; i < bytes; ++i) {
+			fputc(c[i],output);
+			fflush(output);
+			usleep(duration);
+		}
 	}
 	fflush(output);
 }
