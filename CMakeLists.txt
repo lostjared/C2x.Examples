@@ -30,3 +30,5 @@ add_executable(static-arg-test src/static-arg.c)
 add_executable(restrict-test src/restrict.c)
 add_executable(repo-test src/repo.c)
 add_executable(typewriter src/typewriter.c)
+add_executable(tree-test src/tree.c)
+
