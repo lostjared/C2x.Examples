@@ -32,3 +32,5 @@ add_executable(repo-test src/repo.c)
 add_executable(typewriter src/typewriter.c)
 add_executable(tree-test src/tree.c)
 add_executable(restrict-static src/restrict-static.c)
+add_executable(trace-f src/tracef.c)
+
