@@ -4,6 +4,7 @@
 
 void printOut(const char *src, int times) {
 	size_t length = strlen(src);
+	static_assert(sizeof(length) == 8);
 	asm volatile("1: \n\t"
 	"movq $1, %%rax \n\t"
 	"movq $1, %%rdi \n\n"
