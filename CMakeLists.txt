@@ -33,4 +33,7 @@ add_executable(typewriter src/typewriter.c)
 add_executable(tree-test src/tree.c)
 add_executable(restrict-static src/restrict-static.c)
 add_executable(trace-f src/tracef.c)
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND LINUX)
+add_executable(inline_asm_test src/inline-asm.c)
+endif()
 
