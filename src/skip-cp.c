@@ -13,6 +13,10 @@
 static constexpr size_t M_PATH = PATH_MAX * 2;
 
 size_t cp_dir(size_t *counter, const char input[static 1], const char output[static 1]) {
+
+	if(strcmp(input, output) == 0)
+		return *counter;
+
 	if(mkdir(output, 0755) == -1 && errno != EEXIST) {
 		fprintf(stderr, "Error creating directory: %s\n", output);
 		exit(EXIT_FAILURE);
@@ -31,8 +35,15 @@ size_t cp_dir(size_t *counter, const char input[static 1], const char output[sta
 		char out[4096];
 		snprintf(full, M_PATH, "%s/%s", input, e->d_name);
 		if(e->d_type == DT_DIR)  {
+			struct stat st_in, st_out;
+		        if (stat(full, &st_in) == 0 && stat(output, &st_out) == 0) {
+		                if (st_in.st_dev == st_out.st_dev && st_in.st_ino == st_out.st_ino) {                                     	continue;
+             	   		}
+            		}
+
 			snprintf(out, M_PATH, "%s/%s", output, e->d_name);
-			cp_dir(counter, full, out);
+			if(strcmp(full,out) != 0)
+				cp_dir(counter, full, out);
 		} else {
 			char fout[4096+1];
 			snprintf(fout,M_PATH, "%s/%s", output, e->d_name);
