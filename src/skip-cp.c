@@ -95,7 +95,7 @@ size_t cp_dir(size_t *counter, const char input[static 1], const char output[sta
 
 int main(int argc, char **argv)  {
 	if(argc != 3) {
-		fprintf(stderr, "Error invalid args use: skiip-cpy <input> <output>\n");
+		fprintf(stderr, "Error invalid args use: %s <input> <output>\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
