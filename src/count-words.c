@@ -18,13 +18,18 @@ struct Node {
 		return nullptr;
 	}
 	n->text = strdup(text);
+	if(n->text == nullptr) {
+		fprintf(stderr, "Error on allocation.\n");
+		free(n);
+		return nullptr;
+	}
 	n->count = 1;
 	n->left = nullptr;
 	n->right = nullptr;
 	return n;
 }
 
-void insert_node(struct Node **root, const char *text) {
+bool insert_node(struct Node **root, const char *text) {
 	struct Node **current = root;
 	while(*current != nullptr) {
 		int compare = strcmp(text, (*current)->text);
@@ -34,13 +39,14 @@ void insert_node(struct Node **root, const char *text) {
 			current = &(*current)->right;
 		} else {
 			(*current)->count++;
-			return;
+			return true;
 		}
 	}
 	*current = create_node(text);
-	if(*current == nullptr) {
-		fprintf(stderr, "Error on allocation.\n");
+	if(*current == nullptr) {	
+		return false;
 	}
+	return true;
 }
 
 void release_node(struct Node *node) {
@@ -87,7 +93,7 @@ size_t print_node(const struct Node *root) {
 			curr = curr->left;
 		}
 		curr = stack[--top];
-		printf("%s: %ld\n", curr->text, curr->count);
+		printf("%s: %zu\n", curr->text, curr->count);
 		total++;
 		curr = curr->right;
 	}
@@ -100,22 +106,52 @@ size_t count_words(size_t *total, FILE *fptr) {
 	struct Node *root = nullptr;
 	static constexpr int CHUNK_SIZE = 16384;
 	static constexpr int MAX_WORD = 1024;
-	char word[MAX_WORD];
 	char buffer[CHUNK_SIZE];
 	size_t index = 0;
 	size_t bytes_read = 0;
 	size_t counted = 0;
+	size_t word_size = MAX_WORD;
+	char *word = malloc(word_size + 1);
+	if(word == nullptr) {
+		fprintf(stderr, "Error on allocation\n");
+		return 0;
+	}
 	while((bytes_read = fread(buffer, sizeof(char), CHUNK_SIZE, fptr)) > 0) {
 		for(size_t i = 0; i < bytes_read; ++i) {
-		       	char c = buffer[i];
+		       	unsigned char c = (unsigned char)buffer[i];
 			if(isalnum(c)) {
-				if(index < MAX_WORD - 1) {
+				if(index < word_size - 1) {
+					word[index++] = (char)tolower(c);
+				} else {
+					word_size *= 2;
+					char *temp = realloc(word, word_size + 1);
+					if(temp ==  nullptr) {
+						fprintf(stderr, "Error on allocation\n");
+						free(word);
+						release_node(root);
+						return 0;
+					}
+					word = temp;
 					word[index++] = (char)tolower(c);
 				}
 			} else {
 				if(index >0) {
 					word[index] = 0;
-					insert_node(&root, word);
+					if(!insert_node(&root, word)) {	
+						free(word);
+						release_node(root);
+						return 0;
+					}
+					if(index > MAX_WORD) {
+						free(word);
+						word_size = MAX_WORD;
+						word = malloc (word_size + 1);
+						if(word == nullptr) {
+							fprintf(stderr, "Error on allocation.\n");				
+							release_node(root);
+							return 0;
+						}
+					}	
 					counted++;
 					index = 0;
 				}
@@ -124,9 +160,14 @@ size_t count_words(size_t *total, FILE *fptr) {
 	}
 	if(index > 0) {
 		word[index] = 0;
-		insert_node(&root, word);
+		if(!insert_node(&root, word)) {
+			free(word);
+			release_node(root);
+			return 0;
+		}
 		counted++;
 	}
+	free(word);
 	*total = print_node(root);
 	release_node(root);
 	return counted;
@@ -141,7 +182,7 @@ void proc_count_words(const char *restrict filename) {
 	printf("File: %s\n", filename);
 	size_t total = 0;
 	size_t count = count_words(&total, fptr);
-	printf("contains: %ld tokens, unique: %ld\n", count, total);
+	printf("contains: %zu tokens, unique: %zu\n", count, total);
 	fclose(fptr);
 }
 
