@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdint.h>
 #include<stdlib.h>
+#include<stddef.h>
 
 static uint64_t fnv1a64_bytes(const void *data, size_t n, uint64_t h) [[unsequenced]] {
 	const uint8_t *p = (const uint8_t *)data;

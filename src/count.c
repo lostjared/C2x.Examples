@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stddef.h>
 
 size_t compare(const char c, const size_t counter) [[unsequenced]]  {
 	if(c == '\n')

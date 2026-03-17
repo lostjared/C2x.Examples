@@ -9,6 +9,7 @@
 #include<unistd.h>
 #include<fcntl.h>
 #include<sys/sendfile.h>
+#include<stddef.h>
 
 static int in_output_dir(const char path[static 1], const char output_dir[static 1]) {
 	size_t n = strlen(output_dir);

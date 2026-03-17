@@ -4,6 +4,8 @@
 #include<unistd.h>
 #include<sys/types.h>
 #include<stdint.h>
+#include<stddef.h>
+
 
 void output_file(uint32_t duration, FILE *restrict fptr, FILE  *restrict output) {
 	size_t bytes = 0;

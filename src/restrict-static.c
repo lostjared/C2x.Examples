@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stddef.h>
 
 void only(size_t size, char buffer[restrict static size+1]) [[reproducible]] {
 	for(size_t i = 0; i < size; ++i) {

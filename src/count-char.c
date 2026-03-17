@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-
+#include<stddef.h>
 
 size_t count_char(const char *restrict source, const size_t len, const char cmp, const size_t counter) [[reproducible]]  {
 	size_t c = counter;

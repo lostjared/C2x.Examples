@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<stddef.h>
 
 // typedef function pointer
 typedef void logf(size_t bytes, const char src[static bytes+1]);

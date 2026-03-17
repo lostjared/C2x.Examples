@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stddef.h>
 
 void printOut(const char *src, int times) {
 	size_t length = strlen(src);
