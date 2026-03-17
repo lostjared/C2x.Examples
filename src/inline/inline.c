@@ -8,7 +8,7 @@ inline void init() {
 	for_loop(0, 10, "Goodbye, World");
 }
 
-inline void print(const char [static 1]);
+extern inline void print(const char [static 1]);
 
 int main() {
 	init();

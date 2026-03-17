@@ -77,7 +77,7 @@ size_t cp_dir(size_t *counter, const char input[static 1], const char output[sta
 						} else {
 							struct stat dst;
 							fstat(source_fd, &dst);
-	 						sendfile(dest_fd, source_fd, nullptr, dst.st_size);
+	 						sendfile(dest_fd, source_fd, nullptr, (size_t)dst.st_size);
 							close(source_fd);
 							close(dest_fd);
 							printf("%s -> %s\n", full, fout);

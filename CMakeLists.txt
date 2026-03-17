@@ -3,8 +3,27 @@ project(c2x VERSION 1.0.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_FLAGS "-Wall -O2 -fsanitize=address -Warray-bounds=2 -Wvla-parameter")
+#set(CMAKE_C_EXTENSIONS OFF)
 
+add_compile_options(
+    -Wall 
+    -Wextra 
+    -Wpedantic
+    -Warray-bounds=2 
+    -Wvla-parameter
+    -Wshadow
+    -Wconversion
+)
+
+add_compile_options(
+    "$<$<CONFIG:Debug>:-fsanitize=address;-fno-omit-frame-pointer;-g>"
+    "$<$<CONFIG:Release>:-O3;-march=native;-flto>"
+)
+
+add_link_options(
+    "$<$<CONFIG:Debug>:-fsanitize=address>"
+    "$<$<CONFIG:Release>:-flto>"
+)
 
 add_executable(helloworld src/helloworld.c)
 add_executable(hash-test src/hash.c)
@@ -40,3 +59,4 @@ endif()
 add_executable(generic-test1 src/generic-test1.c)
 add_executable(static-test1 src/static-test1.c)
 add_executable(count src/count.c)
+add_executable(count-char src/count-char.c)

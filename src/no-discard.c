@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-[[nodiscard]] char *f_getline(char buffer[static 1], size_t bytes, FILE *fptr) {
+[[nodiscard]] char *f_getline(char buffer[static 1], int  bytes, FILE *fptr) {
 	char *r = fgets(buffer, bytes, fptr);
 	if(r) {
 		auto pos = strchr(r, '\n');
@@ -15,7 +15,7 @@
 }
 
 int main(void) {
-	static constexpr ssize_t bytes = 1024 * 4;
+	static constexpr int bytes = 1024 * 4;
 	char buffer[bytes];
 	printf("Enter text: ");
 	if(f_getline(buffer,  bytes-1, stdin)) {

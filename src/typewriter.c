@@ -1,8 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
+#define _XOPEN_SOURCE 500
 #include<unistd.h>
+#include<sys/types.h>
+#include<stdint.h>
 
-void output_file(useconds_t duration, FILE *restrict fptr, FILE  *restrict output) {
+void output_file(uint32_t duration, FILE *restrict fptr, FILE  *restrict output) {
 	size_t bytes = 0;
 	static constexpr int buf_size = 4096;
 	char c[buf_size];
@@ -28,7 +31,7 @@ int main(int argc, char *argv[argc+1]) {
 		return EXIT_FAILURE;
 	}
 	char *endptr;
-	useconds_t t = (useconds_t)strtoul(argv[2], &endptr, 10);
+	uint32_t t = (useconds_t)strtoul(argv[2], &endptr, 10);
 	if(t > 0) {
 		output_file(t, fptr, stdout);
 	}
