@@ -38,4 +38,4 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND LINUX)
 add_executable(inline_asm_test src/inline-asm.c)
 endif()
 add_executable(generic-test1 src/generic-test1.c)
-
+add_executable(static-test1 src/static-test1.c)
