@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	}
 	size_t bytes = 0;
 	static constexpr size_t BUFFER_SIZE = 4096;
-	char buffer[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE] = {};
 	while((bytes = fread(buffer, sizeof(char), BUFFER_SIZE, fptr)) != 0) {
 		counter += count(buffer, bytes);
 	}
