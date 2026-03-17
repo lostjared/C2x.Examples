@@ -3,6 +3,7 @@
 #include<string.h>
 #include<stddef.h>
 #include<stdint.h>
+#include<ctype.h>
 
 struct Node {
 	char *text;
@@ -59,14 +60,15 @@ void release_node(struct Node *node) {
 	}
 }
 
-void print_node(const struct Node *root) {
-	if(root == nullptr) return;
+size_t print_node(const struct Node *root) {
+	if(root == nullptr) return 0;
 	size_t cap_size = 128;
 	size_t top = 0;
+	size_t total = 0;
 	const struct Node **stack = malloc(cap_size * sizeof(struct Node *));
 	if(stack == nullptr) {
 		fprintf(stderr, "Error on allocation\n");
-		return;
+		return 0;
 	}
 	const struct Node *curr = root;
 	while(curr !=  nullptr || top > 0) {
@@ -77,7 +79,7 @@ void print_node(const struct Node *root) {
 				if(temp == nullptr) {
 					fprintf(stderr, "Out of memory");
 					free(stack);
-					return;
+					return 0;
 				}
 				stack = temp;
 			}
@@ -86,36 +88,48 @@ void print_node(const struct Node *root) {
 		}
 		curr = stack[--top];
 		printf("%s: %ld\n", curr->text, curr->count);
+		total++;
 		curr = curr->right;
 	}
 	free(stack);
+	return total;
 }
 
 
-void count_words(const char *restrict text) {
-	char *temp_buffer = malloc (strlen(text) + 1);
-	if(temp_buffer == nullptr) {
-		fprintf(stderr, "Error on allocation\n");
-		return;
-	}
-	int count = 0;
-	size_t len = strlen(text);
+size_t count_words(size_t *total, FILE *fptr) {
 	struct Node *root = nullptr;
-
-	for(size_t i = 0; i < len; ++i) {
-		if(text[i] != ' ' && ((text[i] >= 'a' && text[i] <= 'z') ||  (text[i] >= 'A' && text[i] <= 'Z'))) {
-			temp_buffer[count++] = text[i];
-			temp_buffer[count] = 0;
-		} else {
-			if(count > 0) {	
-				insert_node(&root, temp_buffer);
-				count = 0;
+	static constexpr int CHUNK_SIZE = 16384;
+	static constexpr int MAX_WORD = 1024;
+	char word[MAX_WORD];
+	char buffer[CHUNK_SIZE];
+	size_t index = 0;
+	size_t bytes_read = 0;
+	size_t counted = 0;
+	while((bytes_read = fread(buffer, sizeof(char), CHUNK_SIZE, fptr)) > 0) {
+		for(size_t i = 0; i < bytes_read; ++i) {
+		       	char c = buffer[i];
+			if(isalnum(c)) {
+				if(index < MAX_WORD - 1) {
+					word[index++] = (char)tolower(c);
+				}
+			} else {
+				if(index >0) {
+					word[index] = 0;
+					insert_node(&root, word);
+					counted++;
+					index = 0;
+				}
 			}
 		}
 	}
-	free(temp_buffer);
-	print_node(root);
+	if(index > 0) {
+		word[index] = 0;
+		insert_node(&root, word);
+		counted++;
+	}
+	*total = print_node(root);
 	release_node(root);
+	return counted;
 }
 
 void proc_count_words(const char *restrict filename) { 
@@ -124,19 +138,10 @@ void proc_count_words(const char *restrict filename) {
 		fprintf(stderr, "Error could not open: %s\n", filename);
 		return;
 	}
-	fseek(fptr, 0, SEEK_END);
-	size_t bytes = (size_t)ftell(fptr);
-	rewind(fptr);
-	char *buffer = calloc((bytes+1), sizeof(char));
-	if(buffer == nullptr) {
-		fprintf(stderr, "Error on allocation.\n");
-		return;
-	}
-	if(fread(buffer, sizeof(char), bytes, fptr) != bytes) {
-		fprintf(stderr, "Invalid read: %s\n", filename);
-	}
-	count_words(buffer);
-	free(buffer);
+	printf("File: %s\n", filename);
+	size_t total = 0;
+	size_t count = count_words(&total, fptr);
+	printf("contains: %ld tokens, unique: %ld\n", count, total);
 	fclose(fptr);
 }
 
