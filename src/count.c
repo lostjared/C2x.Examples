@@ -8,7 +8,7 @@ size_t compare(const char c, const size_t counter) [[unsequenced]]  {
 	return counter;
 }
 
-size_t count(const char *restrict src, const size_t len) [[unsequenced]]  {
+size_t count(const char *restrict src, const size_t len) [[reproducible]]  {
         size_t counter = 0;
 	for(size_t i  = 0; i < len; ++i) {
 		counter = compare(src[i], counter);
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 	}
 	size_t counter = 0;
 	FILE *fptr = fopen(argv[1], "rb");
-	if(!fptr) {
+	if(fptr == nullptr) {
 		fprintf(stderr, "Error could not open file: %s\n", argv[1]);
 		return EXIT_FAILURE;
 	}
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 		counter += count(buffer, bytes);
 	}
 	fclose(fptr);
-	printf("%s: %ld\n", argv[1], counter);
+	printf("%s: %zu\n", argv[1], counter);
 	return EXIT_SUCCESS;
 }
 
