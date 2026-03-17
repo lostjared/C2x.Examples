@@ -5,6 +5,8 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 #set(CMAKE_C_EXTENSIONS OFF)
 
+find_package(Threads REQUIRED)
+
 add_compile_options(
     -Wall 
     -Wextra 
@@ -61,4 +63,6 @@ add_executable(static-test1 src/static-test1.c)
 add_executable(count src/count.c)
 add_executable(count-char src/count-char.c)
 add_executable(count-words src/count-words.c)
+add_executable(thread-ex1 src/thread-ex1.c)
 
+target_link_libraries(thread-ex1 PRIVATE Threads::Threads)
