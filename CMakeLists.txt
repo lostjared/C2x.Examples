@@ -60,3 +60,5 @@ add_executable(generic-test1 src/generic-test1.c)
 add_executable(static-test1 src/static-test1.c)
 add_executable(count src/count.c)
 add_executable(count-char src/count-char.c)
+add_executable(count-words src/count-words.c)
+
