@@ -12,6 +12,10 @@ struct Node {
 
 [[nodiscard]] struct Node *create_node(const char *text) {
 	struct Node *n = malloc(sizeof(struct Node));
+	if(n == nullptr) {
+		fprintf(stderr, "Error on allocation\n");
+		return nullptr;
+	}
 	n->text = strdup(text);
 	n->count = 1;
 	n->left = nullptr;
@@ -33,6 +37,9 @@ void insert_node(struct Node **root, const char *text) {
 		}
 	}
 	*current = create_node(text);
+	if(*current == nullptr) {
+		fprintf(stderr, "Error on allocation.\n");
+	}
 }
 
 void release_node(struct Node *node) {
@@ -57,7 +64,7 @@ void print_node(const struct Node *root) {
 	size_t cap_size = 128;
 	size_t top = 0;
 	const struct Node **stack = malloc(cap_size * sizeof(struct Node *));
-	if(!stack) {
+	if(stack == nullptr) {
 		fprintf(stderr, "Error on allocation\n");
 		return;
 	}
@@ -67,7 +74,7 @@ void print_node(const struct Node *root) {
 			if(top >= cap_size) {
 				cap_size *= 2;
 				const struct Node **temp = realloc(stack, cap_size * sizeof(struct Node *));
-				if(!temp) {
+				if(temp == nullptr) {
 					fprintf(stderr, "Out of memory");
 					free(stack);
 					return;
@@ -87,6 +94,10 @@ void print_node(const struct Node *root) {
 
 void count_words(const char *restrict text) {
 	char *temp_buffer = malloc (strlen(text) + 1);
+	if(temp_buffer == nullptr) {
+		fprintf(stderr, "Error on allocation\n");
+		return;
+	}
 	int count = 0;
 	size_t len = strlen(text);
 	struct Node *root = nullptr;
@@ -117,6 +128,10 @@ void proc_count_words(const char *restrict filename) {
 	size_t bytes = (size_t)ftell(fptr);
 	rewind(fptr);
 	char *buffer = calloc((bytes+1), sizeof(char));
+	if(buffer == nullptr) {
+		fprintf(stderr, "Error on allocation.\n");
+		return;
+	}
 	if(fread(buffer, sizeof(char), bytes, fptr) != bytes) {
 		fprintf(stderr, "Invalid read: %s\n", filename);
 	}
