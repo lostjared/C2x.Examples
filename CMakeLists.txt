@@ -37,4 +37,5 @@ add_executable(skip-cp src/skip-cp.c)
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND LINUX)
 add_executable(inline_asm_test src/inline-asm.c)
 endif()
+add_executable(generic-test1 src/generic-test1.c)
 
