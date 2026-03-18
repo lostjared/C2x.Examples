@@ -37,7 +37,7 @@ int main(void) {
 		char cbuf[CBUF] = {};
 		size_t choice = 0;
 
-		printf("Choice:\n0 = Insert\n1 = Print\n2 = Remove\n3 = Exit\n>");
+		printf("Choice:\n0 = Insert\n1 = Lookup\n2 = Remove\n3 = Exit\n>");
 		if(f_getline(cbuf, CBUF, stdin)) {
 			choice = strtoull(cbuf, nullptr, 0);
 			if(choice > 3)
@@ -52,19 +52,19 @@ int main(void) {
 			 if(choice == 0) {
 				char value[BUFFER_SIZE] = {};
 				printf("Enter value: ");
-				if(f_getline(value, BUFFER_SIZE-1, stdin)) {
+				if(f_getline(value, BUFFER_SIZE, stdin)) {
 					struct Node *n = hash_insert(&table, buffer);
 					if(n != nullptr) {
-						if(n->value != nullptr && n->cleanup != nullptr) {
-							n->cleanup(n->value);
-							n->value = nullptr;
-						}
-						n->value = dup_string(value);
-						if(n->value == nullptr) {
+						char *new_value = dup_string(value);
+						if(new_value == nullptr) {
 							fprintf(stderr, "Error on allocation.\n");
 							hash_cleanup(&table);
 							return EXIT_FAILURE;
 						}
+						if(n->value != nullptr && n->cleanup != nullptr) {
+							n->cleanup(n->value);
+						}
+						n->value = new_value;
 						n->cleanup = cleanup_ptr;
 					}
 				}
@@ -72,7 +72,10 @@ int main(void) {
 			} else if(choice == 1) {
 				struct Node *n = hash_lookup(&table, buffer);
 				if(n != nullptr) {
-					printf("%s = %s\n", n->text, (const char *)n->value);
+					if(n->value != nullptr) 
+						printf("%s = %s\n", n->text, (const char *)n->value);
+					else 
+						printf("%s [no value]\n", n->text);
 				} else {
 					printf("Key not found!\n");
 				}
