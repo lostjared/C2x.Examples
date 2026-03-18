@@ -68,3 +68,5 @@ add_executable(thread-local src/thread-local.c)
 target_link_libraries(thread-ex1 PRIVATE Threads::Threads)
 target_link_libraries(thread-local PRIVATE Threads::Threads)
 add_executable(doubly-link src/doubly-link.c)
+add_executable(hashtable-ex src/hashtable.c)
+
