@@ -35,7 +35,7 @@ struct Node *create_node(const char *text) {
 }
 
 struct Node *insert_node(struct Node **root, const char *text) {
-	if(text == nullptr) 
+	if(root == nullptr || text == nullptr) 
 		return nullptr;
 
 	struct Node *n = create_node(text);
@@ -70,7 +70,7 @@ void release_node(struct Node *root) {
 }
 
 struct Node *find_node(struct Node *root,const char *text) {
-	if(text == nullptr) 
+	if(root == nullptr || text == nullptr) 
 		return nullptr;
 
 	struct Node *n = root;
@@ -83,7 +83,7 @@ struct Node *find_node(struct Node *root,const char *text) {
 }
 
 size_t hash(const char *key, size_t bucket_size) {
-	if(key == nullptr)
+	if(key == nullptr || bucket_size == 0)
 		return 0;
 
 	size_t h = 1469598103934665603ull;
@@ -96,7 +96,7 @@ size_t hash(const char *key, size_t bucket_size) {
 }
 
 struct Node *hash_insert(struct HashTable *table, const char *text) {
-	if(text == nullptr)
+	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
 		return nullptr;
 	size_t key = hash(text, table->bucket_size);	
 	struct Node *existing = find_node(table->buckets[key], text);
@@ -106,25 +106,24 @@ struct Node *hash_insert(struct HashTable *table, const char *text) {
 }
 
 struct Node *hash_lookup(struct HashTable *table, const char *text) {
-	if(text == nullptr)
+	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
 		return nullptr;
 
-	size_t  key = hash(text, table->bucket_size);
-	struct Node **n = &table->buckets[key];
-	return find_node(*n, text);
+	size_t key = hash(text, table->bucket_size);
+	return find_node(table->buckets[key], text);
 
 }
 bool hash_init(struct HashTable *table, size_t bucket_size) {
 	if(table == nullptr || bucket_size == 0) return false;
-	memset(table, 0, sizeof(struct HashTable));
-	table->buckets = calloc(bucket_size, sizeof(struct Node *));
+	memset(table, 0, sizeof(*table));
+	table->buckets = calloc(bucket_size, sizeof(*table->buckets));
 	if(table->buckets == nullptr) return false;
 	table->bucket_size = bucket_size;
 	return true;
 }
 
 void hash_cleanup(struct HashTable *table) {
-	if(table == nullptr) return;
+	if(table == nullptr || table->buckets == nullptr  || table->bucket_size == 0) return;
 	for(size_t i = 0; i < table->bucket_size; ++i) {
 		release_node(table->buckets[i]);
 		table->buckets[i] = nullptr;
@@ -135,7 +134,7 @@ void hash_cleanup(struct HashTable *table) {
 }
 
 void hash_print(struct HashTable *table) {
-	if(table == nullptr) return;	
+	if(table == nullptr || table->buckets == nullptr || table->bucket_size == 0) return;	
 	printf("Keys: {\n");
 	for(size_t i = 0; i < table->bucket_size; ++i) {
 		print_node(table->buckets[i]);
@@ -150,16 +149,19 @@ void cleanup_ptr(void *ptr){
 }
 
 void hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *)) {
-	if(table == nullptr || text == nullptr)
+	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
 		return;
 	struct Node *n = hash_insert(table, text);
 	if(n == nullptr) return;
+	if(n->cleanup != nullptr && n->value != nullptr) {
+		n->cleanup(n->value);
+	}
 	n->value = value;
 	n->cleanup = cleanup;
 }
 
 void hash_remove(struct HashTable *table, const char *text) {
-	if (table == nullptr || text == nullptr) return;
+	if (table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0) return;
 	size_t key = hash(text, table->bucket_size);
 	struct Node *n = table->buckets[key];
 	while (n != nullptr) {

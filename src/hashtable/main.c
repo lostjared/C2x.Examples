@@ -1,19 +1,26 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include"hashtable.h"
 
-char *f_getline(char buffer[static 1], int bytes, FILE *fptr) {
-	buffer[0] = 0;
-	char *ret = fgets(buffer, bytes, fptr);
-	if(ret) {
-		char *position = strchr(buffer, '\n');
-		if(position) 
-			*position = 0;
-		else 
-			ret = nullptr;
+char *f_getline(char *buffer, size_t bytes, FILE *fptr) {
+	if(buffer == nullptr || bytes < 2 || fptr == nullptr)
+		return nullptr;
+
+	char *ret = fgets(buffer, (int)bytes, fptr);
+	if(ret == nullptr)
+		return nullptr;
+
+	char *position = strchr(buffer, '\n');
+	if(position != nullptr) {
+		*position = 0;
+	} else {
+		int ch = 0;
+		while((ch = fgetc(fptr)) != '\n' && ch != EOF) {}
 	}
 	return ret;
 }
+
 int main(void) {
 	static constexpr size_t BUFFER_SIZE = 1024 * 4;
 	struct HashTable table;
@@ -30,8 +37,8 @@ int main(void) {
 		char cbuf[CBUF] = {};
 		size_t choice = 0;
 
-		printf("Choice 0, or 1\n0 = Insert\n1 = Print\n2 = Remove\n3 = Exit\n>");
-		if(f_getline(cbuf, CBUF-1, stdin)) {
+		printf("Choice:\n0 = Insert\n1 = Print\n2 = Remove\n3 = Exit\n>");
+		if(f_getline(cbuf, CBUF, stdin)) {
 			choice = strtoull(cbuf, nullptr, 0);
 			if(choice > 3)
 				continue;
@@ -41,30 +48,24 @@ int main(void) {
 			}
 		}
 		printf("Enter key: ");
-		if(f_getline(buffer, BUFFER_SIZE-1, stdin)) {
+		if(f_getline(buffer, BUFFER_SIZE, stdin)) {
 			 if(choice == 0) {
 				char value[BUFFER_SIZE] = {};
 				printf("Enter value: ");
 				if(f_getline(value, BUFFER_SIZE-1, stdin)) {
 					struct Node *n = hash_insert(&table, buffer);
 					if(n != nullptr) {
-						if(n->value != nullptr) {
+						if(n->value != nullptr && n->cleanup != nullptr) {
 							n->cleanup(n->value);
-							n->value = dup_string(value);
-							if(n->value == nullptr) {
-								fprintf(stderr, "Error on allocation.");
-								hash_cleanup(&table);
-								return EXIT_FAILURE;
-							}
-						} else {
-							n->value = dup_string(value);
-							if(n->value == nullptr) {
-								fprintf(stderr, "Error on allocation out of memory.\n");
-								hash_cleanup(&table);
-								return EXIT_FAILURE;
-							}
-							n->cleanup = cleanup_ptr;
+							n->value = nullptr;
 						}
+						n->value = dup_string(value);
+						if(n->value == nullptr) {
+							fprintf(stderr, "Error on allocation.\n");
+							hash_cleanup(&table);
+							return EXIT_FAILURE;
+						}
+						n->cleanup = cleanup_ptr;
 					}
 				}
 				hash_print(&table);
