@@ -22,7 +22,7 @@ struct Node *create_node(const char *text) {
 		fprintf(stderr, "Error on allocation..\n");
 		return nullptr;
 	}
-	n->text =  dup_string(text);
+	n->text = dup_string(text);
 	if(n->text == nullptr) {
 		fprintf(stderr, "Could not allocate text buffer\n");
 		free(n);
