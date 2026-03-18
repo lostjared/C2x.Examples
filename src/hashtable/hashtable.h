@@ -31,4 +31,5 @@ extern struct Node *hash_lookup(struct HashTable *table, const char *text);
 extern void hash_print(struct HashTable *table);
 extern void hash_cleanup(struct HashTable *table);
 extern void cleanup_ptr(void *ptr);
+extern char *dup_string(const char *text);
 #endif

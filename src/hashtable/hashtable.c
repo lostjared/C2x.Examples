@@ -1,5 +1,18 @@
 #include "hashtable.h"
 
+char *dup_string(const char *text) {
+	if(text == nullptr)
+		return nullptr;
+
+	size_t len = strlen(text) + 1;
+	char *out = malloc(len);
+	if(out == nullptr)
+		return nullptr;
+
+	memcpy(out, text, len);
+	return out;
+}
+
 struct Node *create_node(const char *text) {
 	if(text == nullptr)
 		return nullptr;
@@ -9,7 +22,7 @@ struct Node *create_node(const char *text) {
 		fprintf(stderr, "Error on allocation..\n");
 		return nullptr;
 	}
-	n->text =  strdup(text);
+	n->text =  dup_string(text);
 	if(n->text == nullptr) {
 		fprintf(stderr, "Could not allocate text buffer\n");
 		free(n);
