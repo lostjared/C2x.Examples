@@ -64,5 +64,6 @@ add_executable(count src/count.c)
 add_executable(count-char src/count-char.c)
 add_executable(count-words src/count-words.c)
 add_executable(thread-ex1 src/thread-ex1.c)
-
+add_executable(thread-local src/thread-local.c)
 target_link_libraries(thread-ex1 PRIVATE Threads::Threads)
+target_link_libraries(thread-local PRIVATE Threads::Threads)
