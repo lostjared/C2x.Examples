@@ -147,3 +147,31 @@ void cleanup_ptr(void *ptr){
 		free(ptr);
 	}
 }
+
+void hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *)) {
+	if(table == nullptr || text == nullptr)
+		return;
+	struct Node *n = hash_insert(table, text);
+	if(n == nullptr) return;
+	n->value = value;
+	n->cleanup = cleanup;
+}
+
+void hash_remove(struct HashTable *table, const char *text) {
+	if (table == nullptr || text == nullptr) return;
+	size_t key = hash(text, table->bucket_size);
+	struct Node *n = table->buckets[key];
+	while (n != nullptr) {
+		if (strcmp(n->text, text) == 0) {
+			if (n->prev) n->prev->next = n->next;
+			else table->buckets[key] = n->next;
+			if (n->next) n->next->prev = n->prev;
+			free(n->text);
+			if (n->cleanup && n->value) n->cleanup(n->value);
+			free(n);
+			return;
+		}
+		n = n->next;
+	}
+}
+

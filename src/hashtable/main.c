@@ -27,12 +27,12 @@ int main(void) {
 		char cbuf[CBUF] = {};
 		size_t choice = 0;
 
-		printf("Choice 0, or 1\n0 = Insert\n1 = Print\n2 = Exit\n>");
+		printf("Choice 0, or 1\n0 = Insert\n1 = Print\n2 = Remove\n3 = Exit\n>");
 		if(f_getline(cbuf, CBUF-1, stdin)) {
 			choice = strtoull(cbuf, nullptr, 0);
-			if(choice > 2)
+			if(choice > 3)
 				continue;
-			else if(choice == 2) {
+			else if(choice == 3) {
 				active = false;
 				break;
 			}
@@ -72,7 +72,9 @@ int main(void) {
 				} else {
 					printf("Key not found!\n");
 				}
-			} 
+			} else if(choice == 2) {
+				hash_remove(&table, buffer);
+			}
 		}
 	}
 	hash_cleanup(&table);
