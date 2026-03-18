@@ -26,7 +26,7 @@ extern void print_node(struct Node *root);
 extern void release_node(struct Node *root);
 extern struct Node *find_node(struct Node *root,const char *text);
 extern size_t hash(const char *key, size_t bucket_size);
-extern void hash_init(struct HashTable *table, size_t bucket_size);
+extern bool hash_init(struct HashTable *table, size_t bucket_size);
 extern struct Node *hash_insert(struct HashTable *table, const char *text);
 extern struct Node *hash_lookup(struct HashTable *table, const char *text);
 extern void hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *));

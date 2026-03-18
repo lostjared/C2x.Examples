@@ -114,12 +114,13 @@ struct Node *hash_lookup(struct HashTable *table, const char *text) {
 	return find_node(*n, text);
 
 }
-
-void hash_init(struct HashTable *table, size_t bucket_size) {
-	if(table == nullptr) return;
+bool hash_init(struct HashTable *table, size_t bucket_size) {
+	if(table == nullptr || bucket_size == 0) return false;
 	memset(table, 0, sizeof(struct HashTable));
 	table->buckets = calloc(bucket_size, sizeof(struct Node *));
+	if(table->buckets == nullptr) return false;
 	table->bucket_size = bucket_size;
+	return true;
 }
 
 void hash_cleanup(struct HashTable *table) {

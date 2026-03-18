@@ -17,7 +17,10 @@ char *f_getline(char buffer[static 1], int bytes, FILE *fptr) {
 int main(void) {
 	static constexpr size_t BUFFER_SIZE = 1024 * 4;
 	struct HashTable table;
-	hash_init(&table, DEFAULT_TABLE_SIZE);
+	if(!hash_init(&table, DEFAULT_TABLE_SIZE)) {
+		fprintf(stderr, "Error creating hash table.\n");
+		return EXIT_FAILURE;
+	}
 	char buffer[BUFFER_SIZE]= {};
 	bool active = true;
 
