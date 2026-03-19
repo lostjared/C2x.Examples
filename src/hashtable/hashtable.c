@@ -48,10 +48,10 @@ struct Node *insert_node(struct Node **root, const char *text) {
 	return n;
 }
 
-void print_node(struct Node *root) {
+void print_node(const struct Node *root) {
 	if(root == nullptr) 
 		return;
-	struct Node *temp = root;
+	const struct Node *temp = root;
 	while(temp != nullptr) {
 		printf("\t[%s]\n", temp->text);
 		temp = temp ->next;
@@ -105,7 +105,7 @@ struct Node *hash_insert(struct HashTable *table, const char *text) {
 	return insert_node(&table->buckets[key], text);
 }
 
-struct Node *hash_lookup(struct HashTable *table, const char *text) {
+struct Node *hash_lookup(const struct HashTable *table, const char *text) {
 	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
 		return nullptr;
 
@@ -133,7 +133,7 @@ void hash_cleanup(struct HashTable *table) {
 	table->bucket_size = 0;
 }
 
-void hash_print(struct HashTable *table) {
+void hash_print(const struct HashTable *table) {
 	if(table == nullptr || table->buckets == nullptr || table->bucket_size == 0) return;	
 	printf("Keys: {\n");
 	for(size_t i = 0; i < table->bucket_size; ++i) {
