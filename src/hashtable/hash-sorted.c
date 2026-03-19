@@ -18,6 +18,8 @@ void print_sorted_word_table(const struct HashTable *table) {
 	const struct Node *temp = flat;
 	while(temp != nullptr) {
 		struct Node *value = hash_lookup(table, temp->text);
+		if(value == nullptr)
+			continue;
 		if(value->value != nullptr)
 			printf("\t[%s] = %zu\n", value->text, *(size_t*)value->value);
 		temp = temp->next;

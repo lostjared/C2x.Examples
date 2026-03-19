@@ -85,9 +85,6 @@ void sort_node(struct Node *root) {
 	} while(swapped);
 }
 
-
-
-
 void release_node(struct Node *root) {
 	while(root != nullptr) {
 		struct Node *n = root->next;
@@ -102,7 +99,6 @@ void release_node(struct Node *root) {
 struct Node *find_node(struct Node *root,const char *text) {
 	if(root == nullptr || text == nullptr) 
 		return nullptr;
-
 	struct Node *n = root;
 	while(n != nullptr) {
 		if(strcmp(n->text, text) == 0) 
@@ -115,7 +111,6 @@ struct Node *find_node(struct Node *root,const char *text) {
 size_t hash(const char *key, size_t bucket_size) {
 	if(key == nullptr || bucket_size == 0)
 		return 0;
-
 	size_t h = 1469598103934665603ull;
 	while(*key != '\0') {
 		h ^= (unsigned char)*key;
@@ -138,11 +133,10 @@ struct Node *hash_insert(struct HashTable *table, const char *text) {
 struct Node *hash_lookup(const struct HashTable *table, const char *text) {
 	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
 		return nullptr;
-
 	size_t key = hash(text, table->bucket_size);
 	return find_node(table->buckets[key], text);
-
 }
+
 bool hash_init(struct HashTable *table, size_t bucket_size) {
 	if(table == nullptr || bucket_size == 0) return false;
 	memset(table, 0, sizeof(*table));
@@ -209,6 +203,9 @@ void hash_remove(struct HashTable *table, const char *text) {
 }
 
 struct Node *hash_flat_list(const struct HashTable *table) {
+	if(table == nullptr || table->buckets == nullptr || table->bucket_size == 0)
+		return nullptr;
+
 	struct Node *flat = nullptr;
 	for(size_t i = 0; i < table->bucket_size; ++i) {
 		struct Node *root = table->buckets[i];
