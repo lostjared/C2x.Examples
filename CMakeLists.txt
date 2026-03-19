@@ -70,4 +70,5 @@ target_link_libraries(thread-local PRIVATE Threads::Threads)
 add_executable(doubly-link src/doubly-link.c)
 add_executable(hashtable-ex src/hashtable.c)
 add_executable(hashtable-demo src/hashtable/hashtable.c src/hashtable/main.c)
+add_executable(hashtable-count src/hashtable/hashtable.c src/hashtable/hash-count.c)
 
