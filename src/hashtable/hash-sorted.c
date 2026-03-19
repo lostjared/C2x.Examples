@@ -18,8 +18,10 @@ void print_sorted_word_table(const struct HashTable *table) {
 	const struct Node *temp = flat;
 	while(temp != nullptr) {
 		struct Node *value = hash_lookup(table, temp->text);
-		if(value == nullptr)
-			continue;
+		if(value == nullptr) {
+			printf("Error invalid key.\n");
+			break;
+		}
 		if(value->value != nullptr)
 			printf("\t[%s] = %zu\n", value->text, *(size_t*)value->value);
 		temp = temp->next;
@@ -46,8 +48,38 @@ void print_word_table(const struct HashTable *table) {
 	printf("}\n");
 }
 
-bool count_words(FILE *fptr, size_t *unique_count,  size_t *token_count) {
-	if(fptr == nullptr || token_count == nullptr || unique_count == nullptr)
+
+bool insert_set(struct Node *n) {
+	if(n->value == nullptr) {
+		n->cleanup = cleanup_ptr;
+		n->value = malloc(sizeof(size_t));
+		n->bytes = sizeof(size_t);
+		if(n->value == nullptr) {
+			fprintf(stderr, "Allocation failed.\n");
+			return false;
+		}
+		*((size_t*)n->value) = 1;
+	} else {
+		*((size_t*)n->value) += 1;
+	}
+	return true;
+}
+
+bool insert_value(struct HashTable *table, const char *key, size_t *count) {
+	if(count == nullptr || table == nullptr || table->buckets == nullptr || table->bucket_size == 0 ||  key == nullptr)
+		return false;
+	enum HASH_VALUE_RETURN value = hash_set_value(table, key, insert_set, cleanup_ptr);
+        if(value == VALUE_NEW) {
+		(*count)++;
+		return true;
+	} else if(value == VALUE_ERROR) {
+		return false;
+	}
+	return true;
+}
+
+bool count_words(FILE *fptr, struct HashTable *global, size_t *unique_count,  size_t *token_count, size_t  *total_uniq) {
+	if(fptr == nullptr || token_count == nullptr || unique_count == nullptr || (global != nullptr && total_uniq == nullptr))
 		return false;
 
 	*unique_count = 0;
@@ -95,28 +127,29 @@ bool count_words(FILE *fptr, size_t *unique_count,  size_t *token_count) {
 					word[index] = 0;	
 					index = 0;	
 					(*token_count) ++;
-					struct Node *n = hash_insert(&table, word);
-					if(n == nullptr) {
-						fprintf(stderr, "Allocation failed.\n");
-						free(word);
+					if(!insert_value(&table, word, &count)) {
+						if(word != nullptr)
+							free(word);
 						hash_cleanup(&table);
 						return false;
 					}
-						
-					if(n->value == nullptr) {
-						n->cleanup = cleanup_ptr;
-						n->value = malloc(sizeof(size_t));
-						if(n->value == nullptr) {
-							fprintf(stderr, "Allocation failed.\n");
-							free(word);
-							hash_cleanup(&table);
-							return false;
+
+					if(global != nullptr) {
+						struct Node *u = hash_lookup(global, word);
+						if(u == nullptr) {
+							struct Node *inserted_value = hash_insert(global, word);
+							if(inserted_value == nullptr) {
+								fprintf(stderr, "Error inserting into global Hash table.\n");
+								if(word != nullptr) 
+									free(word);
+			
+								hash_cleanup(&table);
+								return false;
+							}
+							(*total_uniq)++;
 						}
-						*((size_t*)n->value) = 1;
-						count++;
-					} else {
-						*((size_t*)n->value) += 1;
 					}
+
 					if(word_size > BUFFER_SIZE) {
 						free(word);
 						word_size = BUFFER_SIZE;
@@ -143,30 +176,22 @@ bool count_words(FILE *fptr, size_t *unique_count,  size_t *token_count) {
 	if(index > 0) {
 		word[index] = 0;
 		(*token_count) ++;
-		struct Node *n = hash_insert(&table, word);
-		if(n == nullptr) {
-			fprintf(stderr, "Allocation failed.\n");
+		if(!insert_value(&table, word, &count)) {
 			free(word);
 			hash_cleanup(&table);
 			return false;
 		}
-		if(n->value == nullptr) {
-			n->value = malloc(sizeof(size_t));
-			if(n->value == nullptr) {
-				fprintf(stderr, "Allocation failed.\n");
-				free(word);
-				hash_cleanup(&table);
-				return false;
-			}
-			n->cleanup = cleanup_ptr;
-			*((size_t*)n->value) = 1;
-			count++;
-		} else {
-			*((size_t*)n->value) += 1;
-		}
 	}
 	free(word);
 	print_sorted_word_table(&table);
+
+	if(global != nullptr) {
+		if(!hash_merge(global, &table)) {
+			hash_cleanup(&table);
+			return false;
+		}
+	}
+
 	hash_cleanup(&table);
 	*unique_count = count;
 	return true;	
@@ -176,7 +201,7 @@ bool count_words(FILE *fptr, size_t *unique_count,  size_t *token_count) {
 int main(int argc, char **argv) {
 	if(argc <= 1) {
 		size_t num = 0, count = 0;
-		if(count_words(stdin,&count,&num)) {
+		if(count_words(stdin,nullptr,&count,&num,nullptr)) {
 			printf("Contains: %zu tokens, %zu unique\n", num, count);
 			return EXIT_SUCCESS;
 		} else {
@@ -185,9 +210,16 @@ int main(int argc, char **argv) {
 			
 		}
 	}
-	size_t total = 0, unique_total = 0;
+	struct HashTable global;
+	size_t total = 0;
 	int status = EXIT_SUCCESS;
 	size_t errors = 0;
+	if(!hash_init(&global, DEFAULT_TABLE_SIZE)) {
+		fprintf(stderr, "Error creating global hashtable.\n");
+		return EXIT_FAILURE; 
+	}
+
+	size_t total_uniq = 0;
 
 	for(int i = 1; i < argc; ++i) {
 		FILE *fptr = fopen(argv[i], "rb");
@@ -199,10 +231,9 @@ int main(int argc, char **argv) {
 		}
 		size_t num = 0;
 		size_t count = 0;
-	       	if(count_words(fptr,&count,&num)) {
+	       	if(count_words(fptr,&global,&count,&num,&total_uniq)) {
 			printf("%s Contains: %zu tokens, %zu unique\n", argv[i], num, count);
 			total += num;
-			unique_total += count;
 
 		} else {
 			fprintf(stderr, "Error has occurred.\n");
@@ -211,10 +242,13 @@ int main(int argc, char **argv) {
 		}
 		fclose(fptr);
 	}
+
+	hash_cleanup(&global);
 	if(argc > 2)
-		printf("%zu total tokens, %zu total unique\n", total, unique_total);
+		printf("%zu total tokens, %zu total unique\n", total, total_uniq);
 	if(errors > 0)
 		fprintf(stderr, "Encountered %zu file errors.\n", errors);
+
 	return status;
 }
 

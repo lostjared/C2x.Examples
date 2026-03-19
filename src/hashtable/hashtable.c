@@ -172,16 +172,21 @@ void cleanup_ptr(void *ptr){
 	}
 }
 
-void hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *)) {
+struct Node *hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *)) {
 	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
-		return;
+ 		return nullptr;
+
 	struct Node *n = hash_insert(table, text);
-	if(n == nullptr) return;
+	if(n == nullptr) {
+		printf("Error on insert into Hash Table.\n");
+		return nullptr;	
+	}
 	if(n->cleanup != nullptr && n->value != nullptr) {
 		n->cleanup(n->value);
 	}
 	n->value = value;
 	n->cleanup = cleanup;
+	return n;
 }
 
 void hash_remove(struct HashTable *table, const char *text) {
@@ -202,6 +207,26 @@ void hash_remove(struct HashTable *table, const char *text) {
 	}
 }
 
+enum HASH_VALUE_RETURN hash_set_value(struct HashTable *table, const char *key, bool (*hash_setvalue)(struct Node *n), void (*cleanup)(void *)) {
+	if(table == nullptr || table->buckets == nullptr || table->bucket_size == 0 || key == nullptr || hash_setvalue == nullptr) 
+		return VALUE_ERROR;
+	struct Node *n = hash_lookup(table, key);
+	if(n == nullptr) {
+		struct Node *inserted = hash_insert(table, key);
+		if(inserted != nullptr) {
+			inserted->cleanup = cleanup;
+			if(hash_setvalue(inserted))
+				return VALUE_NEW;
+		}
+	} else {
+		n->cleanup = cleanup;
+		if(hash_setvalue(n))
+			return VALUE_UPDATE;
+	}
+	return VALUE_ERROR;
+}
+
+
 struct Node *hash_flat_list(const struct HashTable *table) {
 	if(table == nullptr || table->buckets == nullptr || table->bucket_size == 0)
 		return nullptr;
@@ -220,3 +245,38 @@ struct Node *hash_flat_list(const struct HashTable *table) {
 	}
 	return flat;
 }
+
+bool hash_merge(struct HashTable *to, struct HashTable *from) {
+
+	if(to == nullptr || from == nullptr || to->buckets == nullptr || from->buckets == nullptr || to->bucket_size == 0 || from->bucket_size == 0)
+		return false;
+
+	for(size_t i = 0; i < from->bucket_size; ++i ){
+		struct Node *root = from->buckets[i];
+		while(root != nullptr) {
+			const char *key = root->text;
+			struct Node *n = hash_lookup(to, key);
+			if(n == nullptr) {
+				struct Node *ivalue = hash_insert(to, key);
+				if(ivalue != nullptr) {
+					if(ivalue->value == nullptr) {
+						ivalue->value = malloc (n->bytes);
+						memcpy(ivalue->value, n->value, n->bytes);
+						ivalue->cleanup = n->cleanup;	
+					} else {
+						if(ivalue->cleanup != nullptr)
+							ivalue->cleanup(ivalue->value);
+						ivalue->value = malloc(n->bytes);
+						memcpy(ivalue->value, n->value, n->bytes);
+						ivalue->cleanup = n->cleanup;
+					}
+				} else {
+					return false;
+				}
+			}
+			root = root->next;
+		}
+	}
+	return true;
+}
+
