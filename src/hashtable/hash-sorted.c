@@ -164,7 +164,7 @@ bool count_words(FILE *fptr, size_t *unique_count,  size_t *token_count) {
 		}
 	}
 	free(word);
-	print_word_table(&table);
+	print_sorted_word_table(&table);
 	hash_cleanup(&table);
 	*unique_count = count;
 	return true;	

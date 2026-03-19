@@ -58,6 +58,36 @@ void print_node(const struct Node *root) {
 	}
 }
 
+int node_cmp(const char *a, const char *b) {
+	return strcmp(a, b);
+}
+
+void sort_node(struct Node *root) {
+	if(root == nullptr) return;
+	bool swapped;
+	struct Node  *ptr_1 = nullptr,  *l_ptr = nullptr;
+	do {
+		swapped = false;
+		ptr_1 = root;
+		while(ptr_1->next != l_ptr) {
+			if(node_cmp(ptr_1->text, ptr_1->next->text) > 0) {
+				void *temp_data = ptr_1->value;
+				ptr_1->value = ptr_1->next->value;
+				ptr_1->next->value = temp_data;
+				char *temp_sz = ptr_1->text;
+				ptr_1->text = ptr_1->next->text;
+				ptr_1->next->text = temp_sz;
+				swapped = true;
+			}
+			ptr_1 = ptr_1->next;
+		}
+		l_ptr = ptr_1;
+	} while(swapped);
+}
+
+
+
+
 void release_node(struct Node *root) {
 	while(root != nullptr) {
 		struct Node *n = root->next;
@@ -178,3 +208,18 @@ void hash_remove(struct HashTable *table, const char *text) {
 	}
 }
 
+struct Node *hash_flat_list(const struct HashTable *table) {
+	struct Node *flat = nullptr;
+	for(size_t i = 0; i < table->bucket_size; ++i) {
+		struct Node *root = table->buckets[i];
+		for(struct Node *n = root; n != nullptr; n = n->next) {
+			struct Node *new_node = insert_node(&flat, n->text);
+			if(new_node == nullptr) {
+				fprintf(stderr, "Error, out of memory.\n");
+				release_node(flat);
+				return nullptr;
+			}
+		}
+	}
+	return flat;
+}
