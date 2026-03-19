@@ -33,13 +33,14 @@ extern size_t hash(const char *key, size_t bucket_size);
 extern bool hash_init(struct HashTable *table, size_t bucket_size);
 extern struct Node *hash_insert(struct HashTable *table, const char *text);
 extern struct Node *hash_lookup(const struct HashTable *table, const char *text);
-extern struct Node *hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *));
+extern struct Node *hash_set(struct HashTable *table, const char *text, void *value, size_t bytes, void (*cleanup)(void *));
 extern enum HASH_VALUE_RETURN hash_set_value(struct HashTable *table, const char *key,  bool (*hash_setvalue)(struct Node *), void (*cleanup)(void *));
-
 extern void hash_remove(struct HashTable *table, const char *text);
 extern void hash_print(const struct HashTable *table);
 extern void hash_cleanup(struct HashTable *table);
-extern bool hash_merge(struct HashTable *hash_to, struct HashTable *hash_from);
+extern size_t hash_count(struct HashTable *table);
+extern bool hash_merge(struct HashTable *hash_to, const struct HashTable *hash_from);
+extern bool hash_clone_merge(struct HashTable *to, const struct HashTable *from);
 extern void cleanup_ptr(void *ptr);
 extern char *dup_string(const char *text);
 extern struct Node *hash_flat_list(const struct HashTable *table);

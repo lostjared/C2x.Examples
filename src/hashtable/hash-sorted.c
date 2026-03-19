@@ -78,8 +78,8 @@ bool insert_value(struct HashTable *table, const char *key, size_t *count) {
 	return true;
 }
 
-bool count_words(FILE *fptr, struct HashTable *global, size_t *unique_count,  size_t *token_count, size_t  *total_uniq) {
-	if(fptr == nullptr || token_count == nullptr || unique_count == nullptr || (global != nullptr && total_uniq == nullptr))
+bool count_words(FILE *fptr, struct HashTable *global, size_t *unique_count,  size_t *token_count) {
+	if(fptr == nullptr || token_count == nullptr || unique_count == nullptr)
 		return false;
 
 	*unique_count = 0;
@@ -134,22 +134,6 @@ bool count_words(FILE *fptr, struct HashTable *global, size_t *unique_count,  si
 						return false;
 					}
 
-					if(global != nullptr) {
-						struct Node *u = hash_lookup(global, word);
-						if(u == nullptr) {
-							struct Node *inserted_value = hash_insert(global, word);
-							if(inserted_value == nullptr) {
-								fprintf(stderr, "Error inserting into global Hash table.\n");
-								if(word != nullptr) 
-									free(word);
-			
-								hash_cleanup(&table);
-								return false;
-							}
-							(*total_uniq)++;
-						}
-					}
-
 					if(word_size > BUFFER_SIZE) {
 						free(word);
 						word_size = BUFFER_SIZE;
@@ -186,7 +170,7 @@ bool count_words(FILE *fptr, struct HashTable *global, size_t *unique_count,  si
 	print_sorted_word_table(&table);
 
 	if(global != nullptr) {
-		if(!hash_merge(global, &table)) {
+		if(!hash_clone_merge(global, &table)) {
 			hash_cleanup(&table);
 			return false;
 		}
@@ -201,7 +185,7 @@ bool count_words(FILE *fptr, struct HashTable *global, size_t *unique_count,  si
 int main(int argc, char **argv) {
 	if(argc <= 1) {
 		size_t num = 0, count = 0;
-		if(count_words(stdin,nullptr,&count,&num,nullptr)) {
+		if(count_words(stdin,nullptr,&count,&num)) {
 			printf("Contains: %zu tokens, %zu unique\n", num, count);
 			return EXIT_SUCCESS;
 		} else {
@@ -218,9 +202,6 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Error creating global hashtable.\n");
 		return EXIT_FAILURE; 
 	}
-
-	size_t total_uniq = 0;
-
 	for(int i = 1; i < argc; ++i) {
 		FILE *fptr = fopen(argv[i], "rb");
 		if(fptr == nullptr) {
@@ -231,7 +212,7 @@ int main(int argc, char **argv) {
 		}
 		size_t num = 0;
 		size_t count = 0;
-	       	if(count_words(fptr,&global,&count,&num,&total_uniq)) {
+	       	if(count_words(fptr,&global,&count,&num)) {
 			printf("%s Contains: %zu tokens, %zu unique\n", argv[i], num, count);
 			total += num;
 
@@ -243,6 +224,7 @@ int main(int argc, char **argv) {
 		fclose(fptr);
 	}
 
+	size_t total_uniq = hash_count(&global);
 	hash_cleanup(&global);
 	if(argc > 2)
 		printf("%zu total tokens, %zu total unique\n", total, total_uniq);

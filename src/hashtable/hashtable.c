@@ -31,6 +31,7 @@ struct Node *create_node(const char *text) {
 	n->next = n->prev = nullptr;
 	n->value = nullptr;
 	n->cleanup = nullptr;
+	n->bytes = 0;
 	return n;
 }
 
@@ -77,6 +78,12 @@ void sort_node(struct Node *root) {
 				char *temp_sz = ptr_1->text;
 				ptr_1->text = ptr_1->next->text;
 				ptr_1->next->text = temp_sz;
+				void (*temp_cleanup)(void *) = ptr_1->cleanup;
+				ptr_1->cleanup = ptr_1->next->cleanup;
+				ptr_1->next->cleanup = temp_cleanup;
+				size_t temp_bytes = ptr_1->bytes;
+				ptr_1->bytes = ptr_1->next->bytes;
+				ptr_1->next->bytes = temp_bytes;
 				swapped = true;
 			}
 			ptr_1 = ptr_1->next;
@@ -172,7 +179,7 @@ void cleanup_ptr(void *ptr){
 	}
 }
 
-struct Node *hash_set(struct HashTable *table, const char *text, void *value, void (*cleanup)(void *)) {
+struct Node *hash_set(struct HashTable *table, const char *text, void *value, size_t bytes, void (*cleanup)(void *)) {
 	if(table == nullptr || text == nullptr || table->buckets == nullptr || table->bucket_size == 0)
  		return nullptr;
 
@@ -186,6 +193,7 @@ struct Node *hash_set(struct HashTable *table, const char *text, void *value, vo
 	}
 	n->value = value;
 	n->cleanup = cleanup;
+	n->bytes = bytes;
 	return n;
 }
 
@@ -246,7 +254,20 @@ struct Node *hash_flat_list(const struct HashTable *table) {
 	return flat;
 }
 
-bool hash_merge(struct HashTable *to, struct HashTable *from) {
+size_t hash_count(struct HashTable *table) {
+	size_t count = 0;
+	for(size_t i = 0; i < table->bucket_size; ++i) {
+		struct Node *root = table->buckets[i];
+		while(root != nullptr) {
+			count++;
+			root = root->next;
+		}
+
+	}
+	return count;
+}
+
+bool hash_merge(struct HashTable *to,const struct HashTable *from) {
 
 	if(to == nullptr || from == nullptr || to->buckets == nullptr || from->buckets == nullptr || to->bucket_size == 0 || from->bucket_size == 0)
 		return false;
@@ -257,26 +278,52 @@ bool hash_merge(struct HashTable *to, struct HashTable *from) {
 			const char *key = root->text;
 			struct Node *n = hash_lookup(to, key);
 			if(n == nullptr) {
+		
 				struct Node *ivalue = hash_insert(to, key);
-				if(ivalue != nullptr) {
-					if(ivalue->value == nullptr) {
-						ivalue->value = malloc (n->bytes);
-						memcpy(ivalue->value, n->value, n->bytes);
-						ivalue->cleanup = n->cleanup;	
-					} else {
-						if(ivalue->cleanup != nullptr)
-							ivalue->cleanup(ivalue->value);
-						ivalue->value = malloc(n->bytes);
-						memcpy(ivalue->value, n->value, n->bytes);
-						ivalue->cleanup = n->cleanup;
-					}
-				} else {
+				if(ivalue == nullptr)
 					return false;
+
+				if(root->bytes == 0 || root->value == nullptr) {
+					root = root->next;
+					continue;
 				}
+				
+				ivalue->value = malloc(root->bytes);
+				if(ivalue->value == nullptr)
+					return false;
+
+				memcpy(ivalue->value, root->value, root->bytes);
+				ivalue->bytes = root->bytes;
+				ivalue->cleanup = root->cleanup;
 			}
 			root = root->next;
 		}
+
 	}
 	return true;
+}
+
+bool hash_clone_merge(struct HashTable *global, const struct HashTable *file_table) {
+    
+	if(global == nullptr || file_table == nullptr || global->buckets == nullptr || file_table->buckets == nullptr || global->bucket_size == 0 || file_table->bucket_size == 0)
+		return false;
+
+	struct HashTable temp;
+	if(!hash_init(&temp, global->bucket_size))
+        	return false;
+
+	if(!hash_merge(&temp, global)) {
+        	hash_cleanup(&temp);
+	        return false;
+	}
+
+	if(!hash_merge(&temp, file_table)) {
+        	hash_cleanup(&temp);
+	        return false;
+    	}
+    	
+	hash_cleanup(global);
+    	*global = temp;
+    	return true;
 }
 
