@@ -18,12 +18,12 @@ add_compile_options(
 )
 
 add_compile_options(
-    "$<$<CONFIG:Debug>:-fsanitize=address;-fno-omit-frame-pointer;-g>"
+    "$<$<CONFIG:Debug>:-fsanitize=address;-fno-omit-frame-pointer;-g;>"
     "$<$<CONFIG:Release>:-O3;-march=native;-flto>"
 )
 
 add_link_options(
-    "$<$<CONFIG:Debug>:-fsanitize=address>"
+    "$<$<CONFIG:Debug>:-fsanitize=address;-no-pie>"
     "$<$<CONFIG:Release>:-flto>"
 )
 
