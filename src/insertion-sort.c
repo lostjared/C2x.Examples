@@ -3,8 +3,7 @@
 #include <string.h>
 
 void insertion_sort(void *base, size_t count, size_t size,
-	int (*cmp)(const void *, const void *)) {
-	 
+	int (*cmp)(const void *, const void *))  {
 	unsigned char *arr = base;
     	unsigned char *temp = malloc(size);
     	if (temp == nullptr)
