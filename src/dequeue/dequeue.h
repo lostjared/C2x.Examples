@@ -13,21 +13,21 @@ typedef struct Node_ {
 	struct Node_ *next, *prev;
 } Node;
 
-typedef struct Queue_ {
+typedef struct Dequeue_ {
 	Node *top, *tail;
 	void (*destroy)(void *);
 	size_t count;
-} Queue;
+} Dequeue;
 
-bool queue_init(Queue **queue, void (*destroy)(void *));
-void queue_print(Queue *queue, void (*print)(void *));
-void queue_free(Queue *queue);
-bool queue_push_back(Queue *queue, const void *data, size_t size);
-bool queue_push_front(Queue *queue, const void *data, size_t size);
-bool queue_pop(Queue *queue, void **data, size_t *size);
-bool queue_pop_front(Queue *queue, void **data, size_t *size);
-bool queue_peek_front(Queue *queue, void *data, size_t size);
-bool queue_peek_back(Queue *queue, void *data, size_t size);
+bool dequeue_init(Dequeue **dequeue, void (*destroy)(void *));
+void dequeue_print(Dequeue *dequeue, void (*print)(void *));
+void dequeue_free(Dequeue *dequeue);
+bool dequeue_push_back(Dequeue *dequeue, const void *data, size_t size);
+bool dequeue_push_front(Dequeue *dequeue, const void *data, size_t size);
+bool dequeue_pop(Dequeue *dequeue, void **data, size_t *size);
+bool dequeue_pop_front(Dequeue *dequeue, void **data, size_t *size);
+bool dequeue_peek_front(Dequeue *dequeue, void *data, size_t size);
+bool dequeue_peek_back(Dequeue *dequeue, void *data, size_t size);
 Node *create_node(const void *data, size_t size);
 
 

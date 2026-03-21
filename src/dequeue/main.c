@@ -12,73 +12,73 @@ void echo(void *p) {
 }
 
 int main(void) {
-	Queue *queue = nullptr;
-	if(!queue_init(&queue, release)) {
-		fprintf(stderr, "Error setting up stack.\n");
+	Dequeue *dequeue = nullptr;
+	if(!dequeue_init(&dequeue, release)) {
+		fprintf(stderr, "Error setting up dequeue.\n");
 		return EXIT_FAILURE;
 	}
 	size_t value = 255;
-	if(!queue_push_front(queue, &value, sizeof(value))) {
-		fprintf(stderr, "Error pushing into stack.\n");
-		queue_free(queue);
+	if(!dequeue_push_front(dequeue, &value, sizeof(value))) {
+		fprintf(stderr, "Error pushing into dequeue.\n");
+		dequeue_free(dequeue);
 		return EXIT_FAILURE;
 	}
  	value = 100;
-	if(!queue_push_front(queue, &value, sizeof(value))) {
-		fprintf(stderr, "Error pushing into stack\n");
-		queue_free(queue);
+	if(!dequeue_push_front(dequeue, &value, sizeof(value))) {
+		fprintf(stderr, "Error pushing into dequeue\n");
+		dequeue_free(dequeue);
 		return EXIT_FAILURE;
 	}
-	queue_print(queue, echo);
+	dequeue_print(dequeue, echo);
 	size_t *rt_value = nullptr;
 	size_t size_val;
-	if(queue_pop(queue, (void **)&rt_value, &size_val)) {
-		printf("%zu off top of stack\n", *rt_value);
+	if(dequeue_pop(dequeue, (void **)&rt_value, &size_val)) {
+		printf("%zu off top of dequeue\n", *rt_value);
 		free(rt_value);
 	} else {
-		fprintf(stderr, "Error getting value from back of stack.\n");
-		queue_free(queue);
+		fprintf(stderr, "Error getting value from back of dequeue.\n");
+		dequeue_free(dequeue);
 		return EXIT_FAILURE;
 	}
 	for(size_t i = 0; i < 10; ++i) {
-		if(!queue_push_back(queue, &i, sizeof(i))) {
-			queue_free(queue);
+		if(!dequeue_push_back(dequeue, &i, sizeof(i))) {
+			dequeue_free(dequeue);
 			return EXIT_FAILURE;
 		}
 	}
-	queue_print(queue, echo);
+	dequeue_print(dequeue, echo);
 	for(size_t i = 0; i < 10; ++i) {
-		if(queue_pop_front(queue, (void **)&rt_value, &size_val)) {
+		if(dequeue_pop_front(dequeue, (void **)&rt_value, &size_val)) {
 			printf("Front: %zu\n", *rt_value);
 			free(rt_value);
 		} else {
-			fprintf(stderr, "Error getting front of stack.\n");
-			queue_free(queue);
+			fprintf(stderr, "Error getting front of dequeue.\n");
+			dequeue_free(dequeue);
 			return EXIT_FAILURE;
 		}
 
-		printf("%zu items left in stack\n", queue->count);
+		printf("%zu items left in dequeue\n", dequeue->count);
 		
 	}
 
 	size_t peek_value;
 
-	if(queue_peek_front(queue, &peek_value, sizeof(peek_value))) {
+	if(dequeue_peek_front(dequeue, &peek_value, sizeof(peek_value))) {
 		printf("peeked value: %zu\n", peek_value);
 	}  else {
 		fprintf(stderr, "Error on pop of value: \n");
-		queue_free(queue);
+		dequeue_free(dequeue);
 	}
 
-	if(queue_peek_back(queue, &peek_value, sizeof(peek_value))) {
+	if(dequeue_peek_back(dequeue, &peek_value, sizeof(peek_value))) {
 		printf("peek back: %zu\n", peek_value);
 	} else {
 		fprintf(stderr, "Error on peek.\n");
-		queue_free(queue);
+		dequeue_free(dequeue);
 		return EXIT_FAILURE;
 	}
-	printf("%zu items left in stack\n", queue->count);
-	queue_free(queue);
+	printf("%zu items left in dequeue\n", dequeue->count);
+	dequeue_free(dequeue);
 	return EXIT_SUCCESS;
 }
 
