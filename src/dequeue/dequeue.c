@@ -73,16 +73,12 @@ bool dequeue_push_back(Dequeue *dequeue, const void *data, size_t size) {
     return true;
 }
 
-bool dequeue_pop_back(Dequeue *dequeue, void **data, size_t *size) {
+bool dequeue_pop_back(Dequeue *dequeue, void *data, size_t *size) {
     if(dequeue == nullptr || data == nullptr || dequeue->tail == nullptr || size == nullptr)
         return false;
 
     Node *n = dequeue->tail;
-    *data = malloc(n->size);
-    if(*data == nullptr)
-        return false;
-
-    memcpy(*data, n->data, n->size);
+    memcpy(data, n->data, n->size);
     *size = n->size;
     Node *prev = n->prev;
     if(prev != nullptr)
@@ -143,15 +139,11 @@ bool dequeue_push_front(Dequeue *dequeue, const void *data, size_t size) {
 	dequeue->count++;
 	return true;
 }
-bool dequeue_pop_front(Dequeue *dequeue, void **data, size_t *size) {
+bool dequeue_pop_front(Dequeue *dequeue, void *data, size_t *size) {
 	if(dequeue == nullptr || data == nullptr || dequeue->top == nullptr || size == nullptr)
         return false;
     Node *n = dequeue->top;
-    *data = malloc(n->size);
-    if(*data == nullptr)
-        return false;
-
-    memcpy(*data, n->data, n->size);
+    memcpy(data, n->data, n->size);
     *size = n->size;
     Node *next = n->next;
     if(next != nullptr)
