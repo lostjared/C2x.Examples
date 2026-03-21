@@ -5,12 +5,12 @@
 #include<time.h>
 
 #define DEQUEUE_CHECK(val) \
-{ \
-	if(!val) { \
-		fprintf(stderr, "Error dequeue check failed %s:%d", __FILE__, __LINE__); \
-		exit(EXIT_FAILURE); \
-	} \
-}
+do { \
+    if(!(val)) { \
+        fprintf(stderr, "Error dequeue check failed %s:%d\n", __FILE__, __LINE__); \
+        exit(EXIT_FAILURE); \
+    } \
+} while(0)
 
 struct Event {
 	size_t event_type;
@@ -37,11 +37,10 @@ int main(void)  {
 	}
 	dequeue_print_forward(dequeue, echo);
 	for(size_t i = 0; i < 10; ++i) {
-		struct Event *value = nullptr;
+		struct Event value;
 		size_t rt_size = 0;
-		DEQUEUE_CHECK(dequeue_pop_front(dequeue, (void **)&value, &rt_size));
-		printf("Value popped from front: %zu : %zu\n", value->event_type, value->index);
-		free(value);
+		DEQUEUE_CHECK(dequeue_pop_front(dequeue, &value, sizeof(value), &rt_size));
+		printf("Value popped from front: %zu : %zu\n", value.event_type, value.index);
 	}
 	dequeue_free(dequeue);
 	return EXIT_SUCCESS;

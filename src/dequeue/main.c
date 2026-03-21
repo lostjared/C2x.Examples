@@ -36,8 +36,8 @@ int main(void) {
 	printf("}\n");
 	size_t rt_value;
 	size_t size_val;
-	if(dequeue_pop_back(dequeue, &rt_value, &size_val)) {
-		printf("%zu off back of dequeue\n", *rt_value);
+	if(dequeue_pop_back(dequeue, &rt_value, sizeof(rt_value), &size_val)) {
+		printf("%zu off back of dequeue\n", rt_value);
 	} else {
 		fprintf(stderr, "Error getting value from back of dequeue.\n");
 		dequeue_free(dequeue);
@@ -53,8 +53,8 @@ int main(void) {
 	dequeue_print_forward(dequeue, echo);
 	printf("}\n");
 	for(size_t i = 0; i < 10; ++i) {
-		if(dequeue_pop_front(dequeue, &rt_value, &size_val)) {
-			printf("Front: %zu\n", *rt_value);
+		if(dequeue_pop_front(dequeue, &rt_value, sizeof(rt_value), &size_val)) {
+			printf("Front: %zu\n", rt_value);
 		} else {
 			fprintf(stderr, "Error getting front of dequeue.\n");
 			dequeue_free(dequeue);
