@@ -34,8 +34,8 @@ int main(void) {
 	printf("}\nforward {\n");
 	dequeue_print_forward(dequeue, echo);
 	printf("}\n");
-	size_t rt_value;
-	size_t size_val;
+	size_t rt_value = 0;
+	size_t size_val = 0;
 	if(dequeue_pop_back(dequeue, &rt_value, sizeof(rt_value), &size_val)) {
 		printf("%zu off back of dequeue\n", rt_value);
 	} else {
@@ -62,7 +62,7 @@ int main(void) {
 		}
 		printf("%zu items left in dequeue\n", dequeue->count);
 	}
-	size_t peek_value;
+	size_t peek_value = 0;
 	if(dequeue_peek_front(dequeue, &peek_value, sizeof(peek_value))) {
 		printf("peeked value: %zu\n", peek_value);
 	}  else {
