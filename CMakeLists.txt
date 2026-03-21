@@ -73,3 +73,5 @@ add_executable(hashtable-ex src/hashtable.c)
 add_executable(hashtable-demo src/hashtable/hashtable.c src/hashtable/main.c)
 add_executable(hashtable-count src/hashtable/hashtable.c src/hashtable/hash-count.c)
 add_executable(hashtable-count-sorted src/hashtable/hashtable.c src/hashtable/hash-sorted.c)
+add_executable(stack-ex src/stack/stack.c src/stack/main.c)
+
