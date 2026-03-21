@@ -6,8 +6,8 @@ void release(void *ptr) {
 	free(ptr);
 }
 
-void echo(void *p) {
-	size_t *v = (size_t *)p;
+void echo(const void *p) {
+	const size_t *v = (size_t *)p;
 	printf("\tValue is: %zu\n", *v);
 }
 

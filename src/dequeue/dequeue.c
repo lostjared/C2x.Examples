@@ -100,7 +100,7 @@ bool dequeue_pop_back(Dequeue *dequeue, void *data,size_t size_val,  size_t *siz
     return true;
 }
 
-void dequeue_print_backward(const Dequeue *dequeue, void (*print)(void *)) {
+void dequeue_print_backward(const Dequeue *dequeue, void (*print)(const void *)) {
 	if(dequeue == nullptr || print == nullptr) 
 		return;
 
@@ -112,7 +112,7 @@ void dequeue_print_backward(const Dequeue *dequeue, void (*print)(void *)) {
 	}
 }
 
-void dequeue_print_forward(const Dequeue *dequeue, void (*print)(void *)) {
+void dequeue_print_forward(const Dequeue *dequeue, void (*print)(const void *)) {
 	if(dequeue == nullptr || print == nullptr) 
 		return;
 
