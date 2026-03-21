@@ -1,9 +1,9 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include<string.h>
-#include<stdio.h>
 #include<stdlib.h>
+#include<stddef.h>
+#include<stdbool.h>
 
 typedef struct Node_ {
 	void *data;
@@ -19,8 +19,8 @@ typedef struct Stack_ {
 bool stack_init(Stack **stack, void (*destroy)(void *));
 void stack_print(Stack *stack, void (*print)(void *));
 void stack_free(Stack *stack);
-bool stack_push(Stack *stack, void *data, size_t size);
-bool stack_pop(Stack *stack, void **data);
-Node *node_create(void *data, size_t size);
+bool stack_push(Stack *stack, const void *data, size_t size);
+bool stack_pop(Stack *stack, void **data, size_t *size);
+Node *create_node(const void *data, size_t size);
 
 #endif

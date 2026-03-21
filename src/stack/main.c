@@ -8,7 +8,7 @@ void release(void *ptr) {
 
 void echo(void *p) {
 	size_t *v = (size_t *)p;
-	printf("%zu : value\n", *v);
+	printf("Value is: %zu\n", *v);
 }
 
 int main(void) {
@@ -31,7 +31,8 @@ int main(void) {
 	}
 	stack_print(stack, echo);
 	size_t *rt_value = nullptr;
-	if(stack_pop(stack, (void **)&rt_value)) {
+	size_t size_val;
+	if(stack_pop(stack, (void **)&rt_value, &size_val)) {
 		printf("%zu off top of stack\n", *rt_value);
 		free(rt_value);
 	} else {

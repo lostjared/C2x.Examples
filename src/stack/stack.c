@@ -1,6 +1,8 @@
 #include"stack.h"
+#include<string.h>
+#include<stdio.h>
 
-Node *create_node(void *data, size_t size) {
+Node *create_node(const void *data, size_t size) {
 	if(data == nullptr || size == 0) return nullptr;
 	Node *n = nullptr;
 	if((n = malloc(sizeof(*n) )) != nullptr) {
@@ -19,12 +21,16 @@ Node *create_node(void *data, size_t size) {
 }
 
 bool stack_init(Stack **stack, void (*destroy)(void *)) {
+	if(stack == nullptr)
+		return false;
+
 	Stack *s = malloc(sizeof (*s));
 	if(s == nullptr) {
 		return false;
 	}
 	s->destroy = destroy;
 	s->top = nullptr;
+	s->tail = nullptr;
 	*stack = s;
 	return true;
 }
@@ -35,58 +41,65 @@ void stack_free(Stack *stack) {
 	Node *n = stack->top;
 	while(n != nullptr) {
 		Node *next = n->next;
-		stack->destroy(n->data);
+		if(stack->destroy != nullptr)
+			stack->destroy(n->data);
+		else
+			free(n->data);
 		free(n);
 		n = next;
 	}
 	free(stack);
 }
 
-bool stack_push(Stack *stack, void *data, size_t size) {
-	if(stack == nullptr || data == nullptr || size == 0) 
-		return false;
-	if(stack->top ==  nullptr) {
-		stack->top = create_node(data, size);
-		stack->top->prev = 0;
-		stack->tail = stack->top;
-		return true;
-	}
-	Node **n =  &stack->top;
-	Node *prev = stack->top;
-	while(*n != nullptr) {
-		prev = *n;
-		n = &(*n)->next;
-	}
-	*n = create_node(data, size);
-        if(*n == nullptr) {
-		fprintf(stderr, "Error on allocation.\n");
-		return false;
-	}
-	(*n)->prev = prev;
-	stack->tail = *n;
-	return true;
+bool stack_push(Stack *stack, const void *data, size_t size) {
+    if(stack == nullptr || data == nullptr || size == 0)
+        return false;
+
+    Node *n = create_node(data, size);
+    if(n == nullptr)
+        return false;
+
+    n->prev = stack->tail;
+    n->next = nullptr;
+
+    if(stack->tail != nullptr)
+        stack->tail->next = n;
+    else
+        stack->top = n;
+
+    stack->tail = n;
+    return true;
 }
 
-bool stack_pop(Stack *stack, void **data) {
-	if(stack == nullptr || data == nullptr)
-		return false;
-	Node *n = stack->tail;
-	if(n != nullptr) {
-		if(*data != nullptr) {
-			stack->destroy(data);
-		}
-		*data = malloc(n->size);
-		memcpy(*data, n->data, n->size);
-		Node *prev = n->prev;
-		prev->next = nullptr;
-		free(n->data);
-		free(n);	
-	} else return false;
-	return true;
+bool stack_pop(Stack *stack, void **data, size_t *size) {
+    if(stack == nullptr || data == nullptr || stack->tail == nullptr || size == nullptr)
+        return false;
+
+    Node *n = stack->tail;
+    *data = malloc(n->size);
+    if(*data == nullptr)
+        return false;
+
+    memcpy(*data, n->data, n->size);
+    *size = n->size;
+    Node *prev = n->prev;
+    if(prev != nullptr)
+        prev->next = nullptr;
+    else
+        stack->top = nullptr;
+
+    stack->tail = prev;
+
+    if(stack->destroy != nullptr)
+	stack->destroy(n->data);
+    else
+    	free(n->data);
+    free(n);
+    return true;
 }
 
 void stack_print(Stack *stack, void (*print)(void *)) {
-	if(stack == nullptr) 
+	if(stack == nullptr || print == nullptr) 
 		return;
 
 	Node *n = stack->tail;
