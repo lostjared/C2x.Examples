@@ -73,7 +73,7 @@ bool dequeue_push_back(Dequeue *dequeue, const void *data, size_t size) {
     return true;
 }
 
-bool dequeue_pop(Dequeue *dequeue, void **data, size_t *size) {
+bool dequeue_pop_back(Dequeue *dequeue, void **data, size_t *size) {
     if(dequeue == nullptr || data == nullptr || dequeue->tail == nullptr || size == nullptr)
         return false;
 
@@ -101,7 +101,7 @@ bool dequeue_pop(Dequeue *dequeue, void **data, size_t *size) {
     return true;
 }
 
-void dequeue_print(Dequeue *dequeue, void (*print)(void *)) {
+void dequeue_print_backward(const Dequeue *dequeue, void (*print)(void *)) {
 	if(dequeue == nullptr || print == nullptr) 
 		return;
 
@@ -110,6 +110,18 @@ void dequeue_print(Dequeue *dequeue, void (*print)(void *)) {
 		if(n->data != nullptr)
 			print(n->data);
 		n = n->prev;
+	}
+}
+
+void dequeue_print_forward(const Dequeue *dequeue, void (*print)(void *)) {
+	if(dequeue == nullptr || print == nullptr) 
+		return;
+
+	Node *n = dequeue->top;
+	while(n != nullptr) {
+		if(n->data != nullptr)
+			print(n->data);
+		n = n->next;
 	}
 }
 
@@ -132,7 +144,7 @@ bool dequeue_push_front(Dequeue *dequeue, const void *data, size_t size) {
 	return true;
 }
 bool dequeue_pop_front(Dequeue *dequeue, void **data, size_t *size) {
-	if(dequeue == nullptr || data == nullptr || dequeue->tail == nullptr || size == nullptr)
+	if(dequeue == nullptr || data == nullptr || dequeue->top == nullptr || size == nullptr)
         return false;
     Node *n = dequeue->top;
     *data = malloc(n->size);
@@ -156,7 +168,7 @@ bool dequeue_pop_front(Dequeue *dequeue, void **data, size_t *size) {
 	dequeue->count--;
     return true;
 }
-bool dequeue_peek_front(Dequeue *dequeue, void *data, size_t size) {
+bool dequeue_peek_front(const Dequeue *dequeue, void *data, size_t size) {
 	if(dequeue == nullptr || data == nullptr || dequeue->top == nullptr)
         return false;
     Node *n = dequeue->top;
@@ -166,7 +178,7 @@ bool dequeue_peek_front(Dequeue *dequeue, void *data, size_t size) {
     return true;
 }
 
-bool dequeue_peek_back(Dequeue *dequeue, void *data,  size_t size) {
+bool dequeue_peek_back(const Dequeue *dequeue, void *data,  size_t size) {
 	if(dequeue == nullptr || data == nullptr || dequeue->tail == nullptr)
         return false;
     Node *n = dequeue->tail;

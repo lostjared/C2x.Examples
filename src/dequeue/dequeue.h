@@ -20,15 +20,15 @@ typedef struct Dequeue_ {
 } Dequeue;
 
 bool dequeue_init(Dequeue **dequeue, void (*destroy)(void *));
-void dequeue_print(Dequeue *dequeue, void (*print)(void *));
+void dequeue_print_backward(const Dequeue *dequeue, void (*print)(void *));
+void dequeue_print_forward(const Dequeue *dequeue, void (*print)(void *));
 void dequeue_free(Dequeue *dequeue);
 bool dequeue_push_back(Dequeue *dequeue, const void *data, size_t size);
 bool dequeue_push_front(Dequeue *dequeue, const void *data, size_t size);
-bool dequeue_pop(Dequeue *dequeue, void **data, size_t *size);
+bool dequeue_pop_back(Dequeue *dequeue, void **data, size_t *size);
 bool dequeue_pop_front(Dequeue *dequeue, void **data, size_t *size);
-bool dequeue_peek_front(Dequeue *dequeue, void *data, size_t size);
-bool dequeue_peek_back(Dequeue *dequeue, void *data, size_t size);
+bool dequeue_peek_front(const Dequeue *dequeue, void *data, size_t size);
+bool dequeue_peek_back(const Dequeue *dequeue, void *data, size_t size);
 Node *create_node(const void *data, size_t size);
-
 
 #endif

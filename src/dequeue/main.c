@@ -8,7 +8,7 @@ void release(void *ptr) {
 
 void echo(void *p) {
 	size_t *v = (size_t *)p;
-	printf("Value is: %zu\n", *v);
+	printf("\tValue is: %zu\n", *v);
 }
 
 int main(void) {
@@ -29,11 +29,15 @@ int main(void) {
 		dequeue_free(dequeue);
 		return EXIT_FAILURE;
 	}
-	dequeue_print(dequeue, echo);
+	printf("backward {\n");
+	dequeue_print_backward(dequeue, echo);
+	printf("}\nforward {\n");
+	dequeue_print_forward(dequeue, echo);
+	printf("}\n");
 	size_t *rt_value = nullptr;
 	size_t size_val;
-	if(dequeue_pop(dequeue, (void **)&rt_value, &size_val)) {
-		printf("%zu off top of dequeue\n", *rt_value);
+	if(dequeue_pop_back(dequeue, (void **)&rt_value, &size_val)) {
+		printf("%zu off back of dequeue\n", *rt_value);
 		free(rt_value);
 	} else {
 		fprintf(stderr, "Error getting value from back of dequeue.\n");
@@ -46,7 +50,9 @@ int main(void) {
 			return EXIT_FAILURE;
 		}
 	}
-	dequeue_print(dequeue, echo);
+	printf("forward {\n");
+	dequeue_print_forward(dequeue, echo);
+	printf("}\n");
 	for(size_t i = 0; i < 10; ++i) {
 		if(dequeue_pop_front(dequeue, (void **)&rt_value, &size_val)) {
 			printf("Front: %zu\n", *rt_value);
@@ -56,18 +62,15 @@ int main(void) {
 			dequeue_free(dequeue);
 			return EXIT_FAILURE;
 		}
-
 		printf("%zu items left in dequeue\n", dequeue->count);
-		
 	}
-
 	size_t peek_value;
-
 	if(dequeue_peek_front(dequeue, &peek_value, sizeof(peek_value))) {
 		printf("peeked value: %zu\n", peek_value);
 	}  else {
-		fprintf(stderr, "Error on pop of value: \n");
+		fprintf(stderr, "Error on peek of value: \n");
 		dequeue_free(dequeue);
+		return EXIT_FAILURE;
 	}
 
 	if(dequeue_peek_back(dequeue, &peek_value, sizeof(peek_value))) {
