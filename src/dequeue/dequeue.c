@@ -1,21 +1,24 @@
 #include"dequeue.h"
 #include<string.h>
 #include<stdio.h>
+#include<stdlib.h>
 
 Node *create_node(const void *data, size_t size) {
 	if(data == nullptr || size == 0) return nullptr;
 	Node *n = nullptr;
-	if((n = malloc(sizeof(*n) )) != nullptr) {
-		n->size = size;
-		n->data = malloc(size);
-		if(n->data == nullptr) {
-			free(n);
-			return nullptr;
-		}
-		memcpy(n->data, data, size);
-		n->next = nullptr;
-	        n->prev = nullptr;	
-	} 
+	n = malloc (sizeof(*n));
+	if(n == nullptr)
+		return nullptr;
+
+	n->size = size;
+	n->data = malloc(size);
+	if(n->data == nullptr) {
+		free(n);
+		return nullptr;
+	}
+	memcpy(n->data, data, size);
+	n->next = nullptr;
+	n->prev = nullptr;	
 	return n;
 
 }
@@ -23,7 +26,7 @@ Node *create_node(const void *data, size_t size) {
 bool dequeue_init(Dequeue **dequeue, void (*destroy)(void *)) {
 	if(dequeue == nullptr)
 		return false;
-
+	*dequeue = nullptr;
 	Dequeue *s = malloc(sizeof (*s));
 	if(s == nullptr) {
 		return false;
@@ -92,7 +95,7 @@ bool dequeue_pop_back(Dequeue *dequeue, void *data,size_t size_val,  size_t *siz
     dequeue->tail = prev;
 
     if(dequeue->destroy != nullptr)
-	dequeue->destroy(n->data);
+		dequeue->destroy(n->data);
     else
     	free(n->data);
     free(n);
@@ -100,11 +103,17 @@ bool dequeue_pop_back(Dequeue *dequeue, void *data,size_t size_val,  size_t *siz
     return true;
 }
 
+size_t dequeue_count(const Dequeue *dequeue) { 
+	if(dequeue == nullptr)
+		return 0;
+	return dequeue->count;
+}
+
 void dequeue_print_backward(const Dequeue *dequeue, void (*print)(const void *)) {
 	if(dequeue == nullptr || print == nullptr) 
 		return;
 
-	Node *n = dequeue->tail;
+	const Node *n = dequeue->tail;
 	while(n != nullptr) {
 		if(n->data != nullptr)
 			print(n->data);
@@ -116,7 +125,7 @@ void dequeue_print_forward(const Dequeue *dequeue, void (*print)(const void *)) 
 	if(dequeue == nullptr || print == nullptr) 
 		return;
 
-	Node *n = dequeue->top;
+	const Node *n = dequeue->top;
 	while(n != nullptr) {
 		if(n->data != nullptr)
 			print(n->data);
@@ -157,7 +166,7 @@ bool dequeue_pop_front(Dequeue *dequeue, void *data, size_t size_val, size_t *si
 		dequeue->tail = nullptr;
 	dequeue->top = next;
 	if(dequeue->destroy != nullptr)
-	dequeue->destroy(n->data);
+		dequeue->destroy(n->data);
 	else
 		free(n->data);
 	free(n);

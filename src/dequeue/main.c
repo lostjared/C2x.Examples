@@ -7,7 +7,7 @@ void release(void *ptr) {
 }
 
 void echo(const void *p) {
-	const size_t *v = (size_t *)p;
+	const size_t *v = p;
 	printf("\tValue is: %zu\n", *v);
 }
 
@@ -60,7 +60,7 @@ int main(void) {
 			dequeue_free(dequeue);
 			return EXIT_FAILURE;
 		}
-		printf("%zu items left in dequeue\n", dequeue->count);
+		printf("%zu items left in dequeue\n", dequeue_count(dequeue));
 	}
 	size_t peek_value = 0;
 	if(dequeue_peek_front(dequeue, &peek_value, sizeof(peek_value))) {
@@ -78,7 +78,7 @@ int main(void) {
 		dequeue_free(dequeue);
 		return EXIT_FAILURE;
 	}
-	printf("%zu items left in dequeue\n", dequeue->count);
+	printf("%zu items left in dequeue\n", dequeue_count(dequeue));
 	dequeue_free(dequeue);
 	return EXIT_SUCCESS;
 }

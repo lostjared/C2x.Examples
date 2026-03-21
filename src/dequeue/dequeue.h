@@ -29,6 +29,6 @@ bool dequeue_pop_back(Dequeue *dequeue, void *data, size_t size_val, size_t *siz
 bool dequeue_pop_front(Dequeue *dequeue, void *data, size_t size_val, size_t *size);
 bool dequeue_peek_front(const Dequeue *dequeue, void *data, size_t size);
 bool dequeue_peek_back(const Dequeue *dequeue, void *data, size_t size);
-Node *create_node(const void *data, size_t size);
+size_t dequeue_count(const Dequeue *dequeue);
 
 #endif

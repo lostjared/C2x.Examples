@@ -19,7 +19,7 @@ struct Event {
 
 
 void echo(const void *ptr) {
-	const struct Event *e = (struct Event *)ptr;
+	const struct Event *e = ptr;
 	printf("The value is: %zu:%zu\n", e->event_type, e->index);
 }
 
