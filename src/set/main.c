@@ -49,7 +49,21 @@ int main(void) {
 		fprintf(stderr, "Error on insert.\n");
 		set_free(set_value);
 		return EXIT_FAILURE;
-	}	
+	}
+	data = 255;
+	if(!set_insert(set_value, &data, sizeof(data))) {
+		fprintf(stderr, "Error on insert.\n");
+		set_free(set_value);
+		return EXIT_FAILURE;
+	}
+	printf("with value 255:\n");
+	set_print(set_value, echo);
+	if(!set_remove(set_value, &data)) {
+		fprintf(stderr, "Error on remove.\n");
+		set_free(set_value);
+		return EXIT_FAILURE;
+	}
+	printf("After remove:\n");
 	set_print(set_value, echo);
 	set_free(set_value);
 	return EXIT_SUCCESS;

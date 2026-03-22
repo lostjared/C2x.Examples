@@ -58,6 +58,32 @@ bool set_insert(Set *set, const void *data, size_t bytes) {
 	return true;
 }
 
+bool set_remove(Set *set, const void *data) {
+	if(set == nullptr || data == nullptr || set->count == 0)
+		return false;
+	SetNode *n = set->top;
+	SetNode *prev = nullptr;
+	while(n != nullptr) {
+		if(set->compare(n->data, data) == 0) {
+			if(prev == nullptr) 
+				set->top = n->next;
+			 else 
+ 				prev->next = n->next;
+			if(set->destroy != nullptr) {
+				set->destroy(n->data);
+			} else {
+				free(n->data);
+			}
+			free(n);
+			set->count--;
+			return true;
+
+		}
+		n = n->next;
+	}
+	return false;
+}
+
 void set_print(const Set *set, void (*echo)(const void *ptr)) {
 	if(set == nullptr || echo == nullptr)
 		return;

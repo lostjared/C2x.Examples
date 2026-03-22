@@ -19,6 +19,7 @@ typedef struct _Set {
 bool set_init(Set **set, void (*destroy)(void *), int (*compare)(const void *a, const void *b));
 bool set_contains(const Set *set, const void *data);
 bool set_insert(Set *set, const void *data, size_t bytes);
+bool set_remove(Set *set, const void *data);
 void set_print(const Set *set, void (*echo)(const void *ptr));
 void set_free(Set *set);
 
