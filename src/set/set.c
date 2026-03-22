@@ -18,6 +18,7 @@ SetNode *set_node_create(const void *data, size_t bytes) {
 	s->next = nullptr;
 	return s;
 }
+
 bool set_init(Set **set_value, void (*destroy)(void *), int (*compare)(const void *, const void *)) {
 	if(set_value == nullptr || compare == nullptr)  
 		return false;
@@ -82,6 +83,30 @@ bool set_remove(Set *set, const void *data) {
 		n = n->next;
 	}
 	return false;
+}
+
+bool set_union(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *), int (*compare)(const void *, const void *)) {
+	if(set1 == nullptr || set2 == nullptr || compare == nullptr)
+		return false;
+	if(!set_init(setu, destroy, compare)) 
+		return false;
+	SetNode *n = set1->top;
+	while(n != nullptr) {
+		if(!set_insert(*setu, n->data, n->bytes)) {
+			fprintf(stderr, "set insert failed.\n");
+			set_free(*setu);
+		}
+		n = n->next;
+	}
+	n = set2->top;
+	while(n != nullptr) {
+		if(!set_insert(*setu, n->data, n->bytes)) {
+			fprintf(stderr, "set insert failed.\n");
+			set_free(*setu);
+		}
+		n = n->next;
+	}
+	return true;
 }
 
 void set_print(const Set *set, void (*echo)(const void *ptr)) {
