@@ -45,6 +45,20 @@ bool set_contains(const Set *set, const void *data) {
 	return false;
 }
 
+
+bool _set_insert_no_check(Set *set, const void *data, size_t bytes) {
+	if(set == nullptr || data == nullptr || bytes == 0)
+		return false;
+	SetNode *n = set_node_create(data, bytes);
+	if(n == nullptr)
+		return false;
+	n->next = set->top;
+	set->top = n;
+	set->count++;
+	return true;
+
+}
+
 bool set_insert(Set *set, const void *data, size_t bytes) {
 	if(set == nullptr || data == nullptr || bytes == 0)
 		return false;
@@ -92,7 +106,7 @@ bool set_union(Set **setu, const Set *set1, const Set *set2, void (*destroy)(voi
 		return false;
 	SetNode *n = set1->top;
 	while(n != nullptr) {
-		if(!set_insert(*setu, n->data, n->bytes)) {
+		if(!_set_insert_no_check(*setu, n->data, n->bytes)) {
 			fprintf(stderr, "set insert failed.\n");
 			set_free(*setu);
 		}
