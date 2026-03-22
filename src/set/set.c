@@ -15,7 +15,7 @@ SetNode *set_node_create(const void *data, size_t bytes) {
 	}
 	memcpy(s->data, data, bytes);
 	s->bytes= bytes;
-	s->next = s->prev = nullptr;
+	s->next = nullptr;
 	return s;
 }
 bool set_init(Set **set_value, void (*destroy)(void *), int (*compare)(const void *, const void *)) {
@@ -32,10 +32,42 @@ bool set_init(Set **set_value, void (*destroy)(void *), int (*compare)(const voi
 	return true;
 }
 
+bool set_contains(const Set *set, const void *data) {
+	if(set == nullptr || data == nullptr)
+		return false;
+	SetNode *n = set->top;
+	while(n != nullptr) {
+		if(set->compare(n->data, data) == 0) 
+			return true;
+		n = n->next;
+	}
+	return false;
+}
+
 bool set_insert(Set *set, const void *data, size_t bytes) {
-
-
+	if(set == nullptr || data == nullptr || bytes == 0)
+		return false;
+	if(set_contains(set, data)) 
+		return true;
+	SetNode *n = set_node_create(data, bytes);
+	if(n == nullptr)
+		return false;
+	n->next = set->top;
+	set->top = n;
+	set->count++;
 	return true;
+}
+
+void set_print(const Set *set, void (*echo)(const void *ptr)) {
+	if(set == nullptr || echo == nullptr)
+		return;
+
+	SetNode *n = set->top;
+	while(n != nullptr) {
+		if(n->data != nullptr)
+			echo(n->data);
+		n = n->next;
+	}
 }
 
 void set_free(Set *set) {
