@@ -76,3 +76,5 @@ add_executable(hashtable-count-sorted src/hashtable/hashtable.c src/hashtable/ha
 add_executable(stack-ex src/stack/stack.c src/stack/main.c)
 add_executable(dequeue-ex src/dequeue/dequeue.c src/dequeue/main.c)
 add_executable(dequeue-ex-macro src/dequeue/dequeue.c src/dequeue/macro.c)
+add_executable(set-ex src/set/set.c src/set/main.c)
+
