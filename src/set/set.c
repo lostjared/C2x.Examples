@@ -32,6 +32,12 @@ bool set_init(Set **set_value, void (*destroy)(void *), int (*compare)(const voi
 	return true;
 }
 
+bool set_insert(Set *set, const void *data, size_t bytes) {
+
+
+	return true;
+}
+
 void set_free(Set *set) {
 	if(set == nullptr)
 		return;
