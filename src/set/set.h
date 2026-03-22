@@ -13,10 +13,12 @@ typedef struct _SetNode {
 typedef struct _Set {
 	SetNode *top, *tail;
 	size_t count;
+	void (*destroy)(void *);
+	int (*compare)(const void *a, const void *b);
 } Set;
 
 SetNode *set_node_create(const void *data, size_t bytes);
-bool set_init(Set **set);
+bool set_init(Set **set, void (*destroy)(void *), int (*compare)(const void *a, const void *b));
 void set_free(Set *set);
 
 
