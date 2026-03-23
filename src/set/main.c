@@ -158,6 +158,11 @@ int main(void) {
 	} else {
 		printf("Set sub_i, is a subset of set value 1\n");
 	}
+	if(!set_is_equal(set_value1, set_value2)) {
+		printf("Set value1 not equal to set value2\n");
+	} else {
+		printf("Set value1 is equal to set value2\n");
+	}
 	set_free(sub_i);
 	set_free(set_d);
 	set_free(set_i);

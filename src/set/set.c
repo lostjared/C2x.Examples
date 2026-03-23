@@ -194,6 +194,20 @@ bool set_is_subset(const Set *set1, const Set *set2) {
 	return true;
 }
 
+bool set_is_equal(const Set *set1, const Set *set2) {
+
+	 if(set1 == nullptr || set2 == nullptr || set1->count == 0 || set2->count == 0)
+		 return false;
+
+	 if(set1->count != set2->count)
+		 return false;
+
+	 if(set_is_subset(set1, set2)) 
+		 return true;
+
+	return false;
+}
+
 void set_print(const Set *set, void (*echo)(const void *ptr)) {
 	if(set == nullptr || echo == nullptr)
 		return;
