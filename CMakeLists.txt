@@ -26,7 +26,6 @@ add_link_options(
 )
 elseif (CMAKE_C_COMPILER_ID STREQUAL "Clang")
 message(STATUS "using Clang")
-add_compile_options(-Weverything)
 endif()
 add_executable(helloworld src/helloworld.c)
 add_executable(hash-test src/hash.c)
