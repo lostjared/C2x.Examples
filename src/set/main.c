@@ -108,6 +108,58 @@ int main(void) {
 	}
 	printf("Intersection: \n");
 	set_print(set_i, echo);
+	Set *set_d = nullptr;
+	if(!set_difference(&set_d, set_value1, set_value2, destroy, compare)) {
+		set_free(set_value1);
+		set_free(set_value2);
+		fprintf(stderr, "Error on diference.\n");
+		return EXIT_FAILURE;
+	}
+	printf("Set1: {\n");
+	set_print(set_value1, echo);
+	printf("}\n");
+	printf("Set2: {\n");
+	set_print(set_value2, echo);
+	printf("}\n");
+	Set *sub_i = nullptr;
+	if(!set_init(&sub_i, destroy, compare)) {
+		fprintf(stderr, "Error on init of set.\n");
+		set_free(set_d);
+		set_free(set_i);
+		set_free(set_value1);
+		set_free(set_value2);
+		set_free(set_u);
+		return EXIT_FAILURE;
+	}
+
+	data = 25;
+	if(!set_insert(sub_i, &data, sizeof(data))) {
+		set_free(set_d);
+		set_free(set_i);
+		set_free(set_value1);
+		set_free(set_value2);
+		set_free(set_u);
+		return EXIT_FAILURE;	
+	}
+	printf("Set3: (Sub) {\n");
+	set_print(sub_i, echo);
+	printf("}\n");
+
+	printf("Difference: {\n");
+	set_print(set_d, echo);
+	printf("}\n");
+	if(!set_is_subset(set_value1, set_value2)) {
+		printf("Set value1 is not a subset of set value2.\n");
+	} else {
+		printf("Set value` is a subset of set value2.\n");
+	}
+	if(!set_is_subset(sub_i, set_value1)) {
+		printf("Set sub_i, is not a subset of set value 1\n");
+	} else {
+		printf("Set sub_i, is a subset of set value 1\n");
+	}
+	set_free(sub_i);
+	set_free(set_d);
 	set_free(set_i);
 	set_free(set_value1);
 	set_free(set_value2);

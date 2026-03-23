@@ -143,6 +143,57 @@ bool set_intersection(Set **setu, const Set *set1, const Set *set2, void (*destr
 	return true;
 }
 
+bool set_difference(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *), int (*compare)(const void *, const void *)) {
+	if(setu == nullptr || set1 == nullptr || set2 == nullptr || set1->count == 0 || set2->count == 0)
+		return false;
+
+	if(!set_init(setu, destroy, compare)) {
+		fprintf(stderr, "Error on init of set\n");
+		return false;
+	}
+	SetNode *n = set1->top;
+	while(n != nullptr) {
+		if(!set_contains(set2, n->data)) {
+			if(!_set_insert_no_check(*setu, n->data, n->bytes)) {
+				fprintf(stderr, "Error on insertion.\n");
+				set_free(*setu);
+				return false;
+			}
+		}
+		n = n->next;
+	}
+	n = set2->top;
+	while(n != nullptr) {
+		if(!set_contains(set1, n->data)) {
+			if(!_set_insert_no_check(*setu, n->data, n->bytes)) {
+				fprintf(stderr, "Error on insertion.\n");
+				set_free(*setu);
+				return false;
+			}
+		}
+		n = n->next;
+	}
+	return true;
+}
+
+bool set_is_subset(const Set *set1, const Set *set2) {
+
+	if(set1 == nullptr || set2 == nullptr || set1->count == 0 || set2->count == 0)
+		return false;
+
+	if(set1->count > set2->count)
+		return false;
+
+	SetNode *n = set1->top;
+	while(n != nullptr) {
+		if(!set_contains(set2, n->data)) {
+			return false;
+		}
+		n = n->next;
+	}
+	return true;
+}
+
 void set_print(const Set *set, void (*echo)(const void *ptr)) {
 	if(set == nullptr || echo == nullptr)
 		return;
