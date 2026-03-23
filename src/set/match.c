@@ -107,6 +107,10 @@ int main(int argc, char **argv) {
 		} else if(strcmp(argv[1],"-m") == 0) {
 			use_multi = true;
 			start++;
+		} else if(strcmp(argv[1], "-mq") == 0) {
+			show_info = false;
+			use_multi = true;
+			start++;
 		}
 		if(!set_init(&total, destroy, compare)) {
 			fprintf(stderr, "Error creating set..\n");
