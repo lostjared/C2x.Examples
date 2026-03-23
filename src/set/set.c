@@ -145,7 +145,7 @@ bool set_union(Set **setu, const Set *set1, const Set *set2, void (*destroy)(voi
 }
 
 bool set_intersection(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *), int (*compare)(const void *, const void *)) {
-	if(setu == nullptr || set1 == nullptr || set2 == nullptr)  
+	if(setu == nullptr || set1 == nullptr || set2 == nullptr || compare == nullptr)  
 		return false;
 
 	if(!set_init(setu, destroy, compare)) {
@@ -196,7 +196,7 @@ bool set_is_subset(const Set *set1, const Set *set2) {
 	if(set1 == nullptr || set2 == nullptr)
 		return false;
 
-	if(set2->count == 0)
+	if(set1->count == 0)
 		return true;
 	
 	if(set1->count > set2->count)
