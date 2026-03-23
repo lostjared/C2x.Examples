@@ -112,11 +112,32 @@ int main(int argc, char **argv) {
 				continue;
 			}
 		
-			if(insert_words(fptr, total)) {
+			Set *temp_set = nullptr;
+			if(!set_init(&temp_set, destroy, compare)) {
+				fprintf(stderr, "Error initializing set.\n");
+				set_free(total);
+				fclose(fptr);
+				return EXIT_FAILURE;
+			}
+
+			if(insert_words(fptr, temp_set)) {							if(!set_concat(total, temp_set)) {
+						fprintf(stderr, "Error inserting set into total.\n");
+						set_free(total);
+						set_free(temp_set);
+						fclose(fptr);
+						return EXIT_FAILURE;
+				} else {
+					set_free(temp_set);
+				}
 				if(show_info) {
 					printf("Processed %s.\n", argv[i]);
 				}
 				files++;
+			} else {
+				set_free(total);
+				set_free(temp_set);
+				fclose(fptr);
+				return EXIT_FAILURE;
 			}
 			fclose(fptr);
 		}
