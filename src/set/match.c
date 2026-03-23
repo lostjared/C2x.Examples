@@ -51,7 +51,10 @@ bool insert_words(FILE *fptr, Set *set) {
 			}
 		}
 	}
-
+	if(ferror(fptr)) {
+		free(word);
+		return false;
+	}
 	if(index > 0) {
 		word[index] = 0;
 		if(!insert_text(set, word, &index)) {
@@ -68,8 +71,13 @@ void destroy(void *ptr) {
 }
 
 int compare(const void *a, const void *b) {
-	if(a == nullptr || b == nullptr)
+	if(a == nullptr && b == nullptr)
+		return 0;
+
+	if(a == nullptr)
 		return -1;
+	if(b == nullptr)
+		return 1;
 	return strcmp((const char *)a, (const char *)b);
 }
 
@@ -103,10 +111,12 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Error file: %s could not be opened.\n", argv[i]);
 				continue;
 			}
-			files++;
+		
 			if(insert_words(fptr, total)) {
-				if(show_info)
-					printf("Processed %s.\n", argv[i]);				
+				if(show_info) {
+					printf("Processed %s.\n", argv[i]);
+				}
+				files++;
 			}
 			fclose(fptr);
 		}
