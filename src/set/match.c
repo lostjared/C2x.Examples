@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 			}
 
 			if(insert_words(fptr, temp_set)) {							
-				if(!multiset_concat(&total, temp_set)) {
+				if(!multiset_concat(total, temp_set)) {
 						fprintf(stderr, "Error inserting set into total.\n");
 						set_free(total);
 						set_free(temp_set);

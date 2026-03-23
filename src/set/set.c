@@ -28,7 +28,7 @@ bool set_init(Set **set_value, void (*destroy)(void *), int (*compare)(const voi
 	if(s == nullptr) 
 		return false;
 	s->count = 0;
-	s->top = s->tail = nullptr;
+	s->top = nullptr;
 	s->destroy = destroy;
 	s->compare = compare;
 	*set_value = s;
@@ -102,6 +102,9 @@ bool multiset_insert(Set *set, const void *data, size_t bytes) {
 		n = n->next;
 	}
 	SetNode *node = set_node_create(data, bytes);
+	if(node == nullptr) 
+		return false;
+	
 	node->next = set->top;
 	set->top = node;
 	set->count++;
@@ -120,6 +123,9 @@ bool _multiset_insert(Set *set, const void *data, size_t bytes, size_t count) {
 		n = n->next;
 	}
 	SetNode *node = set_node_create(data, bytes);
+	if(node == nullptr)
+		return false;
+
 	node->count = count;
 	node->next = set->top;
 	set->top = node;
@@ -128,7 +134,7 @@ bool _multiset_insert(Set *set, const void *data, size_t bytes, size_t count) {
 }
 
 
-size_t multiset_count(Set *set, const void *data) {
+size_t multiset_count(const Set *set, const void *data) {
    	if(set == nullptr || data == nullptr) 
 		return 0;
 	SetNode *n = set->top;
@@ -142,7 +148,7 @@ size_t multiset_count(Set *set, const void *data) {
 }
 
 
-void multiset_print(Set *set, void (*echo)(const void *, size_t)) {
+void multiset_print(const Set *set, void (*echo)(const void *, size_t)) {
 	if(set == nullptr || echo == nullptr)
 		return;
 	SetNode *n = set->top;
@@ -169,14 +175,14 @@ bool set_concat(Set *set, const Set *set_from) {
 	return true;
 }
 
-bool multiset_concat(Set **set, const Set *set_from) {
+bool multiset_concat(Set *set, const Set *set_from) {
 	if(set == nullptr || set_from == nullptr)
 		return false;
 	if(set_from->count == 0)
 		return true;
 	SetNode *n = set_from->top;
 	while(n != nullptr) {
-		if(!_multiset_insert(*set, n->data, n->bytes, n->count)) {
+		if(!_multiset_insert(set, n->data, n->bytes, n->count)) {
 			return false;
 		}
 		n = n->next;
