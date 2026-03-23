@@ -5,7 +5,7 @@
 #include<string.h>
 
 SetNode *set_node_create(const void *data, size_t bytes) {
-	SetNode *s = malloc(sizeof(*s));
+	SetNode *s = malloc(sizeof(SetNode));
 	if(s == nullptr)
 		return nullptr;
 	s->data = malloc(bytes);
@@ -70,6 +70,23 @@ bool set_insert(Set *set, const void *data, size_t bytes) {
 	n->next = set->top;
 	set->top = n;
 	set->count++;
+	return true;
+}
+
+bool set_concat(Set *set, const Set *set_from) {
+	if(set == nullptr || set_from == nullptr)
+		return false;
+
+
+	if(set_from->count == 0)
+		return true;
+	SetNode *n = set_from->top;
+	while(n != nullptr) {
+		if(!set_insert(set, n->data, n->bytes)) {
+			return false;
+		}
+		n = n->next;
+	}
 	return true;
 }
 
@@ -234,5 +251,9 @@ void set_free(Set *set) {
 		sn = temp;
 	}
 	free(set);
+}
+
+size_t set_count(const Set *set) {
+	return set->count;
 }
 
