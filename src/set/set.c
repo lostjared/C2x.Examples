@@ -170,7 +170,7 @@ bool set_intersection(Set **setu, const Set *set1, const Set *set2, void (*destr
 }
 
 bool set_difference(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *), int (*compare)(const void *, const void *)) {
-	if(setu == nullptr || set1 == nullptr || set2 == nullptr)
+	if(setu == nullptr || set1 == nullptr || set2 == nullptr || compare == nullptr)
 		return false;
 
 	if(!set_init(setu, destroy, compare)) {
