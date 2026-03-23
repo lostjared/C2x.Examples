@@ -103,6 +103,7 @@ int main(void) {
 	if(!set_intersection(&set_i, set_value1, set_value2, destroy, compare)) {
 		set_free(set_value1);
 		set_free(set_value2);
+		set_free(set_u);
 		fprintf(stderr, "Error on intersection.\n");
 		return EXIT_FAILURE;
 	}
@@ -112,6 +113,8 @@ int main(void) {
 	if(!set_difference(&set_d, set_value1, set_value2, destroy, compare)) {
 		set_free(set_value1);
 		set_free(set_value2);
+		set_free(set_i);
+		set_free(set_u);
 		fprintf(stderr, "Error on diference.\n");
 		return EXIT_FAILURE;
 	}
