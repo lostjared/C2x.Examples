@@ -25,6 +25,7 @@ add_link_options(
     "$<$<CONFIG:Release>:-flto>"
 )
 elseif (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+add_compile_options(-Wno-unknown-attributes)
 message(STATUS "using Clang")
 endif()
 add_executable(helloworld src/helloworld.c)
