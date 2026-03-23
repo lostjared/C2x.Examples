@@ -20,7 +20,8 @@ bool set_init(Set **set, void (*destroy)(void *), int (*compare)(const void *a, 
 bool set_contains(const Set *set, const void *data);
 bool set_insert(Set *set, const void *data, size_t bytes);
 bool set_remove(Set *set, const void *data);
-bool set_union(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *ptr), int (*compare)(const void *, const void *));
+bool set_union(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *), int (*compare)(const void *, const void *));
+bool set_intersection(Set **setu, const Set *set1, const Set *set2, void (*destroy)(void *), int (*compare)(const void *, const void *));
 void set_print(const Set *set, void (*echo)(const void *ptr));
 void set_free(Set *set);
 

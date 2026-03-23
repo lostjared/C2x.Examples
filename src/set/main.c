@@ -98,6 +98,17 @@ int main(void) {
 	}
 	printf("union of two sets.\n");
 	set_print(set_u, echo);
+	
+	Set *set_i = nullptr;
+	if(!set_intersection(&set_i, set_value1, set_value2, destroy, compare)) {
+		set_free(set_value1);
+		set_free(set_value2);
+		fprintf(stderr, "Error on intersection.\n");
+		return EXIT_FAILURE;
+	}
+	printf("Intersection: \n");
+	set_print(set_i, echo);
+	set_free(set_i);
 	set_free(set_value1);
 	set_free(set_value2);
 	set_free(set_u);
