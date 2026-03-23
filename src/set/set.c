@@ -38,7 +38,7 @@ bool set_init(Set **set_value, void (*destroy)(void *), int (*compare)(const voi
 bool set_contains(const Set *set, const void *data) {
 	if(set == nullptr || data == nullptr)
 		return false;
-	SetNode *n = set->top;
+	const SetNode *n = set->top;
 	while(n != nullptr) {
 		if(set->compare(n->data, data) == 0) 
 			return true;
@@ -137,7 +137,7 @@ bool _multiset_insert(Set *set, const void *data, size_t bytes, size_t count) {
 size_t multiset_count(const Set *set, const void *data) {
    	if(set == nullptr || data == nullptr) 
 		return 0;
-	SetNode *n = set->top;
+	const SetNode *n = set->top;
 	while(n != nullptr) {
 		if(set->compare(n->data, data) == 0) {
 			return n->count;
@@ -151,7 +151,7 @@ size_t multiset_count(const Set *set, const void *data) {
 void multiset_print(const Set *set, void (*echo)(const void *, size_t)) {
 	if(set == nullptr || echo == nullptr)
 		return;
-	SetNode *n = set->top;
+	const SetNode *n = set->top;
 	while(n != nullptr) {
 		echo(n->data, n->count);
 		n = n->next;
@@ -165,7 +165,7 @@ bool set_concat(Set *set, const Set *set_from) {
 
 	if(set_from->count == 0)
 		return true;
-	SetNode *n = set_from->top;
+	const SetNode *n = set_from->top;
 	while(n != nullptr) {
 		if(!set_insert(set, n->data, n->bytes)) {
 			return false;
@@ -180,7 +180,7 @@ bool multiset_concat(Set *set, const Set *set_from) {
 		return false;
 	if(set_from->count == 0)
 		return true;
-	SetNode *n = set_from->top;
+	const SetNode *n = set_from->top;
 	while(n != nullptr) {
 		if(!_multiset_insert(set, n->data, n->bytes, n->count)) {
 			return false;
@@ -224,7 +224,7 @@ bool set_union(Set **setu, const Set *set1, const Set *set2, void (*destroy)(voi
 
 	if(!set_init(setu, destroy, compare)) 
 		return false;
-	SetNode *n = set1->top;
+	const SetNode *n = set1->top;
 	while(n != nullptr) {
 		if(!_set_insert_no_check(*setu, n->data, n->bytes)) {
 			fprintf(stderr, "set insert failed.\n");
@@ -256,7 +256,7 @@ bool set_intersection(Set **setu, const Set *set1, const Set *set2, void (*destr
 	if(set2->count == 0)
 		return true;
 
-	SetNode *n = set1->top;
+	const SetNode *n = set1->top;
 	while(n != nullptr) {
 		if(set_contains(set2, n->data)) { 
 			if(!_set_insert_no_check(*setu, n->data, n->bytes)) {
@@ -278,7 +278,7 @@ bool set_difference(Set **setu, const Set *set1, const Set *set2, void (*destroy
 		fprintf(stderr, "Error on init of set\n");
 		return false;
 	}
-	SetNode *n = set1->top;
+	const SetNode *n = set1->top;
 	while(n != nullptr) {
 		if(!set_contains(set2, n->data)) {
 			if(!_set_insert_no_check(*setu, n->data, n->bytes)) {
@@ -303,7 +303,7 @@ bool set_is_subset(const Set *set1, const Set *set2) {
 	if(set1->count > set2->count)
 		return false;
 	
-	SetNode *n = set1->top;
+	const SetNode *n = set1->top;
 
 	while(n != nullptr) {
 		if(!set_contains(set2, n->data)) 
@@ -338,7 +338,7 @@ void set_print(const Set *set, void (*echo)(const void *ptr)) {
 	if(set == nullptr || echo == nullptr)
 		return;
 
-	SetNode *n = set->top;
+	const SetNode *n = set->top;
 	while(n != nullptr) {
 		if(n->data != nullptr)
 			echo(n->data);
@@ -365,7 +365,6 @@ void set_free(Set *set) {
 size_t set_count(const Set *set) {
 	if(set == nullptr)
 		return 0;
-
 	return set->count;
 }
 
