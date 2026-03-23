@@ -8,7 +8,7 @@
 bool insert_text(Set *set, char *restrict word,  size_t *index) {
 	if(*index > 0) {
 		word[*index] = 0;
-		if(!set_insert(set, word, *index+1)) {
+		if(!multiset_insert(set, word, *index+1)) {
 			fprintf(stderr, "Set insert failed.\n");
 			return false;
 		}
@@ -85,6 +85,10 @@ void echo(const void *ptr) {
 	printf("\t%s\n", (const char *)ptr);
 }
 
+void echo_count(const void *ptr, size_t count) {
+	printf("\t%s: %zu\n", (const char *)ptr, count);
+}
+
 void echo_notab(const void *ptr) {
 	printf("%s\n", (const char *)ptr);
 }
@@ -95,9 +99,13 @@ int main(int argc, char **argv) {
 		size_t files = 0;
 		Set *total = nullptr;
 		bool show_info = true;
+		bool use_multi = false;
 		int start = 1;
 		if(strcmp(argv[1], "-q") == 0) {
 			show_info = false;
+			start++;
+		} else if(strcmp(argv[1],"-m") == 0) {
+			use_multi = true;
 			start++;
 		}
 		if(!set_init(&total, destroy, compare)) {
@@ -120,7 +128,8 @@ int main(int argc, char **argv) {
 				return EXIT_FAILURE;
 			}
 
-			if(insert_words(fptr, temp_set)) {							if(!set_concat(total, temp_set)) {
+			if(insert_words(fptr, temp_set)) {							
+				if(!multiset_concat(&total, temp_set)) {
 						fprintf(stderr, "Error inserting set into total.\n");
 						set_free(total);
 						set_free(temp_set);
@@ -143,7 +152,10 @@ int main(int argc, char **argv) {
 		}
 		if(show_info)
 			printf("Unique words across all files: {\n");
-		set_print(total, (show_info == true) ? echo : echo_notab);
+		if(use_multi) 
+			multiset_print(total, echo_count);
+		else
+			set_print(total, (show_info == true) ? echo : echo_notab);
                 if(show_info) {
 			printf("}\n");
 			printf("%zu total unique words across %zu files.\n", set_count(total), files);
