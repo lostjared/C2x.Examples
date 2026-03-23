@@ -101,11 +101,13 @@ int main(int argc, char **argv) {
 		bool show_info = true;
 		bool use_multi = false;
 		int start = 1;
+		int file_index = 1;
 		if(strcmp(argv[1], "-q") == 0) {
 			show_info = false;
 			start++;
 		} else if(strcmp(argv[1],"-m") == 0) {
 			use_multi = true;
+			show_info = true;
 			start++;
 		} else if(strcmp(argv[1], "-mq") == 0) {
 			show_info = false;
@@ -143,7 +145,8 @@ int main(int argc, char **argv) {
 					set_free(temp_set);
 				}
 				if(show_info) {
-					printf("Processed %s.\n", argv[i]);
+					printf("Processed file[%d] ->  %s.\n", file_index, argv[i]);
+					file_index++;
 				}
 				files++;
 			} else {
