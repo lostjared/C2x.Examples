@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 find_package(Threads REQUIRED)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-message(STATUS "using g++")
+message(STATUS "using GNU GCC")
 add_compile_options(
     -Wall 
     -Wextra 
