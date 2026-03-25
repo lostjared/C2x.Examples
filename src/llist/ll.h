@@ -1,6 +1,5 @@
 #ifndef LL_H
 #define LL_H
-
 #include<stddef.h>
 
 typedef struct _ListNode {
@@ -13,7 +12,6 @@ typedef struct _LList {
 	ListNode *root;
 	size_t count;
 } LList;
-
 
 bool list_init(LList **ll);
 size_t list_count(const LList *ll);
