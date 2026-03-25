@@ -7,8 +7,7 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
     struct addrinfo *rt, *rp;
     int sfd = -1, optval, s;
 
-    memset(sock, 0, sizeof(MXSocket));
-    sock->sockfd = -1;
+    mx_socket_init(sock);
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
@@ -36,7 +35,9 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
         if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
             break;
 
-        close(sfd);
+	if(sfd >= 0)
+	    close(sfd);
+	sfd = -1;
     }
 
     if(sfd == -1) {
@@ -65,6 +66,7 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
 bool mx_socket_accept(const MXSocket *input, MXSocket *output) {
     if (input == nullptr || output == nullptr)
 	return false;
+ 
     if(!mx_socket_valid(input))
 	return false;
 
@@ -136,8 +138,7 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
     struct addrinfo *rt, *rp;
     int sfd = -1, s;
     memset(&hints, 0, sizeof(struct addrinfo));
-    memset(sock, 0, sizeof(MXSocket));
-    sock->sockfd = -1;
+    mx_socket_init(sock);
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
     hints.ai_next = nullptr;
@@ -174,6 +175,11 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
 
     freeaddrinfo(rt);
     return true;
+}
+
+void mx_socket_init(MXSocket *sock) {
+	memset(sock, 0, sizeof(MXSocket));
+	sock->sockfd = -1;
 }
 
 bool mx_socket_valid(const MXSocket *sock) {

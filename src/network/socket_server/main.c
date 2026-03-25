@@ -20,11 +20,13 @@ void *process_input(void *p) {
 
 void socket_listen(const char *port) {
     MXSocket sock;
+    mx_socket_init(&sock);
     bool active = true;
     if (mx_socket_listen(&sock, port, 5)) {
         printf("Listening on port %s\n", port);
         while (active) {
             MXSocket new_socket;
+	    mx_socket_init(&new_socket);
             if (mx_socket_accept(&sock, &new_socket)) {
                 pthread_t id;
                 if (pthread_create(&id, nullptr, process_input, &new_socket.sockfd) == 0) {
