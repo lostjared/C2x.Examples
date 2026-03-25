@@ -104,6 +104,8 @@ void mx_socket_close(MXSocket *sock) {
     if (sock == nullptr)
         return;
 
+    printf("Closing socket: %d\n", sock->sockfd);
+    
     if(sock->sockfd >= 0)
 	    close(sock->sockfd);
     sock->sockfd = -1;
@@ -177,11 +179,13 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
     return true;
 }
 
-void mx_socket_init(MXSocket *sock) {
+bool mx_socket_init(MXSocket *sock) {
 	if(sock == nullptr)
 		return false;
 	memset(sock, 0, sizeof(MXSocket));
 	sock->sockfd = -1;
+	sock->blocking = true;
+	return true;
 }
 
 bool mx_socket_valid(const MXSocket *sock) {

@@ -20,7 +20,7 @@ typedef struct {
 } MXSocket;
 
 
-void mx_socket_init(MXSocket *s);
+bool mx_socket_init(MXSocket *s);
 bool mx_socket_listen(MXSocket *s, const char *port, int backlog);
 bool mx_socket_accept(const MXSocket *input, MXSocket *output);
 void mx_socket_close(MXSocket *s);
