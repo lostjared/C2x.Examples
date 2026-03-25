@@ -19,10 +19,8 @@ void *process_input(void *p) {
 }
 
 void socket_listen(const char *port) {
-
     MXSocket sock;
     bool active = true;
-
     if (mx_socket_listen(&sock, port, 5)) {
         printf("Listening on port %s\n", port);
         while (active) {

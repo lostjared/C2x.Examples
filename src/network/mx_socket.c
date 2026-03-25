@@ -135,3 +135,65 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
     freeaddrinfo(rt);
     return true;
 }
+
+bool mx_socket_valid(const MXSocket *sock) {
+    if (sock == nullptr)
+        return false;
+    return sock->sockfd >= 0;
+}
+
+ssize_t mx_socket_read(MXSocket *sock, void *buf, size_t len) {
+    if (sock == nullptr || buf == nullptr || len == 0)
+        return -1;
+    if (!mx_socket_valid(sock)) {
+        errno = EBADF;
+        return -1;
+    }
+    return recv(sock->sockfd, buf, len, 0);
+}
+
+bool mx_socket_is_open(const MXSocket *sock) {
+    if (sock == nullptr || !mx_socket_valid(sock))
+        return false;
+    char c = 0;
+    ssize_t r = recv(sock->sockfd, &c, 1, MSG_PEEK | MSG_DONTWAIT);
+    if (r == 0)
+        return false;
+    if (r > 0)
+        return true;
+    if (r < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+        return true;
+    }
+    return false;
+}
+
+bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
+    if (sock == nullptr || buffer == nullptr || size == nullptr)
+        return false;
+    size_t init_size = 4096;
+    char *temp = malloc(init_size + 1);
+    if (temp == nullptr)
+        return false;
+    char c = 0;
+    size_t index = 0;
+    while (1) {
+        ssize_t read_val = read(sock->sockfd, &c, 1);
+        if (read_val == 0 || read_val == -1)
+            break;
+        if (c == '\n')
+            break;
+        if (index > init_size - 1) {
+            init_size *= 2;
+            char *t = realloc(temp, init_size + 1);
+            if (t == nullptr) {
+                free(temp);
+                return false;
+            }
+        }
+        temp[index++] = c;
+    }
+    temp[index] = 0;
+    *buffer = temp;
+    *size = index;
+    return true;
+}
