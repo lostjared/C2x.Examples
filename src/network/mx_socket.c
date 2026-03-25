@@ -231,8 +231,17 @@ bool mx_socket_is_open(const MXSocket *sock) {
 }
 
 bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
-    if (sock == nullptr || buffer == nullptr || size == nullptr || !mx_socket_valid(sock))
+    if (sock == nullptr || buffer == nullptr || size == nullptr)
         return false;
+
+    if (!mx_socket_valid(sock)) {
+        errno = EBADF;
+        return false;
+    }
+
+    *buffer = nullptr;
+    *size = 0;
+
     size_t init_size = 4096;
     char *temp = malloc(init_size + 1);
     if (temp == nullptr)
@@ -240,25 +249,34 @@ bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
     char c = 0;
     size_t index = 0;
     while (1) {
-        ssize_t read_val = read(sock->sockfd, &c, 1);
+        ssize_t read_val = recv(sock->sockfd, &c, 1, 0);
+        if (read_val > 0) {
+            if (c == '\n')
+                break;
+            if (index >= init_size) {
+                size_t new_init_size = init_size * 2;
+                char *t = realloc(temp, new_init_size + 1);
+                if (t == nullptr) {
+                    free(temp);
+                    return false;
+                }
+                temp = t;
+                init_size = new_init_size;
+            }
+            temp[index++] = c;
+            continue;
+        }
         if (read_val == 0)
             break;
-        if (read_val == -1) {
-            free(temp);
-            return false;
+        if (errno == EINTR)
+            continue;
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            if (!sock->blocking)
+                break;
+            continue;
         }
-        if (c == '\n')
-            break;
-        if (index > init_size - 1) {
-            init_size *= 2;
-            char *t = realloc(temp, init_size + 1);
-            if (t == nullptr) {
-                free(temp);
-                return false;
-            }
-            temp = t;
-        }
-        temp[index++] = c;
+        free(temp);
+        return false;
     }
     temp[index] = 0;
     *buffer = temp;
