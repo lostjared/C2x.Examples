@@ -266,8 +266,13 @@ bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
             temp[index++] = c;
             continue;
         }
-        if (read_val == 0)
+        if (read_val == 0) {
+            if (index == 0) {
+                free(temp);
+                return false;
+            }
             break;
+        }
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
