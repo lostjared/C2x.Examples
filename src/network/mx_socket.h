@@ -12,13 +12,12 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
+#include <stdbool.h>
 typedef struct {
     int sockfd;
     socklen_t addrlen;
     bool blocking;
 } MXSocket;
-
 
 bool mx_socket_init(MXSocket *s);
 bool mx_socket_listen(MXSocket *s, const char *port, int backlog);

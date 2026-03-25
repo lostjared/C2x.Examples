@@ -21,39 +21,41 @@ void *process_input(void *p) {
 
 void socket_listen(const char *port) {
     MXSocket sock;
-    if(!mx_socket_init(&sock)) {
-	    fprintf(stderr, "Error init Socket struct\n");
-	    return;
+    if (!mx_socket_init(&sock)) {
+        fprintf(stderr, "Error init Socket struct\n");
+        return;
     }
     bool active = true;
     if (mx_socket_listen(&sock, port, 5)) {
         printf("Listening on port %s\n", port);
         while (active) {
             MXSocket *new_socket = malloc(sizeof(MXSocket));
-	    if(new_socket == nullptr) {
-		    fprintf(stderr, "Memory exhausted.\n");
-		    mx_socket_close(&sock);
-		    return;
-	    }
-	    if(!mx_socket_init(new_socket)) {
-		    fprintf(stderr, "Error init socket struct.\n");
-		    mx_socket_close(&sock);
-		    return;
-	    }
+            if (new_socket == nullptr) {
+                fprintf(stderr, "Memory exhausted.\n");
+                mx_socket_close(&sock);
+                return;
+            }
+            if (!mx_socket_init(new_socket)) {
+                fprintf(stderr, "Error init socket struct.\n");
+                mx_socket_close(&sock);
+                free(new_socket);
+                return;
+            }
             if (mx_socket_accept(&sock, new_socket)) {
                 pthread_t id;
                 if (pthread_create(&id, nullptr, process_input, new_socket) == 0) {
                     pthread_detach(id);
                 } else {
                     mx_socket_close(new_socket);
-		    free(new_socket);  
-		    fprintf(stderr, "Error spawning new thread...\n");
+                    free(new_socket);
+                    fprintf(stderr, "Error spawning new thread...\n");
                     active = false;
-                    break;
+                    mx_socket_close(&sock);
+                    return;
                 }
             } else {
-		    free(new_socket);
-	    }
+                free(new_socket);
+            }
         }
     } else {
         fprintf(stderr, "Error on listen..\n");
