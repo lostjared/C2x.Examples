@@ -1,20 +1,20 @@
 #ifndef SET_H
 #define SET_H
-#include<stddef.h>
+#include <stddef.h>
 
 typedef struct _SetNode {
-	void *data;
-	size_t bytes;
-	size_t count;
-	struct _SetNode *next;
+    void *data;
+    size_t bytes;
+    size_t count;
+    struct _SetNode *next;
 
 } SetNode;
 
 typedef struct _Set {
-	SetNode *top;
-	size_t count;
-	void (*destroy)(void *);
-	int (*compare)(const void *a, const void *b);
+    SetNode *top;
+    size_t count;
+    void (*destroy)(void *);
+    int (*compare)(const void *a, const void *b);
 } Set;
 
 bool set_init(Set **set, void (*destroy)(void *), int (*compare)(const void *a, const void *b));

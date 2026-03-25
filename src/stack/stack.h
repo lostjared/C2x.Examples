@@ -1,19 +1,19 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include<stdlib.h>
-#include<stddef.h>
-#include<stdbool.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 typedef struct Node_ {
-	void *data;
-	size_t size;
-	struct Node_ *next, *prev;
+    void *data;
+    size_t size;
+    struct Node_ *next, *prev;
 } Node;
 
 typedef struct Stack_ {
-	Node *top, *tail;
-	void (*destroy)(void *);
+    Node *top, *tail;
+    void (*destroy)(void *);
 } Stack;
 
 bool stack_init(Stack **stack, void (*destroy)(void *));

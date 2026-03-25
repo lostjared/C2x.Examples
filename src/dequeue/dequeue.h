@@ -3,20 +3,20 @@
 
 // implementation of Dequeue
 
-#include<stdlib.h>
-#include<stddef.h>
-#include<stdbool.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 typedef struct Node_ {
-	void *data;
-	size_t size;
-	struct Node_ *next, *prev;
+    void *data;
+    size_t size;
+    struct Node_ *next, *prev;
 } Node;
 
 typedef struct Dequeue_ {
-	Node *top, *tail;
-	void (*destroy)(void *);
-	size_t count;
+    Node *top, *tail;
+    void (*destroy)(void *);
+    size_t count;
 } Dequeue;
 
 bool dequeue_init(Dequeue **dequeue, void (*destroy)(void *));
