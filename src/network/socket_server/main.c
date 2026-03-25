@@ -32,10 +32,10 @@ void socket_listen(const char *port) {
             MXSocket *new_socket = malloc(sizeof(MXSocket));
 	    if(new_socket == nullptr) {
 		    fprintf(stderr, "Memory exhausted.\n");
-		    mx_close_socket(&sock);
+		    mx_socket_close(&sock);
 		    return;
 	    }
-	    if(!mx_socket_init(new_socket)):: {
+	    if(!mx_socket_init(new_socket)) {
 		    fprintf(stderr, "Error init socket struct.\n");
 		    mx_socket_close(&sock);
 		    return;
