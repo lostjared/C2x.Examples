@@ -51,10 +51,8 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
 }
 
 bool mx_socket_accept(const MXSocket *input, MXSocket *output) {
-
     if (input == nullptr || output == nullptr)
         return false;
-
     int newfd = accept(input->sockfd, 0, 0);
     if (newfd == -1)
         return false;
@@ -142,14 +140,24 @@ bool mx_socket_valid(const MXSocket *sock) {
     return sock->sockfd >= 0;
 }
 
-ssize_t mx_socket_read(MXSocket *sock, void *buf, size_t len) {
+ssize_t mx_socket_read(MXSocket *sock, void *buf, size_t len, int flags) {
     if (sock == nullptr || buf == nullptr || len == 0)
         return -1;
     if (!mx_socket_valid(sock)) {
         errno = EBADF;
         return -1;
     }
-    return recv(sock->sockfd, buf, len, 0);
+    return recv(sock->sockfd, buf, len, flags);
+}
+
+ssize_t mx_socket_send(MXSocket *sock, void *buf, size_t len, int flags) {
+	if(sock == nullptr || buf == nullptr || len == 0)
+		return -1;
+	if(!mx_socket_valid(sock)) {
+		errno = EBADF;
+		return -1;
+	}
+	return send(sock->sockfd, buf, len, flags);
 }
 
 bool mx_socket_is_open(const MXSocket *sock) {
