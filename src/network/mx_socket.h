@@ -25,7 +25,7 @@ void mx_socket_close(MXSocket *s);
 bool mx_socket_set_blocking(MXSocket *s, bool state);
 bool mx_socket_connect(MXSocket *s, const char *host, const char *port, int type);
 ssize_t mx_socket_read(MXSocket *s, void *data, size_t len, int flags);
-ssize_t mx_socket_send(MXSocket *s, void *data, size_t len, int flags);
+ssize_t mx_socket_send(MXSocket *s, const void *data, size_t len, int flags);
 bool mx_socket_valid(const MXSocket *s);
 bool mx_socket_is_open(const MXSocket *s);
 bool mx_socket_readline(MXSocket *s, char **buffer, size_t *len);

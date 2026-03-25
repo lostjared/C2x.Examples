@@ -5,9 +5,10 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
         return false;
     struct addrinfo hints;
     struct addrinfo *rt, *rp;
-    int sfd, optval, s;
+    int sfd = -1, optval, s;
 
     memset(sock, 0, sizeof(MXSocket));
+    sock->sockfd = -1;
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
@@ -38,28 +39,62 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
         close(sfd);
     }
 
-    if (rp != nullptr) {
+    if(sfd == -1) {
+	   freeaddrinfo(rt);
+	   return false;
+    }
+
+    if (rp != nullptr && sfd >= 0) {
         if (listen(sfd, backlog) == -1) {
             freeaddrinfo(rt);
-            return false;
+            close(sfd);
+	    return false;
         }
         sock->sockfd = sfd;
         sock->addrlen = rp->ai_addrlen;
+    } else { 
+	if(sfd >= 0)
+		close(sfd);
+    	return false;
     }
+
     freeaddrinfo(rt);
     return true;
 }
 
 bool mx_socket_accept(const MXSocket *input, MXSocket *output) {
     if (input == nullptr || output == nullptr)
-        return false;
+	return false;
+    if(!mx_socket_valid(input))
+	return false;
+
     int newfd = accept(input->sockfd, 0, 0);
     if (newfd == -1)
         return false;
+    
+    int flags = fcntl(newfd, F_GETFL);
+    if(flags == -1) {
+	    close(newfd);
+	    return false;
+    }
+
+    if(input->blocking)
+	    flags  &= ~O_NONBLOCK;
+    else
+	    flags |= O_NONBLOCK;
+
+    if(fcntl(newfd, F_SETFL, flags) == -1) {
+	    close(newfd);
+	    return false;
+    }
+
+    if(mx_socket_valid(output))
+	mx_socket_close(output);
+
     output->sockfd = newfd;
     output->addrlen = input->addrlen;
     output->blocking = input->blocking;
-    printf("Socket: %d accepted...\n", newfd);
+    printf("Accepted Socket: %d\n", newfd);
     return true;
 }
 
@@ -67,7 +102,8 @@ void mx_socket_close(MXSocket *sock) {
     if (sock == nullptr)
         return;
 
-    close(sock->sockfd);
+    if(sock->sockfd >= 0)
+	    close(sock->sockfd);
     sock->sockfd = -1;
 }
 
@@ -84,12 +120,12 @@ bool mx_socket_set_blocking(MXSocket *sock, bool state) {
             flags &= ~O_NONBLOCK;
         else
             flags |= O_NONBLOCK;
-        sock->blocking = state;
         if (fcntl(sock->sockfd, F_SETFL, flags) == -1) {
             fprintf(stderr, "Error setting flags for: %d\n", sock->sockfd);
             return false;
         }
-    }
+	sock->blocking = state;
+    } else return false;
     return true;
 }
 
@@ -98,9 +134,10 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
         return false;
     struct addrinfo hints;
     struct addrinfo *rt, *rp;
-    int sfd, s;
+    int sfd = -1, s;
     memset(&hints, 0, sizeof(struct addrinfo));
     memset(sock, 0, sizeof(MXSocket));
+    sock->sockfd = -1;
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
     hints.ai_next = nullptr;
@@ -119,7 +156,10 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
         if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1)
             break;
 
-        close(sfd);
+        if(sfd >= 0) {
+		close(sfd);
+		sfd = -1;
+	}
     }
 
     if (rp != nullptr) {
@@ -127,6 +167,8 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
         sock->addrlen = rp->ai_addrlen;
     } else {
         freeaddrinfo(rt);
+	if(sfd >= 0)
+		close(sfd);
         return false;
     }
 
@@ -150,7 +192,7 @@ ssize_t mx_socket_read(MXSocket *sock, void *buf, size_t len, int flags) {
     return recv(sock->sockfd, buf, len, flags);
 }
 
-ssize_t mx_socket_send(MXSocket *sock, void *buf, size_t len, int flags) {
+ssize_t mx_socket_send(MXSocket *sock, const void *buf, size_t len, int flags) {
 	if(sock == nullptr || buf == nullptr || len == 0)
 		return -1;
 	if(!mx_socket_valid(sock)) {
@@ -176,7 +218,7 @@ bool mx_socket_is_open(const MXSocket *sock) {
 }
 
 bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
-    if (sock == nullptr || buffer == nullptr || size == nullptr)
+    if (sock == nullptr || buffer == nullptr || size == nullptr || !mx_socket_valid(sock))
         return false;
     size_t init_size = 4096;
     char *temp = malloc(init_size + 1);
@@ -186,8 +228,12 @@ bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
     size_t index = 0;
     while (1) {
         ssize_t read_val = read(sock->sockfd, &c, 1);
-        if (read_val == 0 || read_val == -1)
-            break;
+        if (read_val == 0)
+	       break;
+       if(read_val == -1) {
+	       free(temp);
+	       return false;
+       }
         if (c == '\n')
             break;
         if (index > init_size - 1) {
@@ -197,6 +243,7 @@ bool mx_socket_readline(MXSocket *sock, char **buffer, size_t *size) {
                 free(temp);
                 return false;
             }
+	    temp = t;
         }
         temp[index++] = c;
     }
