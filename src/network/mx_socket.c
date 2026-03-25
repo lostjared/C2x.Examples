@@ -178,6 +178,8 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
 }
 
 void mx_socket_init(MXSocket *sock) {
+	if(sock == nullptr)
+		return false;
 	memset(sock, 0, sizeof(MXSocket));
 	sock->sockfd = -1;
 }
