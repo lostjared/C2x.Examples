@@ -97,7 +97,7 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
 	if(sock == nullptr || host == nullptr || port == nullptr)
 		return false;
 	struct addrinfo hints;
-        struct addrinfo *rt, *rp;
+	struct addrinfo *rt, *rp;
         int sfd, s;
         memset(&hints, 0, sizeof(struct addrinfo));
 	memset(sock, 0, sizeof(MXSocket));
