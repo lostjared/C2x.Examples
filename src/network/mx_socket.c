@@ -137,7 +137,7 @@ bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int t
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
     hints.ai_next = nullptr;
-    hints.ai_family = AF_UNSPEC;
+    hints.ai_family = AF_INET;
     hints.ai_socktype = type;
     s = getaddrinfo(host, port, &hints, &rt);
     if (s != 0) {
