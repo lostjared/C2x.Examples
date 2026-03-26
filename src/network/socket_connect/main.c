@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     }
     if (mx_socket_connect(&sock, argv[1], argv[2], SOCK_STREAM)) {
         printf("Connected to: %s:%s\n", argv[1], argv[2]);
-        printf("Type quit to exit\n");
+        printf("Type exit to shutdown\n");
         char buffer[4096];
         bool active = true;
         while (active) {

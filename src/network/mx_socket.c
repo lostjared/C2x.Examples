@@ -79,33 +79,25 @@ bool mx_socket_accept(const MXSocket *input, MXSocket *output) {
         close(newfd);
         return false;
     }
-
     if (input->blocking)
         flags &= ~O_NONBLOCK;
     else
         flags |= O_NONBLOCK;
-
     if (fcntl(newfd, F_SETFL, flags) == -1) {
         close(newfd);
         return false;
     }
-
     if (mx_socket_valid(output))
         mx_socket_close(output);
-
     output->sockfd = newfd;
     output->addrlen = input->addrlen;
     output->blocking = input->blocking;
-    printf("Accepted Socket: %d\n", newfd);
     return true;
 }
 
 void mx_socket_close(MXSocket *sock) {
     if (sock == nullptr)
         return;
-
-    printf("Closing socket: %d\n", sock->sockfd);
-
     if (sock->sockfd >= 0)
         close(sock->sockfd);
     sock->sockfd = -1;
