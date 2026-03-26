@@ -90,5 +90,6 @@ add_executable(socket_connect src/network/mx_socket.c src/network/socket_connect
 target_link_libraries(socket_connect PRIVATE Threads::Threads)
 add_executable(socket_server_queue src/network/mx_socket.c src/network/socket_server_queue/main.c src/network/socket_server_queue/dequeue.c)
 target_link_libraries(socket_server PRIVATE Threads::Threads)
+target_compile_options(socket_server_queue PRIVATE -pthread)
+target_link_options(socket_server_queue PRIVATE -pthread)
 endif()
-
