@@ -47,6 +47,9 @@ void dequeue_free(Dequeue *dequeue) {
         Node *next = n->next;
         if (dequeue->destroy != nullptr)
             dequeue->destroy(n->data);
+        else
+            free(n->data);
+            
         free(n);
         n = next;
     }
