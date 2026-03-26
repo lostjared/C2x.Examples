@@ -49,7 +49,7 @@ void dequeue_free(Dequeue *dequeue) {
             dequeue->destroy(n->data);
         else
             free(n->data);
-            
+
         free(n);
         n = next;
     }
@@ -166,10 +166,10 @@ bool dequeue_pop_front(Dequeue *dequeue, void *data, size_t size_val, size_t *si
     else
         dequeue->tail = nullptr;
     dequeue->top = next;
-    if(dequeue->destroy != nullptr)
-	    dequeue->destroy(n->data);
+    if (dequeue->destroy != nullptr)
+        dequeue->destroy(n->data);
     else
-	    free(n->data);
+        free(n->data);
     free(n);
     dequeue->count--;
     return true;

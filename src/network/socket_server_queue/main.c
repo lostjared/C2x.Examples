@@ -4,12 +4,12 @@
 #include <poll.h>
 #include <pthread.h>
 #include <signal.h>
+#include <stdatomic.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdatomic.h>
 
 pthread_cond_t cond;
 MXSocket g_listen_socket;
@@ -33,8 +33,8 @@ char *_strdup(const char *str) {
 
 void destroy(void *p) {
     QueueData *q = p;
-    if(q != nullptr) {
-        if(q->buffer != nullptr) {
+    if (q != nullptr) {
+        if (q->buffer != nullptr) {
             free(q->buffer);
             q->buffer = nullptr;
         }
@@ -52,7 +52,7 @@ void *process_input(void *p) {
             memset(&d, 0, sizeof(QueueData));
             d.buffer = _strdup(buffer);
 
-            if(d.buffer == nullptr) {
+            if (d.buffer == nullptr) {
                 pthread_mutex_unlock(&mut);
                 break;
             }
@@ -64,7 +64,7 @@ void *process_input(void *p) {
             if (!dequeue_push_back(queue, &d, sizeof(QueueData))) {
                 fprintf(stderr, "Error pushing into queue.\n");
                 free(d.buffer);
-                if(pthread_mutex_unlock(&mut) != 0) {
+                if (pthread_mutex_unlock(&mut) != 0) {
                     fprintf(stderr, "Error unlocking mutex.\n");
                 }
                 break;
@@ -80,7 +80,7 @@ void *process_input(void *p) {
                 mx_socket_close(&g_listen_socket);
                 pthread_cond_broadcast(&cond);
                 break;
-            } 
+            }
         }
     }
     printf("Connection to Socket: %d closed\n", sockfd->sockfd);
@@ -90,14 +90,14 @@ void *process_input(void *p) {
 }
 
 void *proc_queue(void *) {
-    if(pthread_mutex_lock(&mut) != 0)
+    if (pthread_mutex_lock(&mut) != 0)
         return 0;
 
     while (atomic_load(&server_running)) {
         while (atomic_load(&server_running) && dequeue_count(queue) == 0) {
             if (pthread_cond_wait(&cond, &mut) != 0) {
                 fprintf(stderr, "Error waiting on condition variable.\n");
-                if(pthread_mutex_unlock(&mut) != 0) {
+                if (pthread_mutex_unlock(&mut) != 0) {
                     fprintf(stderr, "Error on unlock.\n");
                 }
                 return 0;
@@ -111,7 +111,7 @@ void *proc_queue(void *) {
         size_t bytes = 0;
         if (!dequeue_pop_front(queue, &d, sizeof(QueueData), &bytes)) {
             fprintf(stderr, "failed to pop front.\n");
-            if(pthread_mutex_unlock(&mut) != 0) {
+            if (pthread_mutex_unlock(&mut) != 0) {
                 fprintf(stderr, "Error on unlock.\n");
             }
             break;
@@ -129,10 +129,10 @@ void *proc_queue(void *) {
             break;
         }
     }
-    if(pthread_mutex_unlock(&mut) != 0) {
+    if (pthread_mutex_unlock(&mut) != 0) {
         fprintf(stderr, "Error on unlock.\n");
     }
-    return 0;        
+    return 0;
 }
 
 bool socket_listen(const char *port) {
