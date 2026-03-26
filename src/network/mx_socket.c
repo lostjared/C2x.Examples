@@ -13,7 +13,7 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
     hints.ai_addr = nullptr;
     hints.ai_next = nullptr;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_family = AF_UNSPEC;
+    hints.ai_family = AF_INET;
     hints.ai_flags = AI_PASSIVE;
     s = getaddrinfo(nullptr, port, &hints, &rt);
     if (s != 0)
