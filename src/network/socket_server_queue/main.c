@@ -259,6 +259,10 @@ int main(int argc, char **argv) {
     if (argc == 2) {
         if (socket_listen(argv[1])) {
             printf("Exited.\n");
+            return EXIT_SUCCESS;
+        } else {
+            printf("Error has occoured. exiting...\n");
+            return EXIT_FAILURE;
         }
     } else {
         printf("Use:\n%s: <port>\n", argv[0]);
