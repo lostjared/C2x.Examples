@@ -87,5 +87,7 @@ add_executable(socket_server src/network/mx_socket.c src/network/socket_server/m
 target_link_libraries(socket_server PRIVATE Threads::Threads)
 add_executable(socket_connect src/network/mx_socket.c src/network/socket_connect/main.c)
 target_link_libraries(socket_connect PRIVATE Threads::Threads)
+add_executable(socket_server_queue src/network/mx_socket.c src/network/socket_server_queue/main.c src/network/socket_server_queue/dequeue.c)
+target_link_libraries(socket_server PRIVATE Threads::Threads)
 endif()
 
