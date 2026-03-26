@@ -44,16 +44,16 @@ int main(int argc, char **argv) {
             if (f_getline(buffer, 4096, stdin) == nullptr) {
                 continue;
             }
-            if (strcmp(buffer, "quit") == 0) {
-                printf("Quit message sent shutting down..\n");
-                mx_socket_close(&sock);
-                return EXIT_SUCCESS;
-            }
             ssize_t bytes = 0;
             if ((bytes = mx_socket_send(&sock, buffer, strlen(buffer) + 1, MSG_NOSIGNAL)) > 0) {
                 printf("Data sent... %zd bytes\n", bytes);
             } else if (bytes == -1 && errno == EPIPE) {
                 printf("Connected closed: broken pipe..\n");
+                return EXIT_SUCCESS;
+            }
+            if (strcmp(buffer, "exit") == 0) {
+                printf("Quit message sent shutting down..\n");
+                mx_socket_close(&sock);
                 return EXIT_SUCCESS;
             }
         }
