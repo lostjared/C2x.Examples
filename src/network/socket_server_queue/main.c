@@ -260,6 +260,8 @@ int main(int argc, char **argv) {
         if (socket_listen(argv[1])) {
             printf("Exited.\n");
         }
+    } else {
+        printf("Use:\n%s: <port>\n", argv[0]);
     }
     return EXIT_SUCCESS;
 }
