@@ -21,9 +21,11 @@ struct HashTable {
     size_t bucket_size;
 };
 
-enum HASH_VALUE_RETURN { VALUE_ERROR = 0,
-                         VALUE_NEW,
-                         VALUE_UPDATE };
+enum HASH_VALUE_RETURN {
+    VALUE_ERROR = 0,
+    VALUE_NEW,
+    VALUE_UPDATE
+};
 
 extern struct Node *create_node(const char *text);
 extern struct Node *insert_node(struct Node **root, const char *text);
