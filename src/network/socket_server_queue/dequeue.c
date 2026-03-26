@@ -47,8 +47,6 @@ void dequeue_free(Dequeue *dequeue) {
         Node *next = n->next;
         if (dequeue->destroy != nullptr)
             dequeue->destroy(n->data);
-        else
-            free(n->data);
         free(n);
         n = next;
     }
@@ -165,8 +163,10 @@ bool dequeue_pop_front(Dequeue *dequeue, void *data, size_t size_val, size_t *si
     else
         dequeue->tail = nullptr;
     dequeue->top = next;
-    /* do NOT destroy or free n->data here; caller now owns the popped payload resources */
-    free(n->data);
+    if(dequeue->destroy != nullptr)
+	    dequeue->destroy(n->data);
+    else
+	    free(n->data);
     free(n);
     dequeue->count--;
     return true;

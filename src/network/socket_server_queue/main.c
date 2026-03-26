@@ -22,14 +22,6 @@ typedef struct {
     size_t type;
 } QueueData;
 
-void destroy(void *ptr) {
-    QueueData *d = ptr;
-    if (d != nullptr) {
-        free(d->buffer);
-        free(d);
-    }
-}
-
 char *_strdup(const char *str) {
     size_t bytes = strlen(str) + 1;
     char *temp = malloc(bytes);
@@ -37,6 +29,16 @@ char *_strdup(const char *str) {
         return nullptr;
     memcpy(temp, str, bytes);
     return temp;
+}
+
+void destroy(void *p) {
+    QueueData *q = p;
+    if(q != nullptr) {
+        if(q->buffer != nullptr) {
+            free(q->buffer);
+            q->buffer = nullptr;
+        }
+    }
 }
 
 void *process_input(void *p) {
@@ -101,9 +103,9 @@ void *proc_queue(void *) {
                 return 0;
             }
         }
-        if (!atomic_load(&server_running)) {
+        if (!atomic_load(&server_running) && dequeue_count(queue) == 0)
             break;
-        }
+
         QueueData d;
         memset(&d, 0, sizeof(QueueData));
         size_t bytes = 0;
@@ -148,7 +150,7 @@ bool socket_listen(const char *port) {
         pthread_mutex_destroy(&mut);
         return false;
     }
-    if (!dequeue_init(&queue, destroy)) {
+    if (!dequeue_init(&queue, nullptr)) {
         fprintf(stderr, "Error on queue init\n");
         pthread_mutex_destroy(&mut);
         pthread_cond_destroy(&cond);
