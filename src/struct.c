@@ -65,7 +65,14 @@ void score_init(Score *s, const char *user_name, int score) {
 }
 
 int score_compare(const void *a, const void *b) {
-    return ((Score *)a)->score > ((Score *)b)->score;
+
+    const Score *i_a = a;
+    const Score *i_b = b;
+    if(i_a->score < i_b->score)
+	    return -1;
+    else if(i_a->score < i_b->score)
+	    return 1;
+    return 0;
 }
 
 Score *score_add(Score *s, const char *user_name, int score, size_t *size) {

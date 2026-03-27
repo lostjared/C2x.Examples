@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 int compare_value(const void *a, const void *b) {
-    int *i_a = a;
-    int *i_b = b;
+    const int *i_a = a;
+    const int *i_b = b;
     if(*i_a > *i_b)
 	    return 1;
     else if(*i_a < *i_b)
