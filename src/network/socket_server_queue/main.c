@@ -1,5 +1,5 @@
 #include "../mx_socket.h"
-#include "dequeue.h"
+#include "deque.h"
 #include <errno.h>
 #include <poll.h>
 #include <pthread.h>
@@ -14,7 +14,7 @@
 pthread_cond_t cond;
 MXSocket g_listen_socket;
 pthread_mutex_t mut;
-Dequeue *queue;
+Deque *queue;
 atomic_bool server_running = true;
 
 typedef struct {
@@ -61,7 +61,7 @@ void *process_input(void *p) {
             else
                 d.type = 1;
             size_t cmd_type = d.type;
-            if (!dequeue_push_back(queue, &d, sizeof(QueueData))) {
+            if (!deque_push_back(queue, &d, sizeof(QueueData))) {
                 fprintf(stderr, "Error pushing into queue.\n");
                 free(d.buffer);
                 if (pthread_mutex_unlock(&mut) != 0) {
@@ -94,7 +94,7 @@ void *proc_queue(void *) {
         return 0;
 
     while (atomic_load(&server_running)) {
-        while (atomic_load(&server_running) && dequeue_count(queue) == 0) {
+        while (atomic_load(&server_running) && deque_count(queue) == 0) {
             if (pthread_cond_wait(&cond, &mut) != 0) {
                 fprintf(stderr, "Error waiting on condition variable.\n");
                 if (pthread_mutex_unlock(&mut) != 0) {
@@ -103,13 +103,13 @@ void *proc_queue(void *) {
                 return 0;
             }
         }
-        if (!atomic_load(&server_running) && dequeue_count(queue) == 0)
+        if (!atomic_load(&server_running) && deque_count(queue) == 0)
             break;
 
         QueueData d;
         memset(&d, 0, sizeof(QueueData));
         size_t bytes = 0;
-        if (!dequeue_pop_front(queue, &d, sizeof(QueueData), &bytes)) {
+        if (!deque_pop_front(queue, &d, sizeof(QueueData), &bytes)) {
             fprintf(stderr, "failed to pop front.\n");
             if (pthread_mutex_unlock(&mut) != 0) {
                 fprintf(stderr, "Error on unlock.\n");
@@ -150,7 +150,7 @@ bool socket_listen(const char *port) {
         pthread_mutex_destroy(&mut);
         return false;
     }
-    if (!dequeue_init(&queue, nullptr)) {
+    if (!deque_init(&queue, nullptr)) {
         fprintf(stderr, "Error on queue init\n");
         pthread_mutex_destroy(&mut);
         pthread_cond_destroy(&cond);
@@ -158,7 +158,7 @@ bool socket_listen(const char *port) {
     }
     if (!mx_socket_listen(&sock, port, 5)) {
         fprintf(stderr, "Error on listen..\n");
-        dequeue_free(queue);
+        deque_free(queue);
         pthread_cond_destroy(&cond);
         pthread_mutex_destroy(&mut);
         return false;
@@ -167,7 +167,7 @@ bool socket_listen(const char *port) {
     if (!mx_socket_set_blocking(&sock, false)) {
         fprintf(stderr, "Error setting listening socket nonblocking.\n");
         mx_socket_close(&sock);
-        dequeue_free(queue);
+        deque_free(queue);
         pthread_cond_destroy(&cond);
         pthread_mutex_destroy(&mut);
         return false;
@@ -177,7 +177,7 @@ bool socket_listen(const char *port) {
     if (pthread_create(&qt, nullptr, proc_queue, nullptr) != 0) {
         fprintf(stderr, "Error on creation of queue thread.\n");
         mx_socket_close(&sock);
-        dequeue_free(queue);
+        deque_free(queue);
         pthread_cond_destroy(&cond);
         pthread_mutex_destroy(&mut);
         return false;
@@ -249,7 +249,7 @@ bool socket_listen(const char *port) {
     mx_socket_close(&sock);
     pthread_cond_broadcast(&cond);
     pthread_join(qt, nullptr);
-    dequeue_free(queue);
+    deque_free(queue);
     pthread_mutex_destroy(&mut);
     pthread_cond_destroy(&cond);
     return true;
