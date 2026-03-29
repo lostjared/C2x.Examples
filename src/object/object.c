@@ -10,8 +10,8 @@ bool object_init(MXObject *obj, const char *name) {
     size_t len = strlen(name);
     temp = malloc(len + 1);
     if (temp == nullptr)
-        return false;  
-    memcpy(temp, name, len+1); 
+        return false;
+    memcpy(temp, name, len + 1);
     free(obj->name);
     obj->name = temp;
     return true;
@@ -27,14 +27,14 @@ bool init_object(MXObject **obj) {
     if (obj == nullptr)
         return false;
 
-    if(*obj != nullptr) {
-	    fprintf(stderr, "Error already initalized.\n");
-	    return false;
+    if (*obj != nullptr) {
+        fprintf(stderr, "Error already initalized.\n");
+        return false;
     }
 
-    MXObject *o = malloc (sizeof(MXObject));
-    if(o == nullptr)
-	    return false;
+    MXObject *o = malloc(sizeof(MXObject));
+    if (o == nullptr)
+        return false;
     memset(o, 0, sizeof(MXObject));
     o->init = object_init;
     o->say_hello = object_say_hello;
@@ -43,11 +43,10 @@ bool init_object(MXObject **obj) {
 }
 
 void release_object(MXObject **obj) {
-	if(obj != nullptr && *obj != nullptr) { 
-            free((*obj)->name);
-	    (*obj)->name = nullptr;
- 	    free(*obj);
-	    *obj = nullptr;
-	}
+    if (obj != nullptr && *obj != nullptr) {
+        free((*obj)->name);
+        (*obj)->name = nullptr;
+        free(*obj);
+        *obj = nullptr;
+    }
 }
-

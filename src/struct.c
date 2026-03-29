@@ -68,10 +68,10 @@ int score_compare(const void *a, const void *b) {
 
     const Score *i_a = a;
     const Score *i_b = b;
-    if(i_a->score < i_b->score)
-	    return -1;
-    else if(i_a->score < i_b->score)
-	    return 1;
+    if (i_a->score < i_b->score)
+        return -1;
+    else if (i_a->score < i_b->score)
+        return 1;
     return 0;
 }
 

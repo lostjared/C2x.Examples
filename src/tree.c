@@ -12,11 +12,11 @@ typedef struct node {
 typedef int cmp(const void *, const void *);
 
 int compare(const void *a, const void *b) {
-     if(a == nullptr)
-	     return -1;
-     if(b == nullptr)
-	     return 1;
-     return strcmp((const char *)a, (const char *)b);
+    if (a == nullptr)
+        return -1;
+    if (b == nullptr)
+        return 1;
+    return strcmp((const char *)a, (const char *)b);
 }
 
 [[nodiscard]] Node *createNode(const void *restrict data, const size_t bytes) {

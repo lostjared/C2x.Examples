@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define DEQUEUE_CHECK(val)                                                             \
-    do {                                                                               \
-        if (!(val)) {                                                                  \
+#define DEQUEUE_CHECK(val)                                                           \
+    do {                                                                             \
+        if (!(val)) {                                                                \
             fprintf(stderr, "Error deque check failed %s:%d\n", __FILE__, __LINE__); \
-            exit(EXIT_FAILURE);                                                        \
-        }                                                                              \
+            exit(EXIT_FAILURE);                                                      \
+        }                                                                            \
     } while (0)
 
 struct Event {
