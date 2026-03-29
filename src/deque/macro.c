@@ -1,4 +1,4 @@
-#include "dequeue.h"
+#include "deque.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #define DEQUEUE_CHECK(val)                                                             \
     do {                                                                               \
         if (!(val)) {                                                                  \
-            fprintf(stderr, "Error dequeue check failed %s:%d\n", __FILE__, __LINE__); \
+            fprintf(stderr, "Error deque check failed %s:%d\n", __FILE__, __LINE__); \
             exit(EXIT_FAILURE);                                                        \
         }                                                                              \
     } while (0)
@@ -24,23 +24,23 @@ void echo(const void *ptr) {
 
 int main(void) {
     srand((unsigned int)time(nullptr));
-    Dequeue *dequeue = nullptr;
-    DEQUEUE_CHECK(dequeue_init(&dequeue, nullptr));
+    Deque *deque = nullptr;
+    DEQUEUE_CHECK(deque_init(&deque, nullptr));
     for (size_t i = 0; i < 10; ++i) {
         struct Event e = {(size_t)rand() % 255, i};
         if ((i % 2) == 0) {
-            DEQUEUE_CHECK(dequeue_push_front(dequeue, &e, sizeof(e)));
+            DEQUEUE_CHECK(deque_push_front(deque, &e, sizeof(e)));
         } else {
-            DEQUEUE_CHECK(dequeue_push_back(dequeue, &e, sizeof(e)));
+            DEQUEUE_CHECK(deque_push_back(deque, &e, sizeof(e)));
         }
     }
-    dequeue_print_forward(dequeue, echo);
+    deque_print_forward(deque, echo);
     for (size_t i = 0; i < 10; ++i) {
         struct Event value;
         size_t rt_size = 0;
-        DEQUEUE_CHECK(dequeue_pop_front(dequeue, &value, sizeof(value), &rt_size));
+        DEQUEUE_CHECK(deque_pop_front(deque, &value, sizeof(value), &rt_size));
         printf("Value popped from front: %zu : %zu\n", value.event_type, value.index);
     }
-    dequeue_free(dequeue);
+    deque_free(deque);
     return EXIT_SUCCESS;
 }
