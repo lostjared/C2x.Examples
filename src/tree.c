@@ -99,15 +99,15 @@ void insertNode(Node **root, const void *data, size_t bytes, cmp c) {
 }
 
 [[nodiscard]] Node *findNode(Node *root, const void *data, cmp c) {
-    Node **current = &root;
-    while (*current != nullptr) {
-        int res = c(data, (*current)->data);
+    Node *current = root;
+    while (current != nullptr) {
+        int res = c(data, current->data);
         if (res < 0) {
-            current = &(*current)->left;
+            current = current->left;
         } else if (res > 0) {
-            current = &(*current)->right;
+            current = current->right;
         } else {
-            return *current;
+            return current;
         }
     }
     return nullptr;
