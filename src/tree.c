@@ -1,3 +1,8 @@
+/* Binary Search Tree in C23
+ * https://lostsidedead.biz
+ *
+*/
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
