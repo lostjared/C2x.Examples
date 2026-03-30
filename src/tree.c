@@ -12,6 +12,8 @@ typedef struct node {
 typedef int cmp(const void *, const void *);
 
 int compare(const void *a, const void *b) {
+     if(a == nullptr && b == nullptr)
+	     return 0;
      if(a == nullptr)
 	     return -1;
      if(b == nullptr)
@@ -96,8 +98,8 @@ void insertNode(Node **root, const void *data, size_t bytes, cmp c) {
     *current = createNode(data, bytes);
 }
 
-[[nodiscard]] Node *findNode(Node **root, const void *data, cmp c) {
-    Node **current = root;
+[[nodiscard]] Node *findNode(Node *root, const void *data, cmp c) {
+    Node **current = &root;
     while (*current != nullptr) {
         int res = c(data, (*current)->data);
         if (res < 0) {
@@ -115,17 +117,17 @@ int main(void) {
     Node *root = nullptr;
     static constexpr unsigned int BUFFER_SIZE = 4096;
     while (true) {
-        char buffer[BUFFER_SIZE] = {9};
+        char buffer[BUFFER_SIZE];
         printf("Enter text (exit to quit): ");
         if (fgets(buffer, BUFFER_SIZE - 1, stdin)) {
             buffer[strcspn(buffer, "\n")] = 0;
             if (strcmp(buffer, "exit") == 0) {
                 break;
             }
-            insertNode(&root, (void *)buffer, strlen(buffer) + 1, compare);
+            insertNode(&root, buffer, strlen(buffer) + 1, compare);
         }
     }
-    Node *f = findNode(&root, (void *)"Hello", compare);
+    Node *f = findNode(root, "Hello", compare);
     if (f != nullptr) {
         printf("%s World!\n", (char *)f->data);
     }
