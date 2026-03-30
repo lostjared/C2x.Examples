@@ -1,34 +1,40 @@
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct node {
-    void *data;
+    char *data;
     size_t bytes;
     struct node *left, *right;
 } Node;
 
-typedef int cmp(const void *, const void *);
+typedef int cmp(const char *, const char *);
 
-int compare(const void *a, const void *b) {
-     if(a == nullptr && b == nullptr)
-	     return 0;
-     if(a == nullptr)
-	     return -1;
-     if(b == nullptr)
-	     return 1;
-     return strcmp((const char *)a, (const char *)b);
+int compare(const char *a, const char *b) {
+    if (a == nullptr && b == nullptr)
+        return 0;
+    if (a == nullptr)
+        return -1;
+    if (b == nullptr)
+        return 1;
+    return strcmp(a, b);
 }
 
-[[nodiscard]] Node *createNode(const void *restrict data, const size_t bytes) {
+[[nodiscard]] Node *createNode(const char *restrict data, const size_t bytes) {
+    if (data == nullptr)
+        return nullptr;
+    if (bytes > SIZE_MAX - sizeof(Node))
+        return nullptr;
+
     Node *n = malloc(sizeof(Node) + bytes);
     if (!n) {
         fprintf(stderr, "Error on allocation\n");
         return nullptr;
     }
     n->left = n->right = nullptr;
-    n->data = (char *)n + sizeof(Node);
+    n->data = (char *)n + sizeof(*n);
     memcpy(n->data, data, bytes);
     n->bytes = bytes;
     return n;
@@ -55,7 +61,7 @@ void printNodes(const Node *root) {
         return;
     size_t cap_size = 128;
     size_t top = 0;
-    const Node **stack = malloc(cap_size * sizeof(Node *));
+    const Node **stack = malloc(cap_size * sizeof(const Node *));
     if (!stack) {
         fprintf(stderr, "Error on allocation.\n");
         return;
@@ -65,7 +71,7 @@ void printNodes(const Node *root) {
         while (curr != nullptr) {
             if (top >= cap_size) {
                 cap_size *= 2;
-                const Node **temp = realloc(stack, cap_size * sizeof(Node *));
+                const Node **temp = realloc(stack, cap_size * sizeof(const Node *));
                 if (!temp) {
                     fprintf(stderr, "Fatal out of memory\n");
                     free(stack);
@@ -77,13 +83,13 @@ void printNodes(const Node *root) {
             curr = curr->left;
         }
         curr = stack[--top];
-        printf("Data: %s\n", (const char *)curr->data);
+        printf("Data: %s\n", curr->data);
         curr = curr->right;
     }
     free(stack);
 }
 
-void insertNode(Node **root, const void *data, size_t bytes, cmp c) {
+bool insertNode(Node **root, const char *data, size_t bytes, cmp c) {
     Node **current = root;
     while (*current != nullptr) {
         int res = c(data, (*current)->data);
@@ -92,13 +98,18 @@ void insertNode(Node **root, const void *data, size_t bytes, cmp c) {
         } else if (res > 0) {
             current = &(*current)->right;
         } else {
-            return;
+            return true;
         }
     }
-    *current = createNode(data, bytes);
+    Node *temp = createNode(data, bytes);
+    if (temp == nullptr) {
+        return false;
+    }
+    *current = temp;
+    return true;
 }
 
-[[nodiscard]] Node *findNode(Node *root, const void *data, cmp c) {
+[[nodiscard]] Node *findNode(Node *root, const char *data, cmp c) {
     Node *current = root;
     while (current != nullptr) {
         int res = c(data, current->data);
@@ -119,17 +130,21 @@ int main(void) {
     while (true) {
         char buffer[BUFFER_SIZE];
         printf("Enter text (exit to quit): ");
-        if (fgets(buffer, BUFFER_SIZE - 1, stdin)) {
-            buffer[strcspn(buffer, "\n")] = 0;
-            if (strcmp(buffer, "exit") == 0) {
-                break;
-            }
-            insertNode(&root, buffer, strlen(buffer) + 1, compare);
+        if (fgets(buffer, BUFFER_SIZE, stdin) == nullptr)
+            break;
+
+        buffer[strcspn(buffer, "\n")] = 0;
+        if (strcmp(buffer, "exit") == 0)
+            break;
+        if (!insertNode(&root, buffer, strlen(buffer) + 1, compare)) {
+            fprintf(stderr, "Node insertion failed.\n");
+            freeNodes(root);
+            return EXIT_FAILURE;
         }
     }
     Node *f = findNode(root, "Hello", compare);
     if (f != nullptr) {
-        printf("%s World!\n", (char *)f->data);
+        printf("%s World!\n", f->data);
     }
     printNodes(root);
     freeNodes(root);
