@@ -55,7 +55,7 @@ bool heap_insert(Heap *heap, void *data) {
 		new_cap = heap->capacity * 2;
 	}
 
-	if(new_cap > SIZE_MAX / sizeof(void *))
+	if(new_cap > SIZE_MAX / sizeof(*heap->tree))
 		return false;
 	
         void **temp = realloc(heap->tree, new_cap * sizeof(void *));
