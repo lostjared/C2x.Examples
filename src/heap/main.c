@@ -17,9 +17,9 @@ int main(void) {
     srand((unsigned int)time(nullptr));
     Heap heap;
     size_t values[10];
-    if(!heap_init(&heap, compare, nullptr)) {
-	    fprintf(stderr, "Could not init heap.\n");
-	    return EXIT_FAILURE;
+    if (!heap_init(&heap, compare, nullptr)) {
+        fprintf(stderr, "Could not init heap.\n");
+        return EXIT_FAILURE;
     }
     for (size_t i = 0; i < 10; ++i) {
         values[i] = (size_t)rand() % 255;

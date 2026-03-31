@@ -6,13 +6,14 @@
 
 typedef struct {
     size_t size;
+    size_t capacity;
     int (*compare)(const void *, const void *);
     void (*destroy)(void *);
     void **tree;
 } Heap;
 
 static inline size_t heap_parent(size_t npos) {
-    return ((npos - 1) / 2);
+    return npos ? ((npos - 1) / 2) : 0;
 }
 
 static inline size_t heap_left(size_t npos) {
