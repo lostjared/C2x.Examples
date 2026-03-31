@@ -1,6 +1,7 @@
 #include "heap.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 static constexpr size_t HEAP_DEFAULT_SIZE = 32;
 
@@ -43,9 +44,21 @@ bool heap_insert(Heap *heap, void *data) {
     if (heap == nullptr || data == nullptr || heap->compare == nullptr)
         return false;
 
-    if (heap->size + 1 > heap->capacity) {
-        size_t new_cap = heap->capacity ? heap->capacity * 2 : 1;
-        void **temp = realloc(heap->tree, new_cap * sizeof(void *));
+    if (heap->size == heap->capacity) {
+	size_t new_cap = heap->capacity ? heap->capacity * 2 : 1;
+
+	if(heap->capacity == 0) {
+		new_cap = 1;
+	} else {
+		if(heap->capacity > SIZE_MAX / 2)
+			return false;
+		new_cap = heap->capacity * 2;
+	}
+
+	if(new_cap > SIZE_MAX / sizeof(*heap->tree))
+		return false;
+	
+        void **temp = realloc(heap->tree, new_cap * sizeof(*heap->tree));
         if (temp == nullptr)
             return false;
         heap->tree = temp;
