@@ -29,7 +29,7 @@ int main(void) {
             return EXIT_FAILURE;
         }
     }
-    void *value = 0;
+    void *value = nullptr;
     for (size_t i = 0; i < 10; ++i) {
         if (!heap_extract(&heap, &value)) {
             fprintf(stderr, "Error extracting from heap..\n");
