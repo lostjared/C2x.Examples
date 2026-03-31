@@ -32,6 +32,11 @@ void destroy(void *ptr) {
     free(ptr);
 }
 
+void print(const void *ptr) {
+	if(ptr != nullptr)
+		printf("\theap value -> [%s]\n", (const char *)ptr);
+}
+
 int main(void) {
     Heap heap;
     if (!heap_init(&heap, compare, destroy)) {
@@ -72,7 +77,10 @@ int main(void) {
             return EXIT_FAILURE;
         }
         printf("Extracted from heap #%zu: %s\n", i, (const char *)buffer);
-        destroy(buffer); // clean up
+	destroy(buffer);
+	printf("Left in Heap: {\n");
+	heap_print(&heap, print);
+	printf("}\n");
     }
     heap_destroy(&heap);
     return EXIT_SUCCESS;
