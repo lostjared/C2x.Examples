@@ -30,5 +30,4 @@ extern bool heap_insert(Heap *heap, void *data);
 extern bool heap_extract(Heap *heap, void **data);
 extern void heap_print(Heap *heap, void (*print)(const void *));
 
-
 #endif

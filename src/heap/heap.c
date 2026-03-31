@@ -42,11 +42,11 @@ void heap_destroy(Heap *heap) {
 }
 
 void heap_print(Heap *heap, void (*print)(const void *)) {
-	if(heap == nullptr || print == nullptr)
-		return;
-	for(size_t i = 0; i < heap->size; ++i) {
-		print(heap->tree[i]);
-	}
+    if (heap == nullptr || print == nullptr)
+        return;
+    for (size_t i = 0; i < heap->size; ++i) {
+        print(heap->tree[i]);
+    }
 }
 
 bool heap_insert(Heap *heap, void *data) {
