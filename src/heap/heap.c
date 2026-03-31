@@ -1,6 +1,5 @@
 #include "heap.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 bool heap_init(Heap *heap, int (*compare)(const void *, const void *), void (*destroy)(void *)) {
@@ -31,12 +30,10 @@ void heap_destroy(Heap *heap) {
 bool heap_insert(Heap *heap, void *data) {
     if (heap == nullptr || data == nullptr || heap->compare == nullptr)
         return false;
-    void **temp = nullptr;
-    if ((temp = realloc(heap->tree, (heap->size + 1) * sizeof(void *))) == nullptr) {
+    void **temp = realloc(heap->tree, (heap->size + 1) * sizeof(void *)); 
+    if(temp == nullptr)
         return false;
-    } else {
-        heap->tree = temp;
-    }
+    heap->tree = temp; 
     heap->tree[heap->size] = data;
     size_t ipos = heap->size;
     void *t_temp = nullptr;
@@ -47,17 +44,14 @@ bool heap_insert(Heap *heap, void *data) {
 	t_temp = heap->tree[parent];
         heap->tree[parent] = heap->tree[ipos];
         heap->tree[ipos] = t_temp;
-        ipos = parent;
-        parent = heap_parent(ipos);
+        ipos = parent;       
     }
     ++heap->size;
     return true;
 }
 
 bool heap_extract(Heap *heap, void **data) {
-    if (heap == nullptr || data == nullptr || heap->compare == nullptr)
-        return false;
-    if (heap->size == 0)
+    if (heap == nullptr || data == nullptr || heap->compare == nullptr || heap->size == 0)
         return false;
     void *ptemp = heap->tree[0];
     void *s = heap->tree[heap->size - 1];
@@ -77,7 +71,7 @@ bool heap_extract(Heap *heap, void **data) {
         size_t l = heap_left(i);
         size_t r = heap_right(i);
 	size_t m =  i;
-        if (l < heap->size && heap->compare(heap->tree[l], heap->tree[i]) > 0) 
+        if (l < heap->size && heap->compare(heap->tree[l], heap->tree[m]) > 0) 
             m = l;
 	if (r < heap->size && heap->compare(heap->tree[r], heap->tree[m]) > 0) 
 	    m = r;
