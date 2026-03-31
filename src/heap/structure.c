@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +28,12 @@ char *f_getline(char *buffer, size_t bytes, FILE *fptr) {
         while ((ch = fgetc(fptr)) != '\n' && ch != EOF) {
         }
     }
+
+    position = strchr(buffer, '\r');
+    if (position != nullptr) {
+        *position = '\0';
+    }
+
     return ret;
 }
 
@@ -48,32 +55,46 @@ bool read_file(const char *restrict filename, Heap *heap) {
     if (filename == nullptr || heap == nullptr || heap->compare == nullptr)
         return false;
 
-    FILE *fptr = fopen(filename, "rb");
+    FILE *fptr = fopen(filename, "r");
     if (fptr == nullptr) {
         fprintf(stderr, "Error could not open: %s\n", filename);
         return false;
     }
-    char player[512];
-    while (f_getline(player, 255, fptr)) {
-        char *pos = strchr(player, ':');
-        if (pos != nullptr) {
-            char *p = pos + 1;
-            size_t num = strtoull(p, nullptr, 0);
-            *pos = 0;
-            printf("%s : %zu\n", player, num);
-            Score *s = malloc(sizeof(*s));
-            if (s == nullptr) {
-                fprintf(stderr, "Error on allocation %s.\n", strerror(errno));
-                return false;
-            }
-            strncpy(s->player, player, 255);
-            s->player[strlen(player)] = 0;
-            s->score = num;
-            if (!heap_insert(heap, s)) {
-                fprintf(stderr, "Error on allocation: %s\n", strerror(errno));
-                heap_destroy(heap);
-                return false;
-            }
+    char line_input[512];
+    while (f_getline(line_input, sizeof(line_input), fptr)) {
+        char *pos = strchr(line_input, ':');
+
+        if (pos == nullptr) {
+            fprintf(stderr, "Malformed input, use format PlayerName:Score\n");
+            fclose(fptr);
+            return false;
+        }
+
+        char *p = pos + 1;
+        char *e = nullptr;
+        errno = 0;
+        auto value = strtoull(p, &e, 10);
+        *pos = 0;
+        if (e == p || *e != '\0' || errno == ERANGE || value > SIZE_MAX) {
+            fprintf(stderr, "Error on conversion in source file: %s.\n", filename);
+            fclose(fptr);
+            return false;
+        }
+        size_t num = (size_t)value;
+        Score *s = malloc(sizeof(*s));
+        if (s == nullptr) {
+            fprintf(stderr, "Error on allocation.\n");
+            fclose(fptr);
+            return false;
+        }
+        strncpy(s->player, line_input, sizeof(s->player) - 1);
+        s->player[sizeof(s->player) - 1] = 0;
+        s->score = num;
+        if (!heap_insert(heap, s)) {
+            fprintf(stderr, "Error on allocation.\n");
+            free(s);
+            fclose(fptr);
+            return false;
         }
     }
     fclose(fptr);
@@ -81,6 +102,10 @@ bool read_file(const char *restrict filename, Heap *heap) {
 }
 
 bool extract_from_heap(Heap *heap) {
+
+    if (heap == nullptr)
+        return false;
+
     while (heap->size > 0) {
         void *temp = nullptr;
         if (!heap_extract(heap, &temp)) {
@@ -102,17 +127,21 @@ int main(int argc, char **argv) {
         }
         for (int i = 1; i < argc; ++i) {
             if (!read_file(argv[i], &heap)) {
-                fprintf(stderr, "Error reading file..\n");
-                heap_destroy(&heap);
-                return EXIT_FAILURE;
-            }
-            if (!extract_from_heap(&heap)) {
-                fprintf(stderr, "Error on extration.\n");
+                fprintf(stderr, "Error reading file.\n");
                 heap_destroy(&heap);
                 return EXIT_FAILURE;
             }
         }
+        if (!extract_from_heap(&heap)) {
+            fprintf(stderr, "Error on extraction.\n");
+            heap_destroy(&heap);
+            return EXIT_FAILURE;
+        }
+
         heap_destroy(&heap);
+    } else {
+        fprintf(stderr, "No file names provided. Nothing to do.\n");
+        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;

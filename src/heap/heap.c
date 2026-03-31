@@ -54,8 +54,7 @@ bool heap_insert(Heap *heap, void *data) {
         return false;
 
     if (heap->size == heap->capacity) {
-        size_t new_cap = heap->capacity ? heap->capacity * 2 : 1;
-
+        size_t new_cap = 0;
         if (heap->capacity == 0) {
             new_cap = 1;
         } else {

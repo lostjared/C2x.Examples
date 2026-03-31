@@ -45,25 +45,22 @@ int main(void) {
     }
     printf("Enter 10 strings: \n");
     for (size_t i = 0; i < 10; ++i) {
-        char *temp = malloc(sizeof(char) * 255);
+        char *temp = malloc(sizeof(char) * 256);
         if (temp == nullptr) {
             fprintf(stderr, "Error on allocation.\n");
             heap_destroy(&heap);
             return EXIT_FAILURE;
         }
-        printf("String #%zu:", i);
-        if (!f_getline(temp, 255, stdin)) {
+        printf("String #%zu:", i+1);
+        if (!f_getline(temp, 256, stdin)) {
             fprintf(stderr, "Error on getline no data.\n");
-            heap_destroy(&heap);
-            return EXIT_FAILURE;
-        }
-        if (temp == nullptr) {
-            fprintf(stderr, "Error on allocation of memory.\n");
+            free(temp);
             heap_destroy(&heap);
             return EXIT_FAILURE;
         }
         if (!heap_insert(&heap, temp)) {
-            fprintf(stderr, "Error on insert..\n");
+            fprintf(stderr, "Error on insert.\n");
+            free(temp);
             heap_destroy(&heap);
             return EXIT_FAILURE;
         }
@@ -76,7 +73,7 @@ int main(void) {
             heap_destroy(&heap);
             return EXIT_FAILURE;
         }
-        printf("Extracted from heap #%zu: %s\n", i, (const char *)buffer);
+        printf("Extracted from heap #%zu: %s\n", i+1, (const char *)buffer);
         destroy(buffer);
         printf("Left in Heap: {\n");
         heap_print(&heap, print);
