@@ -87,6 +87,7 @@ add_executable(hash-oa-count  src/hashtable/open_address/oa_hashtable.c src/hash
 add_executable(object-test src/object/object.c src/object/main.c)
 add_executable(heap-test src/heap/heap.c src/heap/main.c)
 add_executable(heap-test2 src/heap/heap.c src/heap/test.c)
+add_executable(heap-struct src/heap/heap.c src/heap/structure.c)
 if(UNIX)
 add_executable(socket_server src/network/mx_socket.c src/network/socket_server/main.c)
 target_link_libraries(socket_server PRIVATE Threads::Threads)
