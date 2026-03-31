@@ -13,15 +13,14 @@ int compare(const void *a, const void *b) {
     return 0;
 }
 
-void destroy(void *ptr) {
-    free(ptr);
-}
-
 int main(void) {
     srand((unsigned int)time(nullptr));
     Heap heap;
     size_t values[10];
-    heap_init(&heap, compare, nullptr);
+    if(!heap_init(&heap, compare, nullptr)) {
+	    fprintf(stderr, "Could not init heap.\n");
+	    return EXIT_FAILURE;
+    }
     for (size_t i = 0; i < 10; ++i) {
         values[i] = (size_t)rand() % 255;
         if (!heap_insert(&heap, &values[i])) {
