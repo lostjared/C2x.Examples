@@ -44,7 +44,7 @@ bool heap_insert(Heap *heap, void *data) {
         return false;
 
     if (heap->size + 1 > heap->capacity) {
-        size_t new_cap = heap->capacity ? heap->capacity * 2  : 1;
+        size_t new_cap = heap->capacity ? heap->capacity * 2 : 1;
         void **temp = realloc(heap->tree, new_cap * sizeof(void *));
         if (temp == nullptr)
             return false;
@@ -74,16 +74,12 @@ bool heap_extract(Heap *heap, void **data) {
     void *s = heap->tree[heap->size - 1];
     if (heap->size == 1) {
         *data = ptemp;
-        // free(heap->tree);
-        // heap->tree = nullptr;
         heap->size = 0;
         return true;
     }
     heap->tree[0] = s;
     --heap->size;
-
     size_t i = 0;
-
     while (1) {
         size_t l = heap_left(i);
         size_t r = heap_right(i);
@@ -99,12 +95,6 @@ bool heap_extract(Heap *heap, void **data) {
         heap->tree[i] = temp;
         i = m;
     }
-
-    // void **t = realloc(heap->tree, heap->size * sizeof(void *));
-    // if(t != nullptr)
-    //	heap->tree = t;
-
     *data = ptemp;
-
     return true;
 }
