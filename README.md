@@ -43,10 +43,21 @@ The `src` directory also contains smaller focused examples covering topics such 
 
 ## Build
 
+### Build with Release settings
+
 ```sh
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+### Build wit Debug settings
+
+```sh
+mkdir build
+cd build
+cmake .. _DCMAKE_BUILD_TYPE=Debug
 make
 ```
 
