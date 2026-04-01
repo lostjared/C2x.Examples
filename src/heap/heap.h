@@ -30,5 +30,6 @@ extern bool heap_insert(Heap *heap, void *data);
 extern bool heap_extract(Heap *heap, void **data);
 extern bool heap_peek(const Heap *heap, void **data);
 extern void heap_print(const Heap *heap, void (*print)(const void *));
+extern bool heap_sort_ex(void *ptr, size_t count, size_t esize, int (*compare)(const void *, const void *));
 
 #endif
