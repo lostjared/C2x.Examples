@@ -28,6 +28,7 @@ extern bool heap_init(Heap *heap, int (*compare)(const void *, const void *), vo
 extern void heap_destroy(Heap *heap);
 extern bool heap_insert(Heap *heap, void *data);
 extern bool heap_extract(Heap *heap, void **data);
-extern void heap_print(Heap *heap, void (*print)(const void *));
+extern bool heap_peek(const Heap *heap, void **data);
+extern void heap_print(const Heap *heap, void (*print)(const void *));
 
 #endif

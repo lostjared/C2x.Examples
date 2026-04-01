@@ -41,7 +41,7 @@ void heap_destroy(Heap *heap) {
     heap->capacity = 0;
 }
 
-void heap_print(Heap *heap, void (*print)(const void *)) {
+void heap_print(const Heap *heap, void (*print)(const void *)) {
     if (heap == nullptr || print == nullptr)
         return;
     for (size_t i = 0; i < heap->size; ++i) {
@@ -117,5 +117,12 @@ bool heap_extract(Heap *heap, void **data) {
         i = m;
     }
     *data = ptemp;
+    return true;
+}
+
+bool heap_peek(const Heap *heap, void **data) {
+    if (heap == nullptr || data == nullptr || heap->size == 0 || heap->tree == nullptr)
+        return false;
+    *data = heap->tree[0];
     return true;
 }
