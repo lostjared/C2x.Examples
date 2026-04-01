@@ -8,7 +8,7 @@ int compare(const void *a, const void *b) {
     const size_t *ia = a, *ib = b;
     if (*ia < *ib)
         return 1;
-    else if (*ia < *ib)
+    else if (*ia > *ib)
         return -1;
     return 0;
 }
