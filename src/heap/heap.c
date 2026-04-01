@@ -1,5 +1,4 @@
 #include "heap.h"
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -129,8 +128,14 @@ bool heap_peek(const Heap *heap, void **data) {
 }
 
 bool heap_sort_ex(void *ptr, size_t count, size_t esize, int (*compare)(const void *, const void *)) {
-    if (ptr == nullptr || count == 0 || esize == 0 || compare == nullptr)
+    if (ptr == nullptr || esize == 0 || compare == nullptr)
         return false;
+    if (count <= 1)
+        return true;
+
+    if (count > SIZE_MAX / esize)
+        return false;
+
     Heap heap;
     if (!heap_init(&heap, compare, nullptr)) {
         return false;
@@ -161,5 +166,62 @@ bool heap_sort_ex(void *ptr, size_t count, size_t esize, int (*compare)(const vo
     memcpy(ptr, output, esize * count);
     free(output);
     heap_destroy(&heap);
+    return true;
+}
+
+static void swap_e(unsigned char *a, unsigned char *b, size_t esize) {
+    unsigned char temp[256];
+    while (esize > 0) {
+        size_t c = (esize < sizeof(temp)) ? esize : sizeof(temp);
+        memcpy(temp, a, c);
+        memcpy(a, b, c);
+        memcpy(b, temp, c);
+        a += c;
+        b += c;
+        esize -= c;
+    }
+}
+
+static void shift_down(unsigned char *base, size_t start, size_t end, size_t esize, int (*compare)(const void *, const void *)) {
+    size_t root = start;
+    while ((root * 2) + 1 <= end) {
+        size_t c = (root * 2) + 1;
+        size_t i = root;
+        if (compare(base + (i * esize), base + (c * esize)) > 0) {
+            i = c;
+        }
+        if (c + 1 <= end && compare(base + (i * esize), base + ((c + 1) * esize)) > 0) {
+            i = c + 1;
+        }
+        if (i == root)
+            return;
+        else {
+            swap_e(base + (root * esize), base + (i * esize), esize);
+            root = i;
+        }
+    }
+}
+
+bool heap_sort_t(void *ptr, size_t count, size_t esize, int (*compare)(const void *, const void *)) {
+    if (ptr == nullptr || esize == 0 || compare == nullptr)
+        return false;
+    if (count <= 1)
+        return true;
+
+    unsigned char *ptr_b = ptr;
+    size_t start = (count - 2) / 2;
+    while (1) {
+        shift_down(ptr_b, start, count - 1, esize, compare);
+        if (start == 0)
+            break;
+        --start;
+    }
+
+    size_t end = count - 1;
+    while (end > 0) {
+        swap_e(ptr_b, ptr_b + (end * esize), esize);
+        --end;
+        shift_down(ptr_b, 0, end, esize, compare);
+    }
     return true;
 }
