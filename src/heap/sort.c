@@ -110,10 +110,10 @@ int main(int argc, char **argv) {
             fclose(fptr);
         }
     }
-    if(!echo_empty_out(&heap)) {
-	    fprintf(stderr, "Error on listing heap.\n");
-	    heap_destroy(&heap);
-	    return EXIT_FAILURE;
+    if (!echo_empty_out(&heap)) {
+        fprintf(stderr, "Error on listing heap.\n");
+        heap_destroy(&heap);
+        return EXIT_FAILURE;
     }
     heap_destroy(&heap);
     return EXIT_SUCCESS;

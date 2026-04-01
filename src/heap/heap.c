@@ -41,7 +41,6 @@ void heap_destroy(Heap *heap) {
     heap->capacity = 0;
 }
 
-
 void heap_print(Heap *heap, void (*print)(const void *)) {
     if (heap == nullptr || print == nullptr)
         return;

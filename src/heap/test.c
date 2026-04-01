@@ -51,7 +51,7 @@ int main(void) {
             heap_destroy(&heap);
             return EXIT_FAILURE;
         }
-        printf("String #%zu:", i+1);
+        printf("String #%zu:", i + 1);
         if (!f_getline(temp, 256, stdin)) {
             fprintf(stderr, "Error on getline no data.\n");
             free(temp);
@@ -73,7 +73,7 @@ int main(void) {
             heap_destroy(&heap);
             return EXIT_FAILURE;
         }
-        printf("Extracted from heap #%zu: %s\n", i+1, (const char *)buffer);
+        printf("Extracted from heap #%zu: %s\n", i + 1, (const char *)buffer);
         destroy(buffer);
         printf("Left in Heap: {\n");
         heap_print(&heap, print);
