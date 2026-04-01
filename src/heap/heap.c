@@ -128,38 +128,38 @@ bool heap_peek(const Heap *heap, void **data) {
     return true;
 }
 
- bool heap_sort_ex(void *ptr, size_t count, size_t esize, int (*compare)(const void *, const void *)) {
-    if(ptr == nullptr || count == 0 || esize == 0 || compare == nullptr)
+bool heap_sort_ex(void *ptr, size_t count, size_t esize, int (*compare)(const void *, const void *)) {
+    if (ptr == nullptr || count == 0 || esize == 0 || compare == nullptr)
         return false;
     Heap heap;
-    if(!heap_init(&heap, compare, nullptr)) {
+    if (!heap_init(&heap, compare, nullptr)) {
         return false;
     }
     unsigned char *values = ptr;
-    unsigned char *output = malloc (count * esize);
-    if(output == nullptr) {
+    unsigned char *output = malloc(count * esize);
+    if (output == nullptr) {
         heap_destroy(&heap);
         return false;
     }
-    for(size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         void *e = (values + (i * esize));
-        if(!heap_insert(&heap, e)) {
+        if (!heap_insert(&heap, e)) {
             heap_destroy(&heap);
             free(output);
             return false;
         }
     }
-    for(size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         void *tmp = nullptr;
-        if(!heap_extract(&heap, &tmp)) {
+        if (!heap_extract(&heap, &tmp)) {
             heap_destroy(&heap);
             free(output);
             return false;
         }
-        memcpy(output + (i * esize), tmp , esize);
+        memcpy(output + (i * esize), tmp, esize);
     }
     memcpy(ptr, output, esize * count);
     free(output);
     heap_destroy(&heap);
     return true;
- }
+}
