@@ -89,7 +89,6 @@ void print(Matrix *matrix) {
     }
 }
 
-
 bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
     if (graph == nullptr || graph->matrix == nullptr || start < 0 || (size_t)start >= graph->num || destination < 0 || (size_t)destination >= graph->num) {
         fprintf(stderr, "Invalid graph dimensions or target.\n");
@@ -103,8 +102,8 @@ bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
 
     if (!dist || !prev || !visited) {
         free(dist);
-       	free(prev); 
-	free(visited);
+        free(prev);
+        free(visited);
         return false;
     }
     for (size_t i = 0; i < num; ++i) {
@@ -128,10 +127,10 @@ bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
         if (u == -1 || min_dist == INFINITE) {
             break;
         }
- 	visited[u] = true;
-	for (size_t v = 0; v < num; ++v) {
-            int weight = get_weight(graph, (size_t) u, v);
-   	    if (!visited[v] && weight != NO_EDGE && dist[u] + weight < dist[v]) {
+        visited[u] = true;
+        for (size_t v = 0; v < num; ++v) {
+            int weight = get_weight(graph, (size_t)u, v);
+            if (!visited[v] && weight != NO_EDGE && dist[u] + weight < dist[v]) {
                 dist[v] = dist[u] + weight;
                 prev[v] = u;
             }
@@ -178,7 +177,6 @@ bool generate_test_matrix(Matrix *mat, size_t num, unsigned int seed) {
     }
     return true;
 }
-
 
 int main(void) {
     size_t node_count = 50;
