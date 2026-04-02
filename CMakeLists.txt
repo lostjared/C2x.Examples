@@ -29,6 +29,20 @@ elseif (CMAKE_C_COMPILER_ID STREQUAL "Clang")
 add_compile_options(-Wno-unknown-attributes)
 message(STATUS "using Clang")
 endif()
+option(WITH_SDL "Use SDL" OFF)
+if(WITH_SDL)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+add_executable(graph-path src/graph/visual-graph.c)
+target_link_libraries(graph-path PRIVATE SDL2::SDL2 SDL2_ttf::SDL2_ttf m)
+add_custom_command(TARGET graph-path POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/src/graph/font.ttf"
+        "$<TARGET_FILE_DIR:graph-path>/font.ttf"
+    COMMENT "Copying font.ttf to build directory"
+)
+endif()
+
 add_executable(helloworld src/helloworld.c)
 add_executable(hash-test src/hash.c)
 add_executable(sort-test src/sort.c)
