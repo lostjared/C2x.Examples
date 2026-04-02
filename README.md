@@ -20,11 +20,13 @@ The repository includes both topic-based folders and standalone source files.
 
 - `src/deque` - deque implementation experiments
 - `src/getline` - input and line-reading utilities
+- 'src/graph' - Graph related
 - `src/hashtable` - hash table work
 - `src/heap` - heap and heap-based sorting experiments
 - `src/llist` - linked list implementations
 - `src/network` - socket and networking examples
 - `src/set` - set data structure work
+- 'src/sort' - sortting related full generic quicksort implementation  etc.
 - `src/stack` - stack implementations
 
 ### Standalone examples
@@ -40,7 +42,8 @@ The `src` directory also contains smaller focused examples covering topics such 
 - function attributes and related language features
 - object-style struct patterns
 - tracing and logging experiments
-
+- graph/visual shortest path
+ 
 ## Build
 
 ### Build with Release settings
