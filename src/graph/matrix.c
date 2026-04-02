@@ -170,7 +170,7 @@ bool generate_test_matrix(Matrix *mat, size_t num, unsigned int seed) {
         for (int j = 0; j < extra_edges; ++j) {
             size_t target = (size_t)rand() % num;
             if (target != i) {
-                int weight = (int)(rand() % 20) + 1;
+                int weight = (rand() % 20) + 1;
                 add_edge(mat, i, target, weight, false);
             }
         }
