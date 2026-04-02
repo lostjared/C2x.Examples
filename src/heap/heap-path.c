@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 static const int INFINITE = 1e9;
 
 typedef struct {
@@ -10,10 +11,8 @@ typedef struct {
 } GNode;
 
 int compare(const void *a, const void *b) {
-
     const GNode *ia = a;
     const GNode *ib = b;
-
     if (ia->distance < ib->distance)
         return 1;
     if (ia->distance > ib->distance)
@@ -72,7 +71,6 @@ bool dijkstra(const Node *graph, size_t num, int start, int destination) {
         int u = current->vertex;
         int d = current->distance;
         free(current);
-
         if (d > dist[u])
             continue;
         for (int i = 0; i < graph[u].ec; ++i) {
@@ -96,7 +94,6 @@ bool dijkstra(const Node *graph, size_t num, int start, int destination) {
             }
         }
     }
-
     if (dist[destination] == INFINITE) {
         printf("No path exists from %d to %d\n", start, destination);
     } else {
