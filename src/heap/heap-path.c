@@ -122,12 +122,9 @@ Node *generate_test_graph(size_t num, unsigned int seed) {
     for (size_t i = 0; i < num; ++i) {
         int ec = (i == num - 1) ? 0 : (rand() % 4) + 2;
         graph[i].ec = ec;
-
         if (ec > 0) {
             graph[i].e = malloc((size_t)ec * sizeof(Edge));
-
             graph[i].e[0] = (Edge){(int)i + 1, (rand() % 10) + 1};
-
             for (int j = 1; j < ec; ++j) {
                 int target = rand() % (int)num;
                 int weight = (rand() % 20) + 1;

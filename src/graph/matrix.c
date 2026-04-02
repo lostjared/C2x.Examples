@@ -45,10 +45,8 @@ void free_matrix(Matrix *matrix) {
 }
 
 bool add_edge(Matrix *matrix, size_t from, size_t to, int weight, bool directed) {
-
     if (matrix == nullptr || matrix->matrix == nullptr)
         return false;
-
     if (from >= matrix->num || to >= matrix->num) {
         fprintf(stderr, "Index out of range.\n");
         return false;
@@ -94,13 +92,11 @@ bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
         fprintf(stderr, "Invalid graph dimensions or target.\n");
         return false;
     }
-
     size_t num = graph->num;
     int *dist = malloc(num * sizeof(int));
     int *prev = malloc(num * sizeof(int));
     bool *visited = malloc(num * sizeof(bool));
-
-    if (!dist || !prev || !visited) {
+    if (dist == nullptr || prev == nullptr || visited == nullptr) {
         free(dist);
         free(prev);
         free(visited);
@@ -111,19 +107,16 @@ bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
         prev[i] = -1;
         visited[i] = false;
     }
-
     dist[start] = 0;
     for (size_t count = 0; count < num; ++count) {
         int min_dist = INFINITE;
         int u = -1;
-
         for (size_t i = 0; i < num; ++i) {
             if (!visited[i] && dist[i] <= min_dist) {
                 min_dist = dist[i];
                 u = (int)i;
             }
         }
-
         if (u == -1 || min_dist == INFINITE) {
             break;
         }
@@ -136,7 +129,6 @@ bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
             }
         }
     }
-
     if (dist[destination] == INFINITE) {
         printf("No path exists from %d to %d\n", start, destination);
     } else {
@@ -148,7 +140,6 @@ bool dijkstra_matrix(const Matrix *graph, int start, int destination) {
         }
         printf("\nTotal distance: %d\n", dist[destination]);
     }
-
     free(dist);
     free(prev);
     free(visited);
@@ -160,12 +151,10 @@ bool generate_test_matrix(Matrix *mat, size_t num, unsigned int seed) {
     if (!init_matrix(mat, num)) {
         return false;
     }
-
     for (size_t i = 0; i < num; ++i) {
         if (i < num - 1) {
             add_edge(mat, i, i + 1, (rand() % 10) + 1, false);
         }
-
         int extra_edges = rand() % 3;
         for (int j = 0; j < extra_edges; ++j) {
             size_t target = (size_t)rand() % num;
