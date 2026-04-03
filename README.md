@@ -43,7 +43,7 @@ The `src` directory also contains smaller focused examples covering topics such 
 - function attributes and related language features
 - object-style struct patterns
 - tracing and logging experiments
-- graph/visualizatino of shortest path
+- graph/visualization of shortest path
  
 ## Build
 
