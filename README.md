@@ -24,9 +24,9 @@ The repository includes both topic-based folders and standalone source files.
 - `src/hashtable` - hash table work
 - `src/heap` - heap and heap-based sorting experiments
 - `src/llist` - linked list implementations
-- `src/merge_sort` - merge sort example
+- `src/mergesort` - merge sort example
 - `src/network` - socket and networking examples
-- `src/quick_sort` - quick sort implementation
+- `src/quicksort` - quick sort implementation
 - `src/set` - set data structure work
 - `src/stack` - stack implementations
 
