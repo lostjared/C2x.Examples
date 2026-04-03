@@ -119,6 +119,12 @@ PathResult dijkstra(const Matrix *graph, int start, int destination) {
         for (int c = destination; c != -1; c = prev[c])
             len++;
         result.path = malloc((size_t)len * sizeof(int));
+        if (result.path == nullptr) {
+            free(dist);
+            free(prev);
+            free(visited);
+            return result;
+        }
         result.path_len = len;
         int idx = len - 1;
         for (int c = destination; c != -1; c = prev[c])
@@ -259,16 +265,36 @@ int main(void) {
     Matrix mat;
     if (!generate_test_matrix(&mat, node_count, seed)) {
         fprintf(stderr, "Failed to generate graph.\n");
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	TTF_Quit();
-	SDL_Quit();
+        if (font_lg != font)
+            TTF_CloseFont(font_lg);
+        TTF_CloseFont(font);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        TTF_Quit();
+        SDL_Quit();
         return EXIT_FAILURE;
     }
 
     PathResult path = dijkstra(&mat, start_node, target_node);
     bool *on_path = calloc(node_count, sizeof(bool));
     bool *path_edge = calloc(node_count * node_count, sizeof(bool));
+    Vec2 *positions = malloc(node_count * sizeof(Vec2));
+    if (on_path == nullptr || path_edge == nullptr || positions == nullptr) {
+        fprintf(stderr, "Failed to allocate memory.\n");
+        free(on_path);
+        free(path_edge);
+        free(positions);
+        free(path.path);
+        free_matrix(&mat);
+        if (font_lg != font)
+            TTF_CloseFont(font_lg);
+        TTF_CloseFont(font);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        TTF_Quit();
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
     if (path.path != nullptr && path.path_len > 0) {
         for (int i = 0; i < path.path_len; i++)
             on_path[path.path[i]] = true;
@@ -279,7 +305,6 @@ int main(void) {
             path_edge[b * node_count + a] = true;
         }
     }
-    Vec2 *positions = malloc(node_count * sizeof(Vec2));
     float cx = WINDOW_WIDTH / 2.0f;
     float cy = WINDOW_HEIGHT / 2.0f + 20.0f;
     float layout_r = fminf(cx, cy) - 60.0f;
@@ -305,11 +330,20 @@ int main(void) {
                     free(path_edge);
 
                     seed = (unsigned int)time(nullptr) ^ (unsigned int)rand();
-                    generate_test_matrix(&mat, node_count, seed);
+                    if (!generate_test_matrix(&mat, node_count, seed)) {
+                        fprintf(stderr, "Failed to regenerate graph.\n");
+                        running = false;
+                        break;
+                    }
                     path = dijkstra(&mat, start_node, target_node);
 
                     on_path = calloc(node_count, sizeof(bool));
                     path_edge = calloc(node_count * node_count, sizeof(bool));
+                    if (on_path == nullptr || path_edge == nullptr) {
+                        fprintf(stderr, "Failed to allocate memory.\n");
+                        running = false;
+                        break;
+                    }
                     if (path.path != nullptr && path.path_len > 0) {
                         for (int i = 0; i < path.path_len; i++)
                             on_path[path.path[i]] = true;
