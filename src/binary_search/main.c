@@ -59,7 +59,7 @@ void free_buffer(char **buffer, size_t arr_size) {
 static constexpr size_t MAX_LINE = 4096;
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
+    if (argc < 3) {
         fprintf(stderr, "Error requires 2 arguments.\n%s /usr/share/dict/words textfile.txt\n", argv[0]);
         return EXIT_FAILURE;
     }
@@ -103,51 +103,55 @@ int main(int argc, char **argv) {
         }
     }
     fclose(fptr);
-    FILE *in_f = fopen(argv[2], "r");
-    if (in_f == nullptr) {
-        fprintf(stderr, "Error opening text file.\n");
-        free_buffer(buffer, arr_size);
-        return EXIT_FAILURE;
-    }
+    printf("Dictionary loaded with %zu words.\n", index);
     qsort(buffer, index, sizeof(char *), compare_str);
 
-    char data[MAX_LINE] = {};
-    size_t bytes = 0;
-    size_t word_index = 0;
-    size_t line = 1;
-    char max_word[MAX_LINE] = {};
+    for (int file = 2; file < argc; file++) {
+        FILE *in_f = fopen(argv[file], "r");
+        if (in_f == nullptr) {
+            fprintf(stderr, "Error opening text file.\n");
+            free_buffer(buffer, arr_size);
+            return EXIT_FAILURE;
+        }
 
-    while ((bytes = fread(data, 1, MAX_LINE - 1, in_f)) > 0) {
-        data[bytes] = 0;
-        size_t len = strlen(data);
-        for (size_t i = 0; i < len; ++i) {
-            unsigned char c = (unsigned char)tolower(data[i]);
-            if (c == '\n')
-                ++line;
+        char data[MAX_LINE] = {};
+        size_t bytes = 0;
+        size_t word_index = 0;
+        size_t line = 1;
+        char max_word[MAX_LINE] = {};
 
-            if (isalnum(c)) {
-                if (word_index < MAX_LINE - 1) {
-                    max_word[word_index++] = (char)c;
-                    max_word[word_index] = 0;
-                }
-            } else {
-                if (word_index > 0) {
-                    if (word_index > 1) {
-                        if (!spell(buffer, sizeof(char *), index, max_word)) {
-                            printf("Incorrect English Word: %s on Line: %zu\n", max_word, line);
-                        }
+        while ((bytes = fread(data, 1, MAX_LINE - 1, in_f)) > 0) {
+            data[bytes] = 0;
+            size_t len = strlen(data);
+            for (size_t i = 0; i < len; ++i) {
+                unsigned char c = (unsigned char)tolower(data[i]);
+                if (c == '\n')
+                    ++line;
+
+                if (isalnum(c)) {
+                    if (word_index < MAX_LINE - 1) {
+                        max_word[word_index++] = (char)c;
+                        max_word[word_index] = 0;
                     }
-                    word_index = 0;
+                } else {
+                    if (word_index > 0) {
+                        if (word_index > 1) {
+                            if (!spell(buffer, sizeof(char *), index, max_word)) {
+                                printf("%s - %s:%zu\n", max_word, argv[file], line);
+                            }
+                        }
+                        word_index = 0;
+                    }
                 }
             }
         }
-    }
-    if (word_index > 1) {
-        if (!spell(buffer, sizeof(char *), index, max_word)) {
-            printf("Incorrect English Word: %s on Line: %zu\n", max_word, line);
+        if (word_index > 1) {
+            if (!spell(buffer, sizeof(char *), index, max_word)) {
+                printf("Incorrect English Word: %s on Line: %zu\n", max_word, line);
+            }
         }
+        fclose(in_f);
     }
     free_buffer(buffer, arr_size);
-    fclose(in_f);
     return EXIT_SUCCESS;
 }
