@@ -60,7 +60,7 @@ static constexpr size_t MAX_LINE = 4096;
 
 int main(int argc, char **argv) {
     if (argc != 3) {
-        fprintf(stderr, "Error requires 3 arguments.\n /usr/share/dict/words textfile.txt\n");
+        fprintf(stderr, "Error requires 2 arguments.\n%s /usr/share/dict/words textfile.txt\n", argv[0]);
         return EXIT_FAILURE;
     }
     char **buffer = nullptr;
