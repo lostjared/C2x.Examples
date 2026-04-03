@@ -21,6 +21,10 @@ void insertion_sort(void *base, size_t count, size_t size, int (*cmp)(const void
 }
 
 static int partition(void *data, size_t esize, int i, int k, int (*compare)(const void *, const void *)) {
+
+    if(data == nullptr || esize == 0 || compare == nullptr)
+        return -1;
+
     char *arr = data;
     void *p_val, *temp;
 
@@ -60,6 +64,10 @@ static int partition(void *data, size_t esize, int i, int k, int (*compare)(cons
 }
 
 bool quick_sort(void *data, size_t size, size_t esize, int i, int k, int (*compare)(const void *, const void *)) {
+
+    if(data == nullptr || size == 0 || esize == 0 || compare == nullptr)
+        return false;
+
     int j = 0;
     while (i < k) {
         if ((j = partition(data, esize, i, k, compare)) < 0)
