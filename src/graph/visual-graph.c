@@ -259,6 +259,10 @@ int main(void) {
     Matrix mat;
     if (!generate_test_matrix(&mat, node_count, seed)) {
         fprintf(stderr, "Failed to generate graph.\n");
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	TTF_Quit();
+	SDL_Quit();
         return EXIT_FAILURE;
     }
 
