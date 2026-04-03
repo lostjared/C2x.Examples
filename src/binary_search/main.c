@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
         size_t len = strlen(data);
         for (size_t i = 0; i < len; ++i) {
             unsigned char c = (unsigned char)tolower(data[i]);
-            if (c == data[i])
+            if (c == '\n')
                 ++line;
 
             if (isalnum(c)) {
