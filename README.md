@@ -17,14 +17,16 @@ This repository is my hands-on study notebook for catching up with modern C afte
 The repository includes both topic-based folders and standalone source files.
 
 ### Topic folders
-
+- `src/binary_search` - binary search (spellcheck)
 - `src/deque` - deque implementation experiments
 - `src/getline` - input and line-reading utilities
 - `src/graph` - Graph related
 - `src/hashtable` - hash table work
 - `src/heap` - heap and heap-based sorting experiments
 - `src/llist` - linked list implementations
+- `src/merge_sort` - merge sort example
 - `src/network` - socket and networking examples
+- `src/quick_sort` - quick sort implementation
 - `src/set` - set data structure work
 - `src/sort` - sortting related full generic quicksort implementation  etc.
 - `src/stack` - stack implementations
