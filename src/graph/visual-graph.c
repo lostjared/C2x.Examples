@@ -1,5 +1,5 @@
-#include <SDL3/SDL.h>
-#include <SDL3_ttf/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -163,7 +163,7 @@ static void compute_circle_layout(Vec2 *pos, size_t num, float cx, float cy, flo
 static void draw_filled_circle(SDL_Renderer *ren, int cx, int cy, int radius) {
     for (int dy = -radius; dy <= radius; dy++) {
         int dx = (int)sqrtf((float)(radius * radius - dy * dy));
-        SDL_RenderLine(ren, (float)(cx - dx), (float)(cy + dy), (float)(cx + dx), (float)(cy + dy));
+        SDL_RenderDrawLine(ren, cx - dx, cy + dy, cx + dx, cy + dy);
     }
 }
 
@@ -176,53 +176,54 @@ static void draw_thick_line(SDL_Renderer *ren, int x1, int y1, int x2, int y2, i
     float nx = -dy / len;
     float ny = dx / len;
     for (int i = -thickness / 2; i <= thickness / 2; i++) {
-        SDL_RenderLine(ren,
-                       (float)(x1 + (int)(nx * (float)i)), (float)(y1 + (int)(ny * (float)i)),
-                       (float)(x2 + (int)(nx * (float)i)), (float)(y2 + (int)(ny * (float)i)));
+        SDL_RenderDrawLine(ren,
+                           x1 + (int)(nx * (float)i), y1 + (int)(ny * (float)i),
+                           x2 + (int)(nx * (float)i), y2 + (int)(ny * (float)i));
     }
 }
 
 static void render_text(SDL_Renderer *ren, TTF_Font *font, const char *text,
                         int x, int y, SDL_Color color) {
-    SDL_Surface *surf = TTF_RenderText_Blended(font, text, 0, color);
+    SDL_Surface *surf = TTF_RenderText_Blended(font, text, color);
     if (surf == nullptr)
         return;
     SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, surf);
     if (tex != nullptr) {
-        SDL_FRect dst = {(float)x, (float)y, (float)surf->w, (float)surf->h};
-        SDL_RenderTexture(ren, tex, nullptr, &dst);
+        SDL_Rect dst = {x, y, surf->w, surf->h};
+        SDL_RenderCopy(ren, tex, nullptr, &dst);
         SDL_DestroyTexture(tex);
     }
-    SDL_DestroySurface(surf);
+    SDL_FreeSurface(surf);
 }
 
 static void render_text_centered(SDL_Renderer *ren, TTF_Font *font, const char *text,
                                  int cx, int cy, SDL_Color color) {
-    SDL_Surface *surf = TTF_RenderText_Blended(font, text, 0, color);
+    SDL_Surface *surf = TTF_RenderText_Blended(font, text, color);
     if (surf == nullptr)
         return;
     SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, surf);
     if (tex != nullptr) {
-        SDL_FRect dst = {(float)(cx - surf->w / 2), (float)(cy - surf->h / 2), (float)surf->w, (float)surf->h};
-        SDL_RenderTexture(ren, tex, nullptr, &dst);
+        SDL_Rect dst = {cx - surf->w / 2, cy - surf->h / 2, surf->w, surf->h};
+        SDL_RenderCopy(ren, tex, nullptr, &dst);
         SDL_DestroyTexture(tex);
     }
-    SDL_DestroySurface(surf);
+    SDL_FreeSurface(surf);
 }
 
 int main(void) {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
-    if (!TTF_Init()) {
-        fprintf(stderr, "TTF_Init failed: %s\n", SDL_GetError());
+    if (TTF_Init() < 0) {
+        fprintf(stderr, "TTF_Init failed: %s\n", TTF_GetError());
         SDL_Quit();
         return EXIT_FAILURE;
     }
 
     SDL_Window *window = SDL_CreateWindow("Dijkstra Shortest Path",
-                                          WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                          WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         fprintf(stderr, "Window creation failed: %s\n", SDL_GetError());
         TTF_Quit();
@@ -230,7 +231,8 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, nullptr);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
+                                                SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr) {
         SDL_DestroyWindow(window);
         TTF_Quit();
@@ -240,7 +242,7 @@ int main(void) {
 
     TTF_Font *font = TTF_OpenFont("font.ttf", FONT_SIZE);
     if (font == nullptr) {
-        fprintf(stderr, "Failed to load font.ttf: %s\n", SDL_GetError());
+        fprintf(stderr, "Failed to load font.ttf: %s\n", TTF_GetError());
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         TTF_Quit();
@@ -289,12 +291,12 @@ int main(void) {
     while (running) {
         SDL_Event ev;
         while (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_EVENT_QUIT)
+            if (ev.type == SDL_QUIT)
                 running = false;
-            if (ev.type == SDL_EVENT_KEY_DOWN) {
-                if (ev.key.key == SDLK_ESCAPE)
+            if (ev.type == SDL_KEYDOWN) {
+                if (ev.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
-                if (ev.key.key == SDLK_R) {
+                if (ev.key.keysym.sym == SDLK_r) {
                     free_matrix(&mat);
                     free(path.path);
                     free(on_path);
@@ -326,9 +328,9 @@ int main(void) {
             for (size_t j = i + 1; j < node_count; ++j) {
                 int w = get_weight(&mat, i, j);
                 if (w != NO_EDGE && w != 0 && !path_edge[i * node_count + j]) {
-                    SDL_RenderLine(renderer,
-                                   positions[i].x, positions[i].y,
-                                   positions[j].x, positions[j].y);
+                    SDL_RenderDrawLine(renderer,
+                                       (int)positions[i].x, (int)positions[i].y,
+                                       (int)positions[j].x, (int)positions[j].y);
                 }
             }
         }
@@ -394,4 +396,3 @@ int main(void) {
     SDL_Quit();
     return EXIT_SUCCESS;
 }
-
