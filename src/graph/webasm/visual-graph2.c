@@ -243,14 +243,19 @@ void proc(void) {
             emscripten_cancel_main_loop();
 #endif
         }
-        if (ev.type == SDL_KEYDOWN) {
+
+	bool pressed = false;
+
+	if(ev.type == SDL_FINGERDOWN)
+		pressed = true;
+        if (ev.type == SDL_KEYDOWN || pressed) {
             if (ev.key.keysym.sym == SDLK_ESCAPE) {
                 running = false;
 #ifdef __EMSCRIPTEN__
                 emscripten_cancel_main_loop();
 #endif
             }
-            if (ev.key.keysym.sym == SDLK_r) {
+            if (ev.key.keysym.sym == SDLK_r || pressed) {
                 free_matrix(&mat);
                 free(path.path);
                 free(on_path);
@@ -325,7 +330,7 @@ void proc(void) {
     char info[256];
     if (path.total_dist >= 0)
         snprintf(info, sizeof(info),
-                 "Shortest Path: %d -> %d  |  Distance: %d  |  R = regenerate  |  ESC = quit",
+                 "Shortest Path: %d -> %d  |  Distance: %d  |  R/Tap = regenerate  |  ESC = quit",
                  start_node, target_node, path.total_dist);
     else
         snprintf(info, sizeof(info),
