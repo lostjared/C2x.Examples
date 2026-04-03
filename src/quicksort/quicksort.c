@@ -64,10 +64,8 @@ static int partition(void *data, size_t esize, int i, int k, int (*compare)(cons
 }
 
 bool quick_sort(void *data, size_t size, size_t esize, int i, int k, int (*compare)(const void *, const void *)) {
-
-    if(data == nullptr || size == 0 || esize == 0 || compare == nullptr)
+    if(data == nullptr || size == 0 || esize == 0 || compare == nullptr || i > k)
         return false;
-
     int j = 0;
     while (i < k) {
         if ((j = partition(data, esize, i, k, compare)) < 0)

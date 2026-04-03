@@ -5,17 +5,13 @@
 #include <string.h>
 
 static bool merge(void *data, size_t esize, size_t i, size_t z, size_t k, int (*cmp)(const void *, const void *)) {
-
-    if (data == nullptr || esize == 0 || cmp == nullptr)
+    if (data == nullptr || esize == 0 || cmp == nullptr || i > z)
         return false;
-
     char *arr = data, *m_ptr;
     size_t i_, z_, m_;
-
     i_ = i;
     z_ = z + 1;
     m_ = 0;
-
     m_ptr = malloc(esize * (size_t)((k - i) + 1));
     if (m_ptr == nullptr)
         return false;
@@ -40,7 +36,6 @@ static bool merge(void *data, size_t esize, size_t i, size_t z, size_t k, int (*
 }
 
 bool merge_sort_ex(void *data, size_t esize, ssize_t i, ssize_t k, int (*cmp)(const void *, const void *)) {
-
     if (i < k) {
         ssize_t z = i + (k - i) / 2;
         if (merge_sort_ex(data, esize, i, z, cmp) == false)
@@ -50,6 +45,5 @@ bool merge_sort_ex(void *data, size_t esize, ssize_t i, ssize_t k, int (*cmp)(co
         if (merge(data, esize, (size_t)i, (size_t)z, (size_t)k, cmp) == false)
             return false;
     }
-
     return true;
 }
