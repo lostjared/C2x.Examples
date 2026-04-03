@@ -28,7 +28,6 @@ The repository includes both topic-based folders and standalone source files.
 - `src/network` - socket and networking examples
 - `src/quick_sort` - quick sort implementation
 - `src/set` - set data structure work
-- `src/sort` - sortting related full generic quicksort implementation  etc.
 - `src/stack` - stack implementations
 
 ### Standalone examples
