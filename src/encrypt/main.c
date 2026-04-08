@@ -97,11 +97,9 @@ int main(int argc, char **argv) {
     fclose(fptr);
     fclose(optr);
     if (mode == 1) {
-        printf("Encrypted: %zu bytes.\n", total);
 	printf("Original File Hash: %lx\n", fnv1a64_file(argv[2]));
     } else {
-        printf("Decrypted: %zu bytes.\n", total);
-	printf("Decrypted file Hash: %lx\n", fnv1a64_file(argv[3]));
+	printf("Decrypted File Hash: %lx\n", fnv1a64_file(argv[3]));
     }
     return EXIT_SUCCESS;
 }
