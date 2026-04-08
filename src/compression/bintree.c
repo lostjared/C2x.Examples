@@ -1,4 +1,4 @@
-#include"bintree.h"
+#include "bintree.h"
 
 [[nodiscard]] Node *createNode(const void *restrict data, const size_t bytes) {
     if (data == nullptr)
@@ -107,5 +107,3 @@ bool insertNode(Node **root, const void *data, size_t bytes, cmp c) {
     }
     return nullptr;
 }
-
-

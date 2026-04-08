@@ -41,12 +41,12 @@ int main(int argc, char **argv) {
             des_decipher(buffer, output, (unsigned char *)argv[4]);
             fwrite(output, sizeof(unsigned char), bytes, optr);
         }
-	total += bytes;
+        total += bytes;
     }
-    if(mode == 1) {
-	    printf("Encrypted: %zu bytes.\n", total);
+    if (mode == 1) {
+        printf("Encrypted: %zu bytes.\n", total);
     } else {
-	    printf("Decrypted: %zu bytes.\n", total);
+        printf("Decrypted: %zu bytes.\n", total);
     }
     fclose(fptr);
     fclose(optr);

@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <emscripten.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -7,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <emscripten.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -244,10 +244,10 @@ void proc(void) {
 #endif
         }
 
-	bool pressed = false;
+        bool pressed = false;
 
-	if(ev.type == SDL_FINGERDOWN)
-		pressed = true;
+        if (ev.type == SDL_FINGERDOWN)
+            pressed = true;
         if (ev.type == SDL_KEYDOWN || pressed) {
             if (ev.key.keysym.sym == SDLK_ESCAPE) {
                 running = false;
@@ -413,7 +413,6 @@ int main(void) {
     float cy = WINDOW_HEIGHT / 2.0f + 20.0f;
     float layout_r = fminf(cx, cy) - 60.0f;
     compute_circle_layout(positions, node_count, cx, cy, layout_r);
-
 
     emscripten_set_main_loop(proc, 0, 1);
 

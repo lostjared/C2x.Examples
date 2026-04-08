@@ -16,8 +16,7 @@ typedef struct node {
 typedef int (*cmp)(const void *, const void *);
 [[nodiscard]] Node *createNode(const void *restrict data, const size_t bytes);
 void freeNodes(Node *n);
-bool insertNode(Node **root, const void *data, size_t bytes, cmp c) ;
+bool insertNode(Node **root, const void *data, size_t bytes, cmp c);
 [[nodiscard]] Node *findNode(Node *root, const void *data, cmp c);
 
 #endif
-

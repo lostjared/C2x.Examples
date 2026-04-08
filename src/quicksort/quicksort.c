@@ -22,7 +22,7 @@ void insertion_sort(void *base, size_t count, size_t size, int (*cmp)(const void
 
 static int partition(void *data, size_t esize, int i, int k, int (*compare)(const void *, const void *)) {
 
-    if(data == nullptr || esize == 0 || compare == nullptr)
+    if (data == nullptr || esize == 0 || compare == nullptr)
         return -1;
 
     char *arr = data;
@@ -64,7 +64,7 @@ static int partition(void *data, size_t esize, int i, int k, int (*compare)(cons
 }
 
 bool quick_sort(void *data, size_t size, size_t esize, int i, int k, int (*compare)(const void *, const void *)) {
-    if(data == nullptr || size == 0 || esize == 0 || compare == nullptr || i > k)
+    if (data == nullptr || size == 0 || esize == 0 || compare == nullptr || i > k)
         return false;
     int j = 0;
     while (i < k) {

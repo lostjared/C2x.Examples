@@ -36,9 +36,9 @@ static bool merge(void *data, size_t esize, size_t i, size_t z, size_t k, int (*
 }
 
 bool merge_sort_ex(void *data, size_t esize, ssize_t i, ssize_t k, int (*cmp)(const void *, const void *)) {
- 	if(data == nullptr || esize == 0  || cmp == nullptr)
-		return false;
-	if (i < k) {
+    if (data == nullptr || esize == 0 || cmp == nullptr)
+        return false;
+    if (i < k) {
         ssize_t z = i + (k - i) / 2;
         if (merge_sort_ex(data, esize, i, z, cmp) == false)
             return false;
