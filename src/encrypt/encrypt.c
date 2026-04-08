@@ -140,7 +140,7 @@ static const int DES_Final[64] = {
 
 static void permute(unsigned char *bits, const int *mapping, int n) {
     unsigned char temp[8];
-    size_t bytes = (n + 7) / 8;
+    size_t bytes = ((size_t)n + 7) / 8;
 
     memset(temp, 0, bytes);
 
@@ -242,8 +242,8 @@ void des_decipher(const unsigned char *ciphertext, unsigned char *text, const un
     DES_main(ciphertext, text, key, DIR_DEC);
 }
 
-void rsa_encipher(Long plaintext, Long *ciphertext, RSA_PublicKey p_key) {
+void rsa_encipher(Long /*plaintext*/, Long * /*ciphertext*/, RSA_PublicKey /*p_key*/) {
 }
 
-void rsa_decipher(Long ciphertext, Long *plaintext, RSA_PrivateKey p_key) {
+void rsa_decipher(Long /*ciphertext*/, Long * /*plaintext*/, RSA_PrivateKey /*p_key*/) {
 }
