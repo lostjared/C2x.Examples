@@ -5,7 +5,7 @@
 int main(void) {
 	time_t t = time(nullptr);
 	char *value = ctime(&t);
-	printf("%s\n", value);
+	printf("%s", value);
 	return 0;
 }
 
