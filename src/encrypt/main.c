@@ -1,9 +1,9 @@
 #include "encrypt.h"
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
-#include <stdint.h>
 static uint64_t fnv1a64_bytes(const void *data, size_t n, uint64_t h) [[unsequenced]] {
     const uint8_t *p = (const uint8_t *)data;
     for (size_t i = 0; i < n; ++i) {
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
             if (bytes < 8) {
                 unsigned char pad_val = 8 - (unsigned char)bytes;
                 memset(buffer + bytes, pad_val, pad_val);
-           }
+            }
             des_encipher(buffer, output, (unsigned char *)argv[4]);
             fwrite(output, 1, 8, optr);
             total += 8;
@@ -97,9 +97,9 @@ int main(int argc, char **argv) {
     fclose(fptr);
     fclose(optr);
     if (mode == 1) {
-	printf("Original File Hash: %lx\n", fnv1a64_file(argv[2]));
+        printf("Original File Hash: %lx\n", fnv1a64_file(argv[2]));
     } else {
-	printf("Decrypted File Hash: %lx\n", fnv1a64_file(argv[3]));
+        printf("Decrypted File Hash: %lx\n", fnv1a64_file(argv[3]));
     }
     return EXIT_SUCCESS;
 }
