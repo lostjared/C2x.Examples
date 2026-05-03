@@ -128,4 +128,5 @@ add_executable(socket_server_queue src/network/mx_socket.c src/network/socket_se
 target_link_libraries(socket_server PRIVATE Threads::Threads)
 target_compile_options(socket_server_queue PRIVATE -pthread)
 target_link_options(socket_server_queue PRIVATE -pthread)
+add_executable(copy-file src/copy-file.c)
 endif()
