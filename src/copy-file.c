@@ -24,7 +24,7 @@
 
     while ((bytes = read(ifd, buffer, 4096)) > 0) {
         if (write(ofd, buffer, (size_t)bytes) != bytes) {
-            printf("Write failed: %s\n", strerror(errno));
+            fprintf(stderr, "Write failed: %s\n", strerror(errno));
             passed = false;
             goto all_cleanup;
         }
