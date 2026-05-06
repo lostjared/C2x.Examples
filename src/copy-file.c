@@ -1,9 +1,9 @@
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
 #include <string.h>
+#include <unistd.h>
 
 [[nodiscard]] bool copy_file(const char *restrict src, const char *restrict dst) {
     int ifd = -1, ofd = -1;
