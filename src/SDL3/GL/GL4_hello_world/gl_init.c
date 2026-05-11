@@ -51,6 +51,7 @@ static GLuint load_spv(GLenum type, const char *path) {
     }
     GLuint shader = glCreateShader(type);
     glShaderBinary(1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V, data, data_size);
+    free(data);
     glSpecializeShader(shader, "main", 0, nullptr, nullptr);
     GLint ok = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &ok);
