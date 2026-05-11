@@ -14,15 +14,14 @@ struct app_info {
 bool init_sdl(struct app_info *app, int w, int h);
 
 float vertices[] = {
-     0.0f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
-    -0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,
-     0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f
-};
+    0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f};
 
 static char *read_file(const char *path, size_t *sz) {
-    if(path == nullptr || sz == nullptr) {
-	    fprintf(stderr, "Invalid Input for read_file.\n");
-	    return nullptr;
+    if (path == nullptr || sz == nullptr) {
+        fprintf(stderr, "Invalid Input for read_file.\n");
+        return nullptr;
     }
     FILE *file = fopen(path, "r");
     if (!file) {
@@ -33,12 +32,12 @@ static char *read_file(const char *path, size_t *sz) {
     size_t size = ftell(file);
     rewind(file);
     if (size == 0) {
-        fprintf(stderr,"Empty file: %s\n", path);
+        fprintf(stderr, "Empty file: %s\n", path);
         return nullptr;
     }
-    char *buffer = malloc (sizeof(char) * size + 1);
+    char *buffer = malloc(sizeof(char) * size + 1);
     fread(buffer, size, 1, file);
-    fclose(file); 
+    fclose(file);
     *sz = size;
     return buffer;
 }
@@ -81,9 +80,9 @@ int main(void) {
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
@@ -92,9 +91,10 @@ int main(void) {
     if (!vs || !fs) {
         fprintf(stderr, "Shader creation failed");
         SDL_GL_DestroyContext(app.ctx);
-	SDL_DestroyWindow(app.window);
-	SDL_Quit();
-	return EXIT_FAILURE;;
+        SDL_DestroyWindow(app.window);
+        SDL_Quit();
+        return EXIT_FAILURE;
+        ;
     }
     GLuint program = glCreateProgram();
     glAttachShader(program, vs);
@@ -131,20 +131,20 @@ int main(void) {
         glClearColor(0.1f, 0.0f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(program);
-	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindVertexArray(0);
-	SDL_GL_SwapWindow(app.window);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
+        SDL_GL_SwapWindow(app.window);
     }
 
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
 
-    if(!SDL_GL_DestroyContext(app.ctx)) {
-	    fprintf(stderr, "Error destroying GL Context: %s\n", SDL_GetError());
-	    SDL_DestroyWindow(app.window);
-	    SDL_Quit();
-	    return EXIT_FAILURE;
+    if (!SDL_GL_DestroyContext(app.ctx)) {
+        fprintf(stderr, "Error destroying GL Context: %s\n", SDL_GetError());
+        SDL_DestroyWindow(app.window);
+        SDL_Quit();
+        return EXIT_FAILURE;
     }
     SDL_DestroyWindow(app.window);
     SDL_Quit();
