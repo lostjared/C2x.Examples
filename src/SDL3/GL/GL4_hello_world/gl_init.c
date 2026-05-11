@@ -137,6 +137,8 @@ int main(void) {
         SDL_GL_SwapWindow(app.window);
     }
 
+    glDeleteProgram(program);
+
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
 
