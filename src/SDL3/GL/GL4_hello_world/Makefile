@@ -1,7 +1,7 @@
 
 
 CFLAGS=-std=c23 -O2
-LIBS=`pkg-config --libs sdl3` -lGL -ldl
+LIBS=`pkg-config --libs sdl3` -ldl
 INCLUDES=`pkg-config --cflags sdl3` -I../include
 OUTPUT=gl_init
 all:
