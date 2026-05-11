@@ -1,9 +1,9 @@
-#include<stdio.h>
-#include<time.h>
-#include<stdint.h>
-#include<unistd.h>
-#include<stdlib.h>
-#include<sys/time.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 
 int64_t get_tick_count() {
     struct timeval val;
@@ -13,15 +13,13 @@ int64_t get_tick_count() {
 }
 
 int main(void) {
-	srand((unsigned int)time(0));
-	int i = 0;
-	while(i < 3) {
-		sleep((unsigned int)rand()%3);
-		auto count = get_tick_count();
-		printf("tick: -> %ld\n", count);
-		++i;
-	}
-	return 0;
+    srand((unsigned int)time(0));
+    int i = 0;
+    while (i < 3) {
+        sleep((unsigned int)rand() % 3);
+        auto count = get_tick_count();
+        printf("tick: -> %ld\n", count);
+        ++i;
+    }
+    return 0;
 }
-
-
