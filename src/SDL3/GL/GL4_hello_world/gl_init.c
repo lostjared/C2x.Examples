@@ -93,11 +93,16 @@ int main(void) {
         fprintf(stderr, "Shader creation failed");
         glDeleteBuffers(1, &vbo);
         glDeleteVertexArrays(1, &vao);
+
+	if(vs)
+		glDeleteShader(vs);
+	if(fs)
+		glDeleteShader(fs);
+
         SDL_GL_DestroyContext(app.ctx);
         SDL_DestroyWindow(app.window);
         SDL_Quit();
-        return EXIT_FAILURE;
-        ;
+        return EXIT_FAILURE;  
     }
     GLuint program = glCreateProgram();
     glAttachShader(program, vs);
@@ -181,7 +186,7 @@ bool init_sdl(struct app_info *app, int width, int height) {
     }
     app->window = window;
     app->ctx = ctx;
-    const char *version = glGetString(GL_VERSION);
+    const char *version = (const char *)glGetString(GL_VERSION);
     if (version != nullptr) {
         printf("OpenGL Version: %s\n", version);
     }
