@@ -31,7 +31,7 @@ int main(void) {
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
     GLuint program = mx_create_shader_program("vert.spv", "frag.spv");
-    if(program == 0) {
+    if (program == 0) {
         glDeleteBuffers(1, &vbo);
         glDeleteVertexArrays(1, &vao);
         SDL_GL_DestroyContext(app.ctx);
