@@ -19,7 +19,6 @@ int main(int argc, char *argv[argc + 1]) {
         fprintf(stderr, "%s: <compute.spv> <image.bmp>\n", argv[0]);
         return EXIT_FAILURE;
     }
-
     struct mx_app_info app = {};
     if (!mx_init_sdl(&app, "Hello, World with Compute Shader!", APP_WIDTH, APP_HEIGHT)) {
         return EXIT_FAILURE;
@@ -54,18 +53,19 @@ int main(int argc, char *argv[argc + 1]) {
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
-    GLuint inputTexture;
-    glGenTextures(1, &inputTexture);
-    glBindTexture(GL_TEXTURE_2D, inputTexture);
+    GLuint input_texture;
+    glGenTextures(1, &input_texture);
+    glBindTexture(GL_TEXTURE_2D, input_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     SDL_Surface *rgba_img = SDL_ConvertSurface(img, SDL_PIXELFORMAT_ABGR8888);
+
     if (!rgba_img) {
         fprintf(stderr, "Failed to convert image to RGBA\n");
-        glDeleteTextures(1, &inputTexture);
+        glDeleteTextures(1, &input_texture);
         SDL_DestroySurface(img);
         mx_close_sdl(&app);
         return EXIT_FAILURE;
@@ -75,6 +75,7 @@ int main(int argc, char *argv[argc + 1]) {
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img_width, img_height, GL_RGBA, GL_UNSIGNED_BYTE, rgba_img->pixels);
     glBindTexture(GL_TEXTURE_2D, 0);
     MX_CHECK_GL_ERROR();
+
     SDL_DestroySurface(img);
     SDL_DestroySurface(rgba_img);
 
@@ -82,7 +83,7 @@ int main(int argc, char *argv[argc + 1]) {
     GLuint compute_program = mx_create_compute_program(argv[1]);
 
     if (program == 0 || compute_program == 0) {
-        glDeleteTextures(1, &inputTexture);
+        glDeleteTextures(1, &input_texture);
         glDeleteBuffers(1, &vbo);
         glDeleteBuffers(1, &ebo);
         glDeleteVertexArrays(1, &vao);
@@ -108,7 +109,7 @@ int main(int argc, char *argv[argc + 1]) {
         }
 
         glUseProgram(compute_program);
-        glBindImageTexture(0, inputTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA16F);
+        glBindImageTexture(0, input_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA16F);
         glDispatchCompute((img_width + 15) / 16, (img_height + 15) / 16, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
         MX_CHECK_GL_ERROR();
@@ -119,7 +120,7 @@ int main(int argc, char *argv[argc + 1]) {
 
         glUseProgram(program);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, inputTexture);
+        glBindTexture(GL_TEXTURE_2D, input_texture);
         glUniform1i(glGetUniformLocation(program, "screenTex"), 0);
 
         glBindVertexArray(vao);
@@ -130,7 +131,7 @@ int main(int argc, char *argv[argc + 1]) {
 
     glDeleteProgram(program);
     glDeleteProgram(compute_program);
-    glDeleteTextures(1, &inputTexture);
+    glDeleteTextures(1, &input_texture);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
     glDeleteVertexArrays(1, &vao);
