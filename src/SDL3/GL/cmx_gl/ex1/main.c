@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static constexpr int WIDTH = 1280;
-static constexpr int HEIGHT = 720;
+static constexpr int APP_WIDTH = 1280;
+static constexpr int APP_HEIGHT = 720;
 
 float vertices[] = {
     0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -14,7 +14,7 @@ float vertices[] = {
 int main(void) {
     printf("Example1: [Start up]\n");
     struct mx_app_info app = {};
-    if (!mx_init_sdl(&app, WIDTH, HEIGHT)) {
+    if (!mx_init_sdl(&app, "Hello, World!", APP_WIDTH, APP_HEIGHT)) {
         return EXIT_FAILURE;
     }
     SDL_Event e;
@@ -56,7 +56,7 @@ int main(void) {
                 break;
             }
         }
-        glViewport(0, 0, WIDTH, HEIGHT);
+        glViewport(0, 0, app.w, app.h);
         glClearColor(0.1f, 0.0f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(program);

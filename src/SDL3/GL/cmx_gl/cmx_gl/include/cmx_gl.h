@@ -21,7 +21,7 @@ struct mx_app_info {
     int w, h;
 };
 
-bool mx_init_sdl(struct mx_app_info *app, int w, int h);
+bool mx_init_sdl(struct mx_app_info *app, const char *title, int w, int h);
 int mx_close_sdl(struct mx_app_info *app);
 char *mx_read_file(const char *path, size_t *sz); 
 GLuint mx_load_spv(GLenum type, const char *path);

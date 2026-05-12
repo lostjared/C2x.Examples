@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool mx_init_sdl(struct mx_app_info *app, int width, int height) {
+bool mx_init_sdl(struct mx_app_info *app, const char *title, int width, int height) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Eror initalizing SDL: %s\n", SDL_GetError());
         return false;
@@ -12,7 +12,7 @@ bool mx_init_sdl(struct mx_app_info *app, int width, int height) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    window = SDL_CreateWindow("Hello, World", width, height, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow(title, width, height, SDL_WINDOW_OPENGL);
     if (!window) {
         fprintf(stderr, "Error creating window: %s\n", SDL_GetError());
         SDL_Quit();
