@@ -68,6 +68,6 @@ int main(void) {
     glDeleteProgram(program);
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
-    printf("Example 1: [Shut down]");
+    printf("Example 1: [Shut down]\n");
     return mx_close_sdl(&app);
 }
