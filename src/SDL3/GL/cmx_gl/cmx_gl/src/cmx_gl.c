@@ -1,6 +1,6 @@
-#include"cmx_gl.h"
-#include<stdio.h>
-#include<stdlib.h>
+#include "cmx_gl.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 bool init_sdl(struct app_info *app, int width, int height) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -39,20 +39,20 @@ bool init_sdl(struct app_info *app, int width, int height) {
 }
 
 int close_sdl(struct app_info *app) {
-	if(app->ctx) {
-		if(!SDL_GL_DestroyContext(app->ctx)) {
-			fprintf(stderr, "Error destroying GL Context: %s\n", SDL_GetError());
-			if(app->window)
-				SDL_DestroyWindow(app->window);
-			SDL_Quit();
-			return EXIT_FAILURE;
-		}
-	}
-	if(app->window != nullptr) {
-		SDL_DestroyWindow(app->window);
-	}
-	SDL_Quit();
-	return EXIT_SUCCESS;
+    if (app->ctx) {
+        if (!SDL_GL_DestroyContext(app->ctx)) {
+            fprintf(stderr, "Error destroying GL Context: %s\n", SDL_GetError());
+            if (app->window)
+                SDL_DestroyWindow(app->window);
+            SDL_Quit();
+            return EXIT_FAILURE;
+        }
+    }
+    if (app->window != nullptr) {
+        SDL_DestroyWindow(app->window);
+    }
+    SDL_Quit();
+    return EXIT_SUCCESS;
 }
 
 char *read_file(const char *path, size_t *sz) {
@@ -101,6 +101,3 @@ GLuint load_spv(GLenum type, const char *path) {
     }
     return shader;
 }
-
-
-

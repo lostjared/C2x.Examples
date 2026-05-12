@@ -36,15 +36,15 @@ int main(void) {
         glDeleteBuffers(1, &vbo);
         glDeleteVertexArrays(1, &vao);
 
-	if(vs)
-		glDeleteShader(vs);
-	if(fs)
-		glDeleteShader(fs);
+        if (vs)
+            glDeleteShader(vs);
+        if (fs)
+            glDeleteShader(fs);
 
         SDL_GL_DestroyContext(app.ctx);
         SDL_DestroyWindow(app.window);
         SDL_Quit();
-        return EXIT_FAILURE;  
+        return EXIT_FAILURE;
     }
     GLuint program = glCreateProgram();
     glAttachShader(program, vs);
@@ -89,5 +89,3 @@ int main(void) {
     glDeleteVertexArrays(1, &vao);
     return close_sdl(&app);
 }
-
-
