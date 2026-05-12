@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool init_sdl(struct app_info *app, int width, int height) {
+bool mx_init_sdl(struct mx_app_info *app, int width, int height) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Eror initalizing SDL: %s\n", SDL_GetError());
         return false;
@@ -38,7 +38,7 @@ bool init_sdl(struct app_info *app, int width, int height) {
     return true;
 }
 
-int close_sdl(struct app_info *app) {
+int mx_close_sdl(struct mx_app_info *app) {
     if (app->ctx) {
         if (!SDL_GL_DestroyContext(app->ctx)) {
             fprintf(stderr, "Error destroying GL Context: %s\n", SDL_GetError());
@@ -55,7 +55,7 @@ int close_sdl(struct app_info *app) {
     return EXIT_SUCCESS;
 }
 
-char *read_file(const char *path, size_t *sz) {
+char *mx_read_file(const char *path, size_t *sz) {
     if (path == nullptr || sz == nullptr) {
         fprintf(stderr, "Invalid Input for read_file.\n");
         return nullptr;
@@ -79,9 +79,9 @@ char *read_file(const char *path, size_t *sz) {
     return buffer;
 }
 
-GLuint load_spv(GLenum type, const char *path) {
+GLuint mx_load_spv(GLenum type, const char *path) {
     size_t data_size = 0;
-    auto data = read_file(path, &data_size);
+    auto data = mx_read_file(path, &data_size);
     if (data == nullptr) {
         fprintf(stderr, "SPV load failed: %s\n", path);
         return 0;
@@ -101,3 +101,4 @@ GLuint load_spv(GLenum type, const char *path) {
     }
     return shader;
 }
+

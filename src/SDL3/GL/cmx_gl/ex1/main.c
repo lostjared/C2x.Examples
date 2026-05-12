@@ -12,8 +12,8 @@ float vertices[] = {
     0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f};
 
 int main(void) {
-    struct app_info app = {};
-    if (!init_sdl(&app, WIDTH, HEIGHT)) {
+    struct mx_app_info app = {};
+    if (!mx_init_sdl(&app, WIDTH, HEIGHT)) {
         return EXIT_FAILURE;
     }
     SDL_Event e;
@@ -29,8 +29,8 @@ int main(void) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
-    GLuint vs = load_spv(GL_VERTEX_SHADER, "vert.spv");
-    GLuint fs = load_spv(GL_FRAGMENT_SHADER, "frag.spv");
+    GLuint vs = mx_load_spv(GL_VERTEX_SHADER, "vert.spv");
+    GLuint fs = mx_load_spv(GL_FRAGMENT_SHADER, "frag.spv");
     if (!vs || !fs) {
         fprintf(stderr, "Shader creation failed");
         glDeleteBuffers(1, &vbo);
@@ -87,5 +87,5 @@ int main(void) {
     glDeleteProgram(program);
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
-    return close_sdl(&app);
+    return mx_close_sdl(&app);
 }
