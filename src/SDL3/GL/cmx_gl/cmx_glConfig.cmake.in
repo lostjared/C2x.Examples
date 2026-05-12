@@ -1,0 +1,13 @@
+@PACKAGE_INIT@
+
+# Include the target export file
+include("${CMAKE_CURRENT_LIST_DIR}/cmx_glTargets.cmake")
+
+# Define include directories
+set(cmx_gl_INCLUDE_DIRS "@INSTALL_INCLUDE_DIR@")
+
+# Define library directories
+set(cmx_gl_LIBRARY_DIRS "@INSTALL_LIB_DIR@")
+
+# Define libraries
+set(cmx_gl_LIBRARIES cmx_gl::cmx_gl)
