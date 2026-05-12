@@ -91,6 +91,8 @@ int main(void) {
     GLuint fs = load_spv(GL_FRAGMENT_SHADER, "frag.spv");
     if (!vs || !fs) {
         fprintf(stderr, "Shader creation failed");
+        glDeleteBuffers(1, &vbo);
+        glDeleteVertexArrays(1, &vao);
         SDL_GL_DestroyContext(app.ctx);
         SDL_DestroyWindow(app.window);
         SDL_Quit();
@@ -139,7 +141,6 @@ int main(void) {
     }
 
     glDeleteProgram(program);
-
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
 
