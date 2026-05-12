@@ -37,6 +37,7 @@ option(EXAMPLES "Examples" OFF)
 
 if(EXAMPLES)
 	add_subdirectory(ex1)
+	add_subdirectory(ex2_compute)
 endif()
 
 write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/cmx_glConfigVersion.cmake"

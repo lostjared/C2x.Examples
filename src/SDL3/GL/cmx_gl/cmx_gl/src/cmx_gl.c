@@ -102,3 +102,46 @@ GLuint mx_load_spv(GLenum type, const char *path) {
     return shader;
 }
 
+GLuint mx_create_shader_program(const char *vertex_spv, const char *fragment_spv) {
+    GLuint vs = mx_load_spv(GL_VERTEX_SHADER, vertex_spv);
+    GLuint fs = mx_load_spv(GL_FRAGMENT_SHADER, fragment_spv);
+    if (!vs || !fs) {
+        fprintf(stderr, "mx_create_shader: Shader creation failed\n");
+        if (vs)
+            glDeleteShader(vs);
+        if (fs)
+            glDeleteShader(fs);
+        return 0;
+    }
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+    GLint linked = 0;
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+    if (!linked) {
+        char log[4096];
+        glGetProgramInfoLog(program, 4096, nullptr, log);
+        fprintf(stderr, "Program link error: %s\n", log);
+    }
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return program;
+}
+
+GLuint mx_create_compute_program(const char *compute_spv) {
+    GLuint c_shader = mx_load_spv(GL_COMPUTE_SHADER, compute_spv);
+    GLuint program = glCreateProgram();
+    glAttachShader(program, c_shader);
+    glLinkProgram(program);
+    GLint linked = 0;
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+    if (linked != GL_TRUE) {
+        fprintf(stderr, "Error creating compute program: %s\n", compute_spv);
+        glDeleteShader(c_shader);
+        glDeleteProgram(program);
+        return 0;
+    }
+    glDeleteShader(c_shader);
+    return program;
+}

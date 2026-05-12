@@ -1,0 +1,16 @@
+#version 460 core
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(rgba16f, binding = 0) uniform image2D destTex;
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 imgSize = imageSize(destTex);
+    if (pos.x >= imgSize.x || pos.y >= imgSize.y)
+        return;
+    
+    ivec2 sourcePos = ivec2(
+        (pos.x - 1 + imgSize.x) % imgSize.x,
+        (pos.y - 1 + imgSize.y) % imgSize.y
+    );
+    vec4 pixel = imageLoad(destTex, sourcePos);
+    imageStore(destTex, pos, pixel);
+}

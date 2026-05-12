@@ -12,6 +12,7 @@ float vertices[] = {
     0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f};
 
 int main(void) {
+    printf("Example1: [Start up]\n");
     struct mx_app_info app = {};
     if (!mx_init_sdl(&app, WIDTH, HEIGHT)) {
         return EXIT_FAILURE;
@@ -29,36 +30,16 @@ int main(void) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
-    GLuint vs = mx_load_spv(GL_VERTEX_SHADER, "vert.spv");
-    GLuint fs = mx_load_spv(GL_FRAGMENT_SHADER, "frag.spv");
-    if (!vs || !fs) {
-        fprintf(stderr, "Shader creation failed");
+    GLuint program = mx_create_shader_program("vert.spv", "frag.spv");
+    if(program == 0) {
         glDeleteBuffers(1, &vbo);
         glDeleteVertexArrays(1, &vao);
-
-        if (vs)
-            glDeleteShader(vs);
-        if (fs)
-            glDeleteShader(fs);
-
         SDL_GL_DestroyContext(app.ctx);
         SDL_DestroyWindow(app.window);
         SDL_Quit();
+        printf("Example 1: [Failure].\n");
         return EXIT_FAILURE;
     }
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-    GLint linked = 0;
-    glGetProgramiv(program, GL_LINK_STATUS, &linked);
-    if (!linked) {
-        char log[4096];
-        glGetProgramInfoLog(program, 4096, nullptr, log);
-        fprintf(stderr, "Program link error: %s\n", log);
-    }
-    glDeleteShader(vs);
-    glDeleteShader(fs);
     glUseProgram(program);
     while (active) {
         while (SDL_PollEvent(&e)) {
@@ -87,5 +68,6 @@ int main(void) {
     glDeleteProgram(program);
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
+    printf("Example 1: [Shut down]");
     return mx_close_sdl(&app);
 }
