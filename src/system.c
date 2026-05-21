@@ -39,7 +39,7 @@
             sigaction(SIGINT, &sa_default, nullptr);
         if (sa_oquit.sa_handler != SIG_IGN)
             sigaction(SIGQUIT, &sa_default, nullptr);
-	sigprocmask(SIG_SETMASK, &omask, nullptr);
+        sigprocmask(SIG_SETMASK, &omask, nullptr);
         execl("/bin/sh", "sh", "-c", command, (char *)nullptr);
         _exit(127);
         break;
