@@ -7,18 +7,17 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-int system_cmd(const char *restrict command) {
+[[nodiscard]] int system_cmd(const char *restrict command) {
     if (command == nullptr) {
-        fprintf(stderr, "Error command string is null.\n");
-        return EXIT_FAILURE;
+        return 1;
     }
     sigset_t bmask, omask;
-    struct sigaction sa_ignore, sa_oquit, sa_origint, sa_default;
+    struct sigaction sa_ignore = {}, sa_oquit = {}, sa_origint = {}, sa_default = {};
     pid_t id;
     int status, serrno;
 
     if (strlen(command) == 0)
-        return system_cmd(":") == 0;
+        return 0;
 
     sigemptyset(&bmask);
     sigaddset(&bmask, SIGCHLD);
@@ -37,10 +36,11 @@ int system_cmd(const char *restrict command) {
         sa_default.sa_flags = 0;
         sigemptyset(&sa_default.sa_mask);
         if (sa_origint.sa_handler != SIG_IGN)
-            sigaction(SIGINT, &sa_default, NULL);
+            sigaction(SIGINT, &sa_default, nullptr);
         if (sa_oquit.sa_handler != SIG_IGN)
-            sigaction(SIGQUIT, &sa_default, NULL);
-        execl("/bin/sh", "sh", "-c", command, (char *)NULL);
+            sigaction(SIGQUIT, &sa_default, nullptr);
+	sigprocmask(SIG_SETMASK, &omask, nullptr);
+        execl("/bin/sh", "sh", "-c", command, (char *)nullptr);
         _exit(127);
         break;
     default:
@@ -53,9 +53,9 @@ int system_cmd(const char *restrict command) {
         break;
     }
     serrno = errno;
-    sigprocmask(SIG_SETMASK, &omask, NULL);
-    sigaction(SIGINT, &sa_origint, NULL);
-    sigaction(SIGQUIT, &sa_oquit, NULL);
+    sigprocmask(SIG_SETMASK, &omask, nullptr);
+    sigaction(SIGINT, &sa_origint, nullptr);
+    sigaction(SIGQUIT, &sa_oquit, nullptr);
     errno = serrno;
     return status;
 }
