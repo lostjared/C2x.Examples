@@ -4,8 +4,8 @@
 #include <unistd.h>
 
 void handler(int) {
-	char message[] = "\nSIGINT.\n";
-	write(STDOUT_FILENO, message, sizeof(message) - 1);
+    char message[] = "\nSIGINT.\n";
+    write(STDOUT_FILENO, message, sizeof(message) - 1);
     exit(EXIT_SUCCESS);
 }
 

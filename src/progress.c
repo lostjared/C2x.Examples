@@ -1,9 +1,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 void quit(int) {
     char msg[] = "\nProgress interrupted.\n";
@@ -12,13 +12,12 @@ void quit(int) {
 }
 
 static int get_terminal_width() {
-	struct winsize w;
-	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
-		return 80;
-	}
-	return w.ws_col;
+    struct winsize w;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
+        return 80;
+    }
+    return w.ws_col;
 }
-
 
 int main(void) {
     if (signal(SIGINT, quit) == SIG_ERR) {
@@ -26,11 +25,12 @@ int main(void) {
         return EXIT_FAILURE;
     }
     for (int i = 0; i <= 100; ++i) {
-	int term_width = get_terminal_width();
+        int term_width = get_terminal_width();
         int bar_width = term_width - 12;
-        if (bar_width < 10) bar_width = 10;
+        if (bar_width < 10)
+            bar_width = 10;
         int num_equals = (i * bar_width) / 100;
-	printf("\r\033[2K[");
+        printf("\r\033[2K[");
         for (int j = 0; j < bar_width; ++j) {
             if (j < num_equals) {
                 putchar('=');
@@ -39,8 +39,8 @@ int main(void) {
             }
         }
         printf("] - %d%%", i);
-	fflush(stdout);
-	usleep(1000 * 100);
+        fflush(stdout);
+        usleep(1000 * 100);
     }
     printf("\n");
     return EXIT_SUCCESS;
