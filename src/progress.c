@@ -31,7 +31,6 @@ int main(void) {
         if (bar_width < 10) bar_width = 10;
         int num_equals = (i * bar_width) / 100;
 	printf("\r\033[2K[");
-	printf("[");
         for (int j = 0; j < bar_width; ++j) {
             if (j < num_equals) {
                 putchar('=');
