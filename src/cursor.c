@@ -24,7 +24,7 @@ int main(void) {
     }
     for (int i = 0; i <= 100; ++i) {
         clear_screen();
-        set_cursor(0, 25);
+        set_cursor(1, 25);
         sleep(1);
         printf("Progress (Ctrl+C to break): %d%%\n", i);
     }
