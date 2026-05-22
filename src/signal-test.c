@@ -5,7 +5,10 @@
 #include <unistd.h>
 
 void signal_handler(int sig [[maybe_unused]]) {
-    puts("\nSignal SIGINT caught.");
+    
+	char message[] = "\nSignal SIGINT caught.\n";
+	write(STDOUT_FILENO, message, sizeof(message) - 1);
+
     exit(EXIT_SUCCESS);
 }
 

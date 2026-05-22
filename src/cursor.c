@@ -13,7 +13,8 @@ static void clear_screen() {
 
 void quit(int) {
     clear_screen();
-    printf("Progress interrupted.\n");
+    char message[] = "\bProgress interrupted.\n";
+    write(STDOUT_FILENO, message, sizeof(message) -1);
     exit(EXIT_FAILURE);
 }
 
