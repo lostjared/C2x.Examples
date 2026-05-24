@@ -30,15 +30,15 @@ void print_info(pid_t id, const char *file_info) {
 
 int main(int argc, char **argv) {
 
-    if(argc != 2) {
-	    fprintf(stderr, "Error requires process id:\nuse:\n%s <pid>\n", argv[0]);
-	    return EXIT_FAILURE;
+    if (argc != 2) {
+        fprintf(stderr, "Error requires process id:\nuse:\n%s <pid>\n", argv[0]);
+        return EXIT_FAILURE;
     }
     char *p = nullptr;
     long value = strtol(argv[1], &p, 10);
-    if(p == nullptr || *p != '\0') {
-	    fprintf(stderr, "Error invalid input.\n");
-	    return EXIT_FAILURE;
+    if (p == nullptr || *p != '\0') {
+        fprintf(stderr, "Error invalid input.\n");
+        return EXIT_FAILURE;
     }
     pid_t id = (pid_t)value;
     printf("process id: %d\n", id);
