@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
     char *p = nullptr;
+    errno = 0;
     long value = strtol(argv[1], &p, 10);
     if (errno == ERANGE || p == argv[1] || *p != '\0') {
         fprintf(stderr, "Error invalid input.\n");
