@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,15 +31,18 @@ void print_info(pid_t id, const char *file_info) {
 }
 
 int main(int argc, char **argv) {
-
     if (argc != 2) {
         fprintf(stderr, "Error requires process id:\nuse:\n%s <pid>\n", argv[0]);
         return EXIT_FAILURE;
     }
     char *p = nullptr;
     long value = strtol(argv[1], &p, 10);
-    if (p == nullptr || *p != '\0') {
+    if (errno == ERANGE || p == argv[1] || *p != '\0') {
         fprintf(stderr, "Error invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    if (value <= 0 || value > INT_MAX) {
+        fprintf(stderr, "Error process id out of bounds.\n");
         return EXIT_FAILURE;
     }
     pid_t id = (pid_t)value;
