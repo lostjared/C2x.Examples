@@ -23,5 +23,6 @@ int main(void) {
     int status = 0;
     waitpid(id, &status, 0);
     printf("Program complete..\n");
+    printf("Exit code: %d\n", status);
     return EXIT_SUCCESS;
 }
