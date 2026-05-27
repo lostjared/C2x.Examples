@@ -126,6 +126,7 @@ add_executable(bsearch-test src/binary_search/bsearch.c src/binary_search/main.c
 add_executable(compress src/compression/bintree.c src/compression/heap.c  src/compression/huffman.c src/compression/main.c)
 add_executable(mx-encrypt src/encrypt/encrypt.c src/encrypt/main.c)
 add_executable(print_time src/time.c)
+add_executable(to_int src/to_int.c)
 target_link_libraries(mx-encrypt PRIVATE m)
 if(UNIX)
 add_executable(socket_server src/network/mx_socket.c src/network/socket_server/main.c)
