@@ -6,6 +6,7 @@
 bool to_int(const char *src, int *number) {
     long value = 0;
     char *p = nullptr;
+    errno = 0;
     value = strtol(src, &p, 10);
     if (errno == ERANGE || p == src || *p != '\0') {
         fprintf(stderr, "Invalid integer input\n");
