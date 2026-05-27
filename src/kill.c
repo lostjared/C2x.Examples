@@ -3,6 +3,7 @@
 #include<unistd.h>
 #include<errno.h>
 #include<limits.h>
+#include<signal.h>
 
 int main(int argc, char *argv[argc+1]) {
 	 if(argc != 2) {
@@ -25,7 +26,7 @@ int main(int argc, char *argv[argc+1]) {
 	 }
 
 	 pid_t id = (pid_t)value;
-	 kill(id);
+	 kill(id, SIGINT);
 
 	return EXIT_SUCCESS;
 }
