@@ -4,7 +4,7 @@
 #include<errno.h>
 #include<limits.h>
 
-int main(int agc, char **argv) {
+int main(int argc, char *argv[argc+1]) {
 	 if(argc != 2) {
 		 fprintf(stderr, "Error invalid arguments. Use:\n%s <pid>\n", argv[0]);
 		 return EXIT_FAILURE;
@@ -14,7 +14,7 @@ int main(int agc, char **argv) {
 	 errno = 0;
 	 value = strtol(argv[1],  &ptr, 10);
 
-	 if(errno == ERANGE || ptr == nullptr || *ptr != '\0') {
+	 if(errno == ERANGE || ptr == argv[1] || *ptr != '\0') {
 		 fprintf(stderr, "Error on conversion of integer value.\n");
 		 return EXIT_FAILURE;
 	 }
@@ -24,7 +24,8 @@ int main(int agc, char **argv) {
 		 return EXIT_FAILURE;
 	 }
 
-	 pid_t id = (pid_t)value
+	 pid_t id = (pid_t)value;
+	 kill(id);
 
 	return EXIT_SUCCESS;
 }
