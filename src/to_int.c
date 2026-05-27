@@ -2,7 +2,6 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 bool to_int(const char *src, int *number) {
     long value = 0;
@@ -13,7 +12,7 @@ bool to_int(const char *src, int *number) {
         *number = 0;
         return false;
     }
-    if (value <= INT_MIN || value >= INT_MAX) {
+    if (value < INT_MIN || value > INT_MAX) {
         fprintf(stderr, "Error invalid integer range.\n");
         *number = 0;
         return false;
