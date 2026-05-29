@@ -60,17 +60,22 @@ int main(void) {
         int message = rand() % 255;
         printf("Sending message: %d\n", message);
         close(fd[0]);
-        write_all(fd[1], &message, sizeof(message));
+        if (write_all(fd[1], &message, sizeof(message)) == -1) {
+            perror("write");
+        }
         close(fd[1]);
         _exit(EXIT_SUCCESS);
     } else {
         close(fd[1]);
         int message = 0;
         ssize_t rb = read_all(fd[0], &message, sizeof(message));
-        if (rb > 0) {
+        if (rb == (ssize_t)sizeof(message)) {
             printf("Child returned: %d\n", message);
             close(fd[0]);
-        }
+        } else if (rb == -1)
+            perror("read");
+        else
+            fprintf(stderr, "Unexpected EOF (end of file) or partial read\n");
     }
     waitpid(id, 0, 0);
     return EXIT_SUCCESS;
