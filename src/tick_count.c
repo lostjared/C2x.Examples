@@ -13,7 +13,7 @@ int64_t get_tick_count() {
 }
 
 int main(void) {
-    srand((unsigned int)time(0));
+    srand((unsigned int)time(nullptr));
     int i = 0;
     while (i < 3) {
         sleep((unsigned int)rand() % 3);
