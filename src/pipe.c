@@ -1,3 +1,4 @@
+#include "rwlib/rw.h"
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
@@ -6,7 +7,6 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
-#include"rwlib/rw.h"
 
 int main(void) {
     int fd[2];

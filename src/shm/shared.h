@@ -2,7 +2,7 @@
 #define __SHARED__H__
 
 struct shared_data {
-        int value;
+    int value;
 };
 
 #endif
