@@ -26,7 +26,7 @@ int main(int argc, char *argv[argc + 1]) {
     pid_t id = (pid_t)value;
     if (kill(id, SIGINT) == -1) {
         fprintf(stderr, "Error on kill: %s\n", strerror(errno));
-	return EXIT_FAILURE;
+        return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
 }

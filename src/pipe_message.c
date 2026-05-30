@@ -57,35 +57,35 @@ int main(void) {
         return EXIT_FAILURE;
     } else if (id == 0) {
         srand((unsigned int)time(nullptr));
-	close(fd[0]); 
-	for(int i = 0; i < 250; ++i) {
-        	int message = 1+rand() % 255;
-	        printf("Sending message: %d\n", message);
-	      	if (write_all(fd[1], &message, sizeof(message)) == -1) {
-	            perror("write");
-        	}
-	}
-	int exit_message = 0;
-	if(write_all(fd[1], &exit_message, sizeof(exit_message)) == -1) {
-		perror("write");
-	}
+        close(fd[0]);
+        for (int i = 0; i < 250; ++i) {
+            int message = 1 + rand() % 255;
+            printf("Sending message: %d\n", message);
+            if (write_all(fd[1], &message, sizeof(message)) == -1) {
+                perror("write");
+            }
+        }
+        int exit_message = 0;
+        if (write_all(fd[1], &exit_message, sizeof(exit_message)) == -1) {
+            perror("write");
+        }
         close(fd[1]);
         _exit(EXIT_SUCCESS);
     } else {
         close(fd[1]);
 
-	while(1) {
-        	int message = 0;
-	        ssize_t rb = read_all(fd[0], &message, sizeof(message));
-        	if (rb == (ssize_t)sizeof(message)) {
-	            printf("Child returned: %d\n", message);
-		    if(message == 0) {
-			    printf("Exit message\n");
-			    break;
-    		    }
-		}
-	}
-	close(fd[0]);
+        while (1) {
+            int message = 0;
+            ssize_t rb = read_all(fd[0], &message, sizeof(message));
+            if (rb == (ssize_t)sizeof(message)) {
+                printf("Child returned: %d\n", message);
+                if (message == 0) {
+                    printf("Exit message\n");
+                    break;
+                }
+            }
+        }
+        close(fd[0]);
     }
     waitpid(id, 0, 0);
     return EXIT_SUCCESS;
