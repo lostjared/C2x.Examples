@@ -25,7 +25,7 @@ int main(void) {
         close(fd[0]);
         for (int i = 0; i < 250; ++i) {
             int message = 1 + rand() % 255;
-            printf("Sending message: %d\n", message);
+            printf("Sending message to parent: %d\n", message);
             if (write_all(fd[1], &message, sizeof(message)) == -1) {
                 perror("write");
             }
@@ -38,7 +38,6 @@ int main(void) {
         _exit(EXIT_SUCCESS);
     } else {
         close(fd[1]);
-
         while (1) {
             int message = 0;
             ssize_t rb = read_all(fd[0], &message, sizeof(message));
