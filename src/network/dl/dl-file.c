@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "../mx_socket.h"
 #include <errno.h>
 #include <stdio.h>
@@ -89,25 +90,37 @@ int main(int argc, char **argv) {
             struct http_header h;
             if (extract_header(&socket, &h)) {
                 printf("Header: %s\n", h.header);
-                FILE *fptr = fopen(argv[4], "wb");
-                if (!fptr) {
-                    perror("fopen");
-                    free(h.header);
-                    free(h.body);
-                    return EXIT_FAILURE;
+                char *len_pos = strcasestr(h.header, "Content-Length:");
+                if(len_pos != nullptr) {
+                    len_pos += 15;
+                    char *end_pos;
+                    size_t f_len = strtoul(len_pos, &end_pos, 10);
+                    if(end_pos != len_pos) {
+                        FILE *fptr = fopen(argv[4], "wb");
+                        if (!fptr) {
+                            perror("fopen");
+                            free(h.header);
+                            free(h.body);
+                            return EXIT_FAILURE;
+                        }
+                        size_t file_length = 0;
+                        if (h.body_length > 0) {
+                            file_length += fwrite(h.body, 1, h.body_length, fptr);
+                        }
+                        while ((bytes = mx_socket_read(&socket, info, buffer_size, 0)) > 0) {
+                            file_length += fwrite(info, 1, (size_t)bytes, fptr);
+                        }
+                        if (bytes == -1) {
+                            fprintf(stderr, "dl: Connection reset or error: %s\n", strerror(errno));
+                        } else {
+                            if(file_length == f_len)
+                                printf("dl: [OK] -> %s\n", argv[4]);
+                            else
+                                printf("Incorrect file length: %zu != %zu\n",file_length, f_len);
+                        }
+                        fclose(fptr);
+                    }
                 }
-                if (h.body_length > 0) {
-                    fwrite(h.body, h.body_length, 1, fptr);
-                }
-                while ((bytes = mx_socket_read(&socket, info, buffer_size, 0)) > 0) {
-                    fwrite(info, (size_t)bytes, 1, fptr);
-                }
-                if (bytes == -1) {
-                    fprintf(stderr, "dl: Connection reset or error: %s\n", strerror(errno));
-                } else {
-                    printf("dl: [OK] -> %s\n", argv[4]);
-                }
-                fclose(fptr);
                 free(h.header);
                 free(h.body);
             }
