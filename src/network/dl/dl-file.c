@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
 
 static constexpr size_t BUFFER_SIZE = 4096;
 
@@ -72,6 +73,43 @@ bool extract_header(MXSocket *socket, struct http_header *h) {
     return true;
 }
 
+static int get_terminal_width() {
+    struct winsize w;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
+        return 80;
+    }
+    return w.ws_col;
+}
+
+static void print_progress(size_t length, size_t progress) {
+
+    if(length == 0) {
+        printf("\r\033[2K[ Downloading ] - 0%%\n");
+        return;
+    }
+
+    if(progress > length) {
+        progress = length;
+    }
+    int term_width = get_terminal_width();
+    int bar_width = term_width - 12;
+    double ratio = (double)progress / (double)length;
+    int num_equals = (int)(ratio * bar_width);
+    int percent = (int)(ratio * 100.0);
+    if (bar_width < 10)
+        bar_width = 10;
+    printf("\r\033[2K[");
+    for (int j = 0; j < bar_width; ++j) {
+        if (j < num_equals) {
+            putchar('=');
+        } else {
+            putchar(' ');
+        }
+    }
+    printf("] - %d%%", percent);
+    fflush(stdout);
+}
+
 int main(int argc, char **argv) {
     if (argc != 5) {
         fprintf(stderr, "Error on invoke of dl-file:\nuse:\ndl <host> <port> <file> <output>\n");
@@ -106,13 +144,16 @@ int main(int argc, char **argv) {
                         size_t file_length = 0;
                         if (h.body_length > 0) {
                             file_length += fwrite(h.body, 1, h.body_length, fptr);
+                            print_progress(f_len, file_length);
                         }
                         while ((bytes = mx_socket_read(&socket, info, buffer_size, 0)) > 0) {
                             file_length += fwrite(info, 1, (size_t)bytes, fptr);
+                            print_progress(f_len, file_length);
                         }
                         if (bytes == -1) {
                             fprintf(stderr, "dl: Connection reset or error: %s\n", strerror(errno));
                         } else {
+                            printf("\n");
                             if(file_length == f_len)
                                 printf("dl: [OK] -> %s\n", argv[4]);
                             else
