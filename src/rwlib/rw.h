@@ -2,7 +2,7 @@
 #define RWLIB_H_
 
 #include <stdlib.h>
-
+#include <unistd.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
