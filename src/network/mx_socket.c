@@ -5,7 +5,8 @@
 bool mx_socket_unix_listen(MXSocket *sock, const char *path, int backlog) {
     if (sock == nullptr || path == nullptr)
         return false;
-    mx_socket_init(sock);
+    if(!mx_socket_init(sock))
+        return false;
     struct sockaddr_un addr;
     int sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sockfd == -1) {
@@ -38,7 +39,8 @@ bool mx_socket_unix_listen(MXSocket *sock, const char *path, int backlog) {
 bool mx_socket_unix_connect(MXSocket *sock, const char *path) {
     if (sock == nullptr || path == nullptr)
         return false;
-    mx_socket_init(sock);
+    if(!mx_socket_init(sock))
+        return false;
     int sockfd = -1;
     struct sockaddr_un addr;
     memset(&addr, 0, sizeof(struct sockaddr_un));
