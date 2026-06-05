@@ -27,7 +27,6 @@ bool extract_header(MXSocket *socket, struct http_header *h) {
             free(buffer);
             return false;
         }
-
         if (length + (size_t)rbytes >= buffer_size_value) {
             buffer_size_value *= 2;
             char *n_buffer = realloc(buffer, buffer_size_value + 1);
