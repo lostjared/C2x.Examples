@@ -13,7 +13,7 @@ struct http_header {
     size_t body_length;
 };
 
-bool extract_header(MXSocket *socket, struct http_header *h) {
+bool extract_header(MXSocket *sock, struct http_header *h) {
     size_t buffer_size_value = BUFFER_SIZE;
     size_t length = 0;
     char *buffer = (char *)malloc(BUFFER_SIZE + 1);
@@ -21,7 +21,7 @@ bool extract_header(MXSocket *socket, struct http_header *h) {
     char data[1024];
     data[0] = 0;
     while (1) {
-        rbytes = mx_socket_read(socket, data, sizeof(data), 0);
+        rbytes = mx_socket_read(sock, data, sizeof(data), 0);
         if (rbytes <= 0) {
             fprintf(stderr, "Connection closed: Error.\n");
             free(buffer);
@@ -114,18 +114,18 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Error on invoke of dl-file:\nuse:\ndl <host> <port> <file> <output>\n");
         return EXIT_FAILURE;
     }
-    MXSocket socket;
-    mx_socket_init(&socket);
-    if (mx_socket_connect(&socket, argv[1], argv[2], SOCK_STREAM)) {
+    MXSocket sock;
+    mx_socket_init(&sock);
+    if (mx_socket_connect(&sock, argv[1], argv[2], SOCK_STREAM)) {
         printf("dl: connected.\n");
         static constexpr int buffer_size = 4096;
         char info[buffer_size];
         snprintf(info, buffer_size - 1, "GET %s HTTP/1.0\r\nHOST: %s\r\nUser-Agent: C-DL-Client/1.0\r\nConnection: close\r\n\r\n", argv[3], argv[1]);
         ssize_t bytes = 0;
-        if ((bytes = mx_socket_send(&socket, info, strlen(info), MSG_NOSIGNAL)) > 0) {
+        if ((bytes = mx_socket_send(&sock, info, strlen(info), MSG_NOSIGNAL)) > 0) {
             printf("dl: request sent.\n");
             struct http_header h;
-            if (extract_header(&socket, &h)) {
+            if (extract_header(&sock, &h)) {
                 printf("Header: %s\n", h.header);
                 char *len_pos = strcasestr(h.header, "Content-Length:");
                 if (len_pos != nullptr) {
@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
                             file_length += fwrite(h.body, 1, h.body_length, fptr);
                             print_progress(f_len, file_length);
                         }
-                        while ((bytes = mx_socket_read(&socket, info, buffer_size, 0)) > 0) {
+                        while ((bytes = mx_socket_read(&sock, info, buffer_size, 0)) > 0) {
                             file_length += fwrite(info, 1, (size_t)bytes, fptr);
                             print_progress(f_len, file_length);
                         }
@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
         } else if (bytes == -1 && errno == EPIPE) {
             fprintf(stderr, "dl: Error on send, broken pipe.\n");
         }
-        mx_socket_close(&socket);
+        mx_socket_close(&sock);
     } else {
         fprintf(stderr, "Error on connect:\n");
         return EXIT_FAILURE;
