@@ -1,62 +1,61 @@
 #include "mx_socket.h"
-#include <unistd.h>
 #include <sys/un.h>
-
+#include <unistd.h>
 
 bool mx_socket_unix_listen(MXSocket *sock, const char *path, int backlog) {
-    if(sock == nullptr || path == nullptr)
-           return false;
+    if (sock == nullptr || path == nullptr)
+        return false;
     mx_socket_init(sock);
     struct sockaddr_un addr;
     int sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if(sockfd == -1) {
-	    perror("socket");
-	    return false;
+    if (sockfd == -1) {
+        perror("socket");
+        return false;
     }
-    if(remove(path) == -1 && errno == ENOENT) {
-	    perror("remove");
-	    close(sockfd);
-	    return false;
+    if (remove(path) == -1 && errno == ENOENT) {
+        perror("remove");
+        close(sockfd);
+        return false;
     }
     memset(&addr, 0, sizeof(struct sockaddr_un));
     strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
     addr.sun_family = AF_UNIX;
-    if(bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1) {
-	    perror("bind");
-	    close(sockfd);
-	    return false;
+    if (bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1) {
+        perror("bind");
+        close(sockfd);
+        return false;
     }
 
-    if(listen(sockfd, backlog) == -1) {
-	    perror("listen");
-	    close(sockfd);
-	    return false;
+    if (listen(sockfd, backlog) == -1) {
+        perror("listen");
+        close(sockfd);
+        return false;
     }
     sock->sockfd = sockfd;
     return true;
 }
 
 bool mx_socket_unix_connect(MXSocket *sock, const char *path) {
-	if(sock == nullptr || path == nullptr)
-		return false;
-	mx_socket_init(sock);
-	int sockfd = -1;
-	struct sockaddr_un addr;
-	memset(&addr, 0, sizeof(struct sockaddr_un));
-	addr.sun_family = AF_UNIX;
-	sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-	if(sockfd == -1) {
-		perror("socket");
-		return false;
-	}
-	strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
-	if(connect(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1) {
-		perror("connect");
-		close(sockfd);
-		return false;
-	}
-	sock->sockfd = sockfd;
-	return true;
+    if (sock == nullptr || path == nullptr)
+        return false;
+    mx_socket_init(sock);
+    int sockfd = -1;
+    struct sockaddr_un addr;
+    memset(&addr, 0, sizeof(struct sockaddr_un));
+    addr.sun_family = AF_UNIX;
+    sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (sockfd == -1) {
+        perror("socket");
+        return false;
+    }
+    strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
+    if (connect(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1) {
+        perror("connect");
+        close(sockfd);
+        return false;
+    }
+    sock->sockfd = sockfd;
+    return true;
 }
 
 bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {

@@ -82,12 +82,12 @@ static int get_terminal_width() {
 
 static void print_progress(size_t length, size_t progress) {
 
-    if(length == 0) {
+    if (length == 0) {
         printf("\r\033[2K[ Downloading ] - 0%%\n");
         return;
     }
 
-    if(progress > length) {
+    if (progress > length) {
         progress = length;
     }
     int term_width = get_terminal_width();
@@ -128,11 +128,11 @@ int main(int argc, char **argv) {
             if (extract_header(&socket, &h)) {
                 printf("Header: %s\n", h.header);
                 char *len_pos = strcasestr(h.header, "Content-Length:");
-                if(len_pos != nullptr) {
+                if (len_pos != nullptr) {
                     len_pos += 15;
                     char *end_pos;
                     size_t f_len = strtoul(len_pos, &end_pos, 10);
-                    if(end_pos != len_pos) {
+                    if (end_pos != len_pos) {
                         FILE *fptr = fopen(argv[4], "wb");
                         if (!fptr) {
                             perror("fopen");
@@ -153,10 +153,10 @@ int main(int argc, char **argv) {
                             fprintf(stderr, "dl: Connection reset or error: %s\n", strerror(errno));
                         } else {
                             printf("\n");
-                            if(file_length == f_len)
+                            if (file_length == f_len)
                                 printf("dl: [OK] -> %s\n", argv[4]);
                             else
-                                printf("Incorrect file length: %zu != %zu\n",file_length, f_len);
+                                printf("Incorrect file length: %zu != %zu\n", file_length, f_len);
                         }
                         fclose(fptr);
                     }
