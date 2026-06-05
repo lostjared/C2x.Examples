@@ -1,7 +1,7 @@
 #include "../mx_socket.h"
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 
 static constexpr size_t BUFFER_SIZE = 1024;
 
@@ -18,7 +18,7 @@ void proc_cmd(int clientfd) {
 sig_atomic_t close_socket = 0;
 
 void close_signal(int sig [[maybe_unused]]) {
-	close_socket = 1;
+    close_socket = 1;
 }
 
 int main(void) {
@@ -27,20 +27,20 @@ int main(void) {
     struct sigaction sa = {};
     sa.sa_handler = close_signal;
     sa.sa_flags = 0;
-    if(sigaction(SIGINT,  &sa, nullptr) == -1) {
-	    perror("sigaction");
-	    return EXIT_FAILURE;
+    if (sigaction(SIGINT, &sa, nullptr) == -1) {
+        perror("sigaction");
+        return EXIT_FAILURE;
     }
     if (mx_socket_unix_listen(&sock, "/tmp/un_socket1.sock", 5)) {
         while (1) {
-	    if(close_socket == 1) {
-		    break;
-	    }
+            if (close_socket == 1) {
+                break;
+            }
             clientfd = accept(sock.sockfd, 0, 0);
             if (clientfd == -1) {
-		if(errno == EINTR) {
-			continue;
-		}
+                if (errno == EINTR) {
+                    continue;
+                }
                 perror("accept");
                 continue;
             }
