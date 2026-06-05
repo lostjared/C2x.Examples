@@ -65,7 +65,9 @@ bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
     struct addrinfo *rt, *rp;
     int sfd = -1, optval, s;
 
-    mx_socket_init(sock);
+    if(!mx_socket_init(sock)) {
+        return false;
+    }
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
