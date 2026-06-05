@@ -1,0 +1,4 @@
+player1:200
+plyaer2:10
+player3:500
+A:5

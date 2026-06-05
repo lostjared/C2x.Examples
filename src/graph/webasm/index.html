@@ -1,0 +1,73 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra Shortest Path</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+        const originalWidth = 1920; 
+        const originalHeight = 1080; 
+        const aspectRatio = originalWidth / originalHeight;
+	
+
+        const canvas = document.getElementById('canvas');
+        const resizeCanvas = () => {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            let newWidth, newHeight;
+
+            if (windowWidth / windowHeight > aspectRatio) {
+                // Screen is wider than the aspect ratio
+                newHeight = windowHeight;
+                newWidth = windowHeight * aspectRatio;
+            } else {
+                // Screen is taller than the aspect ratio
+                newWidth = windowWidth;
+                newHeight = windowWidth / aspectRatio;
+            }
+
+            // Set the canvas size
+            canvas.style.width = `${newWidth}px`;
+            canvas.style.height = `${newHeight}px`;
+
+            // Update the actual canvas resolution for rendering
+            canvas.width = originalWidth;
+            canvas.height = originalHeight;
+        };
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        var Module = {
+            canvas: canvas,
+            onRuntimeInitialized: function () {
+                console.log("Emscripten app is ready.");
+            }
+        };
+    </script>
+    <script src="Graph.js?v=1.0"></script>
+</body>
+</html>
+
+

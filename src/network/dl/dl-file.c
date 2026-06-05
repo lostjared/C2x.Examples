@@ -1,6 +1,8 @@
 #include "../mx_socket.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static constexpr size_t BUFFER_SIZE = 4096;
 
@@ -80,17 +82,35 @@ int main(int argc, char **argv) {
         printf("dl: connected.\n");
         static constexpr int buffer_size = 4096;
         char info[buffer_size];
-        snprintf(info, buffer_size - 1, "GET %s HTTP/1.0\r\nHOST: %s\r\n\r\n", argv[3], argv[1]);
+        snprintf(info, buffer_size - 1, "GET %s HTTP/1.0\r\nHOST: %s\r\nUser-Agent: C-DL-Client/1.0\r\nConnection: close\r\n\r\n", argv[3], argv[1]);
         ssize_t bytes = 0;
-        if ((bytes = mx_socket_send(&socket, info, strlen(info) + 1, MSG_NOSIGNAL)) > 0) {
+        if ((bytes = mx_socket_send(&socket, info, strlen(info), MSG_NOSIGNAL)) > 0) {
             printf("dl: request sent.\n");
             struct http_header h;
             if (extract_header(&socket, &h)) {
                 printf("Header: %s\n", h.header);
+                FILE *fptr = fopen(argv[4], "wb");
+                if (!fptr) {
+                    perror("fopen");
+                    free(h.header);
+                    free(h.body);
+                    return EXIT_FAILURE;
+                }
+                if (h.body_length > 0) {
+                    fwrite(h.body, h.body_length, 1, fptr);
+                }
+                while ((bytes = mx_socket_read(&socket, info, buffer_size, 0)) > 0) {
+                    fwrite(info, (size_t)bytes, 1, fptr);
+                }
+                if (bytes == -1) {
+                    fprintf(stderr, "dl: Connection reset or error: %s\n", strerror(errno));
+                } else {
+                    printf("dl: [OK] -> %s\n", argv[4]);
+                }
+                fclose(fptr);
                 free(h.header);
                 free(h.body);
             }
-
         } else if (bytes == -1 && errno == EPIPE) {
             fprintf(stderr, "dl: Error on send, broken pipe.\n");
         }

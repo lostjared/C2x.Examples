@@ -2,10 +2,10 @@
 #include <errno.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
-#include <sys/socket.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 
 void echo_ip(const char *device) {
