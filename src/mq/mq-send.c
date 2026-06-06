@@ -9,7 +9,13 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Error requires two arguments:%s <path> <prority>\n", argv[0]);
         return EXIT_FAILURE;
     }
-    unsigned int prio = (unsigned int)atoi(argv[2]);
+
+    char *end = nullptr;
+    unsigned int prio = (unsigned int)strtoul(argv[2], &end, 10);
+    if(end == argv[2] || (end != nullptr && *end != '\0')) {
+        fprintf(stderr, "Error invalid conversion of: %s\n", argv[2]);
+        return EXIT_FAILURE;
+    }
     mqd_t m;
     m = mq_open(argv[1], O_CREAT | O_WRONLY);
     if (m == (mqd_t)-1) {
