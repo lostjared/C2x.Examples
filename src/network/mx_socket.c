@@ -60,6 +60,54 @@
     return true;
 }
 
+[[nodiscard]] bool mx_socket_connect_hostname(MXSocket *sock, const char *host_value, const char *port, int type) {
+    if (host_value == nullptr || port == nullptr)
+        return false;
+    if(!mx_socket_init(sock))
+        return false;
+
+    struct addrinfo hints;
+    struct addrinfo *rt, *rp;
+    int sfd = -1, s;
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_canonname = nullptr;
+    hints.ai_addr = nullptr;
+    hints.ai_next = nullptr;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = type;
+    int status = getaddrinfo(host_value, port, &hints, &rt);
+    if (status != 0) {
+        fprintf(stderr, "Error resolving host: %s\n", gai_strerror(status));
+        return false;
+    }
+    for (rp = rt; rp != nullptr; rp = rp->ai_next) {
+        sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        if (sfd == -1)
+            continue;
+
+        if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1)
+            break;
+
+        if (sfd >= 0) {
+            close(sfd);
+            sfd = -1;
+        }
+    }
+
+    if (rp != nullptr) {
+        sock->sockfd = sfd;
+        sock->addrlen = rp->ai_addrlen;
+    } else {
+        freeaddrinfo(rt);
+        if (sfd >= 0)
+            close(sfd);
+        return false;
+    }
+
+    freeaddrinfo(rt);
+    return true;
+}
+
 [[nodiscard]] bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
     if (port == nullptr)
         return false;
@@ -203,8 +251,6 @@ void mx_socket_close(MXSocket *sock) {
     struct addrinfo *rt, *rp;
     int sfd = -1, s;
     memset(&hints, 0, sizeof(struct addrinfo));
-    if(!mx_socket_init(sock))
-        return false;
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
     hints.ai_next = nullptr;
