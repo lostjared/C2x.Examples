@@ -114,14 +114,13 @@ void *process_input(void *data) {
             const char *exit_cmd = strstr(buffer, "exit:");
             if (exit_cmd != nullptr) {
                 printf("Exiting thread socket[%d]\n", sock->sockfd);
-		mx_socket_close(sock);
-		free(sock);
+                mx_socket_close(sock);
+                free(sock);
                 return nullptr;
             }
-	} 
-	if(bytes <= 0)
-		break;
-
+        }
+        if (bytes <= 0)
+            break;
     }
     printf("Exiting thread socket[%d]", sock->sockfd);
     mx_socket_close(sock);
@@ -189,8 +188,8 @@ static void connect_client(const char *host, const char *port) {
             if (fgets(input, BUFFER_SIZE - 3, stdin)) {
                 size_t slen = strlen(input);
                 input[slen - 1] = '\0';
-                if(slen + 2 < BUFFER_SIZE) {
-                    strncat(input, "\r\n", BUFFER_SIZE-1);
+                if (slen + 2 < BUFFER_SIZE) {
+                    strncat(input, "\r\n", BUFFER_SIZE - 1);
                 }
                 slen = strlen(input);
                 if (write_all(sock.sockfd, input, slen) != (ssize_t)slen) {
@@ -230,17 +229,17 @@ static void connect_client(const char *host, const char *port) {
                         size_t file_size = (size_t)strtoul(cl_ptr, nullptr, 10);
                         char filename[PATH_MAX] = {};
                         char fmt_string[32] = {};
-			snprintf(fmt_string, sizeof(fmt_string), "get: %%%zus", (size_t)PATH_MAX - 1);
-			if(sscanf(input, fmt_string, filename) == 1) {
-                        	nt fd = openat(AT_FDCWD, filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-                	       if (fd == -1) {
-        	                   perror("openat");
-	                           continue;
-                        	}
-			} else {
-				fprintf(stderr, "fileserve: Error on interpreting get command.\n");
-				continue;
-			}
+                        snprintf(fmt_string, sizeof(fmt_string), "get: %%%zus", (size_t)PATH_MAX - 1);
+                        if (sscanf(input, fmt_string, filename) == 1) {
+                            int fd = openat(AT_FDCWD, filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                            if (fd == -1) {
+                                perror("openat");
+                                continue;
+                            }
+                        } else {
+                            fprintf(stderr, "fileserve: Error on interpreting get command.\n");
+                            continue;
+                        }
 
                         char *data_start = strchr(cl_ptr, '\n');
                         size_t bytes_written = 0;
