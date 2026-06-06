@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
                     len_pos += 15;
                     char *end_pos;
                     size_t f_len = strtoul(len_pos, &end_pos, 10);
-                    if (end_pos != len_pos) {
+                    if (end_pos != len_pos && (end_pos != nullptr && *end_pos != '\0')) {
                         FILE *fptr = fopen(argv[4], "wb");
                         if (!fptr) {
                             perror("fopen");
