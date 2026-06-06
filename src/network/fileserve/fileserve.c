@@ -201,7 +201,7 @@ static int get_terminal_width() {
     return w.ws_col;
 }
 
-static void print_progress(size_t length, size_t progress) {
+static void print_progress(int *prev, size_t length, size_t progress) {
     if (length == 0) {
         printf("\r\033[2K[ Downloading ] - 0%%\n");
         return;
@@ -214,6 +214,10 @@ static void print_progress(size_t length, size_t progress) {
     double ratio = (double)progress / (double)length;
     int num_equals = (int)(ratio * bar_width);
     int percent = (int)(ratio * 100.0);
+
+    if(*prev == percent)
+        return;
+    *prev = percent;
     if (bar_width < 10)
         bar_width = 10;
     printf("\r\033[2K[");
@@ -225,6 +229,7 @@ static void print_progress(size_t length, size_t progress) {
         }
     }
     printf("] - %d%%", percent);
+
     fflush(stdout);
 }
 
@@ -307,7 +312,8 @@ static void connect_client(const char *host, const char *port) {
                                 }
                             }
                         }
-                        print_progress(file_size, bytes_written);
+                        int prev = 0;
+                        print_progress(&prev, file_size, bytes_written);
                         while (bytes_written < file_size) {
                             memset(buffer, 0, sizeof(buffer));
                             size_t to_read = BUFFER_SIZE;
@@ -325,9 +331,9 @@ static void connect_client(const char *host, const char *port) {
                                 break;
                             }
                             bytes_written += (size_t)bytes;
-                            print_progress(file_size, bytes_written);
+                            print_progress(&prev, file_size, bytes_written);
                         }
-                        print_progress(file_size, bytes_written);
+                        print_progress(&prev, file_size, bytes_written);
                         printf("\nfileserve:  Saved %zu bytes to %s\n", bytes_written, filename);
                         close(fd);
                     }
