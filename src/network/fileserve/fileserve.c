@@ -9,6 +9,7 @@
 #include <sys/sendfile.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdatomic.h>
 
 static constexpr size_t PORT_MAX = 3002;
 static constexpr size_t BUFFER_SIZE = 4096;
@@ -84,12 +85,12 @@ void send_file(MXSocket *sock, const char *filename) {
     close(ofd);
 }
 
-sig_atomic_t active_loop = 0;
+atomic_bool active_loop = false;
 
 void *process_input(void *data) {
     char buffer[BUFFER_SIZE] = {};
     MXSocket *sock = (MXSocket *)data;
-    while (active_loop == 1) {
+    while (atomic_load(&active_loop)) {
         memset(buffer, 0, sizeof(buffer));
         ssize_t bytes = 0;
         while ((bytes = mx_socket_read(sock, buffer, sizeof(buffer) - 1, 0)) > 0) {
@@ -129,15 +130,15 @@ void *process_input(void *data) {
 }
 
 void listen_signal(int) {
-    active_loop = 0;
+    atomic_store(&active_loop, false);
 }
 
 static void listen_server(const char *port) {
     MXSocket sock;
     if (mx_socket_listen(&sock, port, 5)) {
         printf("file_serve: Listening on port %s\n", port);
-        active_loop = 1;
-        while (active_loop == 1) {
+        atomic_store(&active_loop, true);
+        while (atomic_load(&active_loop)) {
             MXSocket *new_socket = malloc(sizeof(MXSocket));
             if (new_socket == nullptr) {
                 fprintf(stderr, "fileserve: Memory exhausted.\n");
@@ -158,7 +159,7 @@ static void listen_server(const char *port) {
                     mx_socket_close(new_socket);
                     free(new_socket);
                     fprintf(stderr, "fileserve: Error spawning new thread...\n");
-                    active_loop = 0;
+                    atomic_store(&active_loop, false);
                     mx_socket_close(&sock);
                     return;
                 }
@@ -179,9 +180,9 @@ static void listen_server(const char *port) {
 
 static void connect_client(const char *host, const char *port) {
     MXSocket sock;
-    active_loop = 1;
+    atomic_store(&active_loop, true);
     if (mx_socket_connect(&sock, host, port, SOCK_STREAM)) {
-        while (active_loop == 1) {
+        while (atomic_load(&active_loop)) {
             char input[BUFFER_SIZE] = {};
             char buffer[BUFFER_SIZE] = {};
             printf("fileserve> ");
