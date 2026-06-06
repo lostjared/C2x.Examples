@@ -307,7 +307,7 @@ static void connect_client(const char *host, const char *port) {
                                 }
                             }
                         }
-                        print_progress(bytes_written, file_size);
+                        print_progress(file_size, bytes_written);
                         while (bytes_written < file_size) {
                             memset(buffer, 0, sizeof(buffer));
                             size_t to_read = BUFFER_SIZE;
@@ -325,9 +325,9 @@ static void connect_client(const char *host, const char *port) {
                                 break;
                             }
                             bytes_written += (size_t)bytes;
-                            print_progress(bytes_written, file_size);
+                            print_progress(file_size, bytes_written);
                         }
-                        print_progress(bytes_written, file_size);
+                        print_progress(file_size, bytes_written);
                         printf("\nfileserve:  Saved %zu bytes to %s\n", bytes_written, filename);
                         close(fd);
                     }
