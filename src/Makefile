@@ -624,6 +624,71 @@ copy-file/fast:
 .PHONY : copy-file/fast
 
 #=============================================================================
+# Target rules for targets named mq-send
+
+# Build rule for target.
+mq-send: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mq-send
+.PHONY : mq-send
+
+# fast build rule for target.
+mq-send/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-send.dir/build.make CMakeFiles/mq-send.dir/build
+.PHONY : mq-send/fast
+
+#=============================================================================
+# Target rules for targets named mq-recv
+
+# Build rule for target.
+mq-recv: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mq-recv
+.PHONY : mq-recv
+
+# fast build rule for target.
+mq-recv/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-recv.dir/build.make CMakeFiles/mq-recv.dir/build
+.PHONY : mq-recv/fast
+
+#=============================================================================
+# Target rules for targets named semaphore-proc
+
+# Build rule for target.
+semaphore-proc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 semaphore-proc
+.PHONY : semaphore-proc
+
+# fast build rule for target.
+semaphore-proc/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-proc.dir/build.make CMakeFiles/semaphore-proc.dir/build
+.PHONY : semaphore-proc/fast
+
+#=============================================================================
+# Target rules for targets named semaphore-thread
+
+# Build rule for target.
+semaphore-thread: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 semaphore-thread
+.PHONY : semaphore-thread
+
+# fast build rule for target.
+semaphore-thread/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread.dir/build.make CMakeFiles/semaphore-thread.dir/build
+.PHONY : semaphore-thread/fast
+
+#=============================================================================
+# Target rules for targets named semaphore-thread-wake
+
+# Build rule for target.
+semaphore-thread-wake: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 semaphore-thread-wake
+.PHONY : semaphore-thread-wake
+
+# fast build rule for target.
+semaphore-thread-wake/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread-wake.dir/build.make CMakeFiles/semaphore-thread-wake.dir/build
+.PHONY : semaphore-thread-wake/fast
+
+#=============================================================================
 # Target rules for targets named inline_asm_test
 
 # Build rule for target.
@@ -1428,6 +1493,71 @@ pipe-message: cmake_check_build_system
 pipe-message/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pipe-message.dir/build.make CMakeFiles/pipe-message.dir/build
 .PHONY : pipe-message/fast
+
+#=============================================================================
+# Target rules for targets named dl
+
+# Build rule for target.
+dl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dl
+.PHONY : dl
+
+# fast build rule for target.
+dl/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/build
+.PHONY : dl/fast
+
+#=============================================================================
+# Target rules for targets named dl-file
+
+# Build rule for target.
+dl-file: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dl-file
+.PHONY : dl-file
+
+# fast build rule for target.
+dl-file/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/build
+.PHONY : dl-file/fast
+
+#=============================================================================
+# Target rules for targets named un_socket_server
+
+# Build rule for target.
+un_socket_server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 un_socket_server
+.PHONY : un_socket_server
+
+# fast build rule for target.
+un_socket_server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/build
+.PHONY : un_socket_server/fast
+
+#=============================================================================
+# Target rules for targets named un_socket_client
+
+# Build rule for target.
+un_socket_client: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 un_socket_client
+.PHONY : un_socket_client
+
+# fast build rule for target.
+un_socket_client/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/build
+.PHONY : un_socket_client/fast
+
+#=============================================================================
+# Target rules for targets named fileserve
+
+# Build rule for target.
+fileserve: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fileserve
+.PHONY : fileserve
+
+# fast build rule for target.
+fileserve/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/build
+.PHONY : fileserve/fast
 
 auto.o: auto.c.o
 .PHONY : auto.o
@@ -3094,6 +3224,102 @@ mergesort/mergesort.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/merge_sort.dir/build.make CMakeFiles/merge_sort.dir/mergesort/mergesort.c.s
 .PHONY : mergesort/mergesort.c.s
 
+mq/mq-recv.o: mq/mq-recv.c.o
+.PHONY : mq/mq-recv.o
+
+# target to build an object file
+mq/mq-recv.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-recv.dir/build.make CMakeFiles/mq-recv.dir/mq/mq-recv.c.o
+.PHONY : mq/mq-recv.c.o
+
+mq/mq-recv.i: mq/mq-recv.c.i
+.PHONY : mq/mq-recv.i
+
+# target to preprocess a source file
+mq/mq-recv.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-recv.dir/build.make CMakeFiles/mq-recv.dir/mq/mq-recv.c.i
+.PHONY : mq/mq-recv.c.i
+
+mq/mq-recv.s: mq/mq-recv.c.s
+.PHONY : mq/mq-recv.s
+
+# target to generate assembly for a file
+mq/mq-recv.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-recv.dir/build.make CMakeFiles/mq-recv.dir/mq/mq-recv.c.s
+.PHONY : mq/mq-recv.c.s
+
+mq/mq-send.o: mq/mq-send.c.o
+.PHONY : mq/mq-send.o
+
+# target to build an object file
+mq/mq-send.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-send.dir/build.make CMakeFiles/mq-send.dir/mq/mq-send.c.o
+.PHONY : mq/mq-send.c.o
+
+mq/mq-send.i: mq/mq-send.c.i
+.PHONY : mq/mq-send.i
+
+# target to preprocess a source file
+mq/mq-send.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-send.dir/build.make CMakeFiles/mq-send.dir/mq/mq-send.c.i
+.PHONY : mq/mq-send.c.i
+
+mq/mq-send.s: mq/mq-send.c.s
+.PHONY : mq/mq-send.s
+
+# target to generate assembly for a file
+mq/mq-send.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mq-send.dir/build.make CMakeFiles/mq-send.dir/mq/mq-send.c.s
+.PHONY : mq/mq-send.c.s
+
+network/dl/dl-file.o: network/dl/dl-file.c.o
+.PHONY : network/dl/dl-file.o
+
+# target to build an object file
+network/dl/dl-file.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/network/dl/dl-file.c.o
+.PHONY : network/dl/dl-file.c.o
+
+network/dl/dl-file.i: network/dl/dl-file.c.i
+.PHONY : network/dl/dl-file.i
+
+# target to preprocess a source file
+network/dl/dl-file.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/network/dl/dl-file.c.i
+.PHONY : network/dl/dl-file.c.i
+
+network/dl/dl-file.s: network/dl/dl-file.c.s
+.PHONY : network/dl/dl-file.s
+
+# target to generate assembly for a file
+network/dl/dl-file.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/network/dl/dl-file.c.s
+.PHONY : network/dl/dl-file.c.s
+
+network/dl/main.o: network/dl/main.c.o
+.PHONY : network/dl/main.o
+
+# target to build an object file
+network/dl/main.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/network/dl/main.c.o
+.PHONY : network/dl/main.c.o
+
+network/dl/main.i: network/dl/main.c.i
+.PHONY : network/dl/main.i
+
+# target to preprocess a source file
+network/dl/main.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/network/dl/main.c.i
+.PHONY : network/dl/main.c.i
+
+network/dl/main.s: network/dl/main.c.s
+.PHONY : network/dl/main.s
+
+# target to generate assembly for a file
+network/dl/main.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/network/dl/main.c.s
+.PHONY : network/dl/main.c.s
+
 network/echo_ip/echo_ip.o: network/echo_ip/echo_ip.c.o
 .PHONY : network/echo_ip/echo_ip.o
 
@@ -3118,6 +3344,30 @@ network/echo_ip/echo_ip.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/echo-ip.dir/build.make CMakeFiles/echo-ip.dir/network/echo_ip/echo_ip.c.s
 .PHONY : network/echo_ip/echo_ip.c.s
 
+network/fileserve/fileserve.o: network/fileserve/fileserve.c.o
+.PHONY : network/fileserve/fileserve.o
+
+# target to build an object file
+network/fileserve/fileserve.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/network/fileserve/fileserve.c.o
+.PHONY : network/fileserve/fileserve.c.o
+
+network/fileserve/fileserve.i: network/fileserve/fileserve.c.i
+.PHONY : network/fileserve/fileserve.i
+
+# target to preprocess a source file
+network/fileserve/fileserve.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/network/fileserve/fileserve.c.i
+.PHONY : network/fileserve/fileserve.c.i
+
+network/fileserve/fileserve.s: network/fileserve/fileserve.c.s
+.PHONY : network/fileserve/fileserve.s
+
+# target to generate assembly for a file
+network/fileserve/fileserve.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/network/fileserve/fileserve.c.s
+.PHONY : network/fileserve/fileserve.c.s
+
 network/mx_socket.o: network/mx_socket.c.o
 .PHONY : network/mx_socket.o
 
@@ -3126,6 +3376,11 @@ network/mx_socket.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server.dir/build.make CMakeFiles/socket_server.dir/network/mx_socket.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_connect.dir/build.make CMakeFiles/socket_connect.dir/network/mx_socket.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server_queue.dir/build.make CMakeFiles/socket_server_queue.dir/network/mx_socket.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/network/mx_socket.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/network/mx_socket.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/network/mx_socket.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/network/mx_socket.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/network/mx_socket.c.o
 .PHONY : network/mx_socket.c.o
 
 network/mx_socket.i: network/mx_socket.c.i
@@ -3136,6 +3391,11 @@ network/mx_socket.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server.dir/build.make CMakeFiles/socket_server.dir/network/mx_socket.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_connect.dir/build.make CMakeFiles/socket_connect.dir/network/mx_socket.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server_queue.dir/build.make CMakeFiles/socket_server_queue.dir/network/mx_socket.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/network/mx_socket.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/network/mx_socket.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/network/mx_socket.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/network/mx_socket.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/network/mx_socket.c.i
 .PHONY : network/mx_socket.c.i
 
 network/mx_socket.s: network/mx_socket.c.s
@@ -3146,6 +3406,11 @@ network/mx_socket.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server.dir/build.make CMakeFiles/socket_server.dir/network/mx_socket.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_connect.dir/build.make CMakeFiles/socket_connect.dir/network/mx_socket.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server_queue.dir/build.make CMakeFiles/socket_server_queue.dir/network/mx_socket.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl.dir/build.make CMakeFiles/dl.dir/network/mx_socket.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dl-file.dir/build.make CMakeFiles/dl-file.dir/network/mx_socket.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/network/mx_socket.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/network/mx_socket.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/network/mx_socket.c.s
 .PHONY : network/mx_socket.c.s
 
 network/socket_connect/main.o: network/socket_connect/main.c.o
@@ -3243,6 +3508,54 @@ network/socket_server_queue/main.s: network/socket_server_queue/main.c.s
 network/socket_server_queue/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/socket_server_queue.dir/build.make CMakeFiles/socket_server_queue.dir/network/socket_server_queue/main.c.s
 .PHONY : network/socket_server_queue/main.c.s
+
+network/uds_client/client.o: network/uds_client/client.c.o
+.PHONY : network/uds_client/client.o
+
+# target to build an object file
+network/uds_client/client.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/network/uds_client/client.c.o
+.PHONY : network/uds_client/client.c.o
+
+network/uds_client/client.i: network/uds_client/client.c.i
+.PHONY : network/uds_client/client.i
+
+# target to preprocess a source file
+network/uds_client/client.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/network/uds_client/client.c.i
+.PHONY : network/uds_client/client.c.i
+
+network/uds_client/client.s: network/uds_client/client.c.s
+.PHONY : network/uds_client/client.s
+
+# target to generate assembly for a file
+network/uds_client/client.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/network/uds_client/client.c.s
+.PHONY : network/uds_client/client.c.s
+
+network/uds_server/server.o: network/uds_server/server.c.o
+.PHONY : network/uds_server/server.o
+
+# target to build an object file
+network/uds_server/server.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/network/uds_server/server.c.o
+.PHONY : network/uds_server/server.c.o
+
+network/uds_server/server.i: network/uds_server/server.c.i
+.PHONY : network/uds_server/server.i
+
+# target to preprocess a source file
+network/uds_server/server.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/network/uds_server/server.c.i
+.PHONY : network/uds_server/server.c.i
+
+network/uds_server/server.s: network/uds_server/server.c.s
+.PHONY : network/uds_server/server.s
+
+# target to generate assembly for a file
+network/uds_server/server.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_server.dir/build.make CMakeFiles/un_socket_server.dir/network/uds_server/server.c.s
+.PHONY : network/uds_server/server.c.s
 
 no-discard.o: no-discard.c.o
 .PHONY : no-discard.o
@@ -3610,6 +3923,8 @@ rwlib/rw.o: rwlib/rw.c.o
 # target to build an object file
 rwlib/rw.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rwlib.dir/build.make CMakeFiles/rwlib.dir/rwlib/rw.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/rwlib/rw.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/rwlib/rw.c.o
 .PHONY : rwlib/rw.c.o
 
 rwlib/rw.i: rwlib/rw.c.i
@@ -3618,6 +3933,8 @@ rwlib/rw.i: rwlib/rw.c.i
 # target to preprocess a source file
 rwlib/rw.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rwlib.dir/build.make CMakeFiles/rwlib.dir/rwlib/rw.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/rwlib/rw.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/rwlib/rw.c.i
 .PHONY : rwlib/rw.c.i
 
 rwlib/rw.s: rwlib/rw.c.s
@@ -3626,6 +3943,8 @@ rwlib/rw.s: rwlib/rw.c.s
 # target to generate assembly for a file
 rwlib/rw.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rwlib.dir/build.make CMakeFiles/rwlib.dir/rwlib/rw.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/un_socket_client.dir/build.make CMakeFiles/un_socket_client.dir/rwlib/rw.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fileserve.dir/build.make CMakeFiles/fileserve.dir/rwlib/rw.c.s
 .PHONY : rwlib/rw.c.s
 
 seek-test.o: seek-test.c.o
@@ -3651,6 +3970,78 @@ seek-test.s: seek-test.c.s
 seek-test.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/seek-test.dir/build.make CMakeFiles/seek-test.dir/seek-test.c.s
 .PHONY : seek-test.c.s
+
+semaphore_proc.o: semaphore_proc.c.o
+.PHONY : semaphore_proc.o
+
+# target to build an object file
+semaphore_proc.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-proc.dir/build.make CMakeFiles/semaphore-proc.dir/semaphore_proc.c.o
+.PHONY : semaphore_proc.c.o
+
+semaphore_proc.i: semaphore_proc.c.i
+.PHONY : semaphore_proc.i
+
+# target to preprocess a source file
+semaphore_proc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-proc.dir/build.make CMakeFiles/semaphore-proc.dir/semaphore_proc.c.i
+.PHONY : semaphore_proc.c.i
+
+semaphore_proc.s: semaphore_proc.c.s
+.PHONY : semaphore_proc.s
+
+# target to generate assembly for a file
+semaphore_proc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-proc.dir/build.make CMakeFiles/semaphore-proc.dir/semaphore_proc.c.s
+.PHONY : semaphore_proc.c.s
+
+semaphore_thread.o: semaphore_thread.c.o
+.PHONY : semaphore_thread.o
+
+# target to build an object file
+semaphore_thread.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread.dir/build.make CMakeFiles/semaphore-thread.dir/semaphore_thread.c.o
+.PHONY : semaphore_thread.c.o
+
+semaphore_thread.i: semaphore_thread.c.i
+.PHONY : semaphore_thread.i
+
+# target to preprocess a source file
+semaphore_thread.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread.dir/build.make CMakeFiles/semaphore-thread.dir/semaphore_thread.c.i
+.PHONY : semaphore_thread.c.i
+
+semaphore_thread.s: semaphore_thread.c.s
+.PHONY : semaphore_thread.s
+
+# target to generate assembly for a file
+semaphore_thread.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread.dir/build.make CMakeFiles/semaphore-thread.dir/semaphore_thread.c.s
+.PHONY : semaphore_thread.c.s
+
+semaphore_thread_wake.o: semaphore_thread_wake.c.o
+.PHONY : semaphore_thread_wake.o
+
+# target to build an object file
+semaphore_thread_wake.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread-wake.dir/build.make CMakeFiles/semaphore-thread-wake.dir/semaphore_thread_wake.c.o
+.PHONY : semaphore_thread_wake.c.o
+
+semaphore_thread_wake.i: semaphore_thread_wake.c.i
+.PHONY : semaphore_thread_wake.i
+
+# target to preprocess a source file
+semaphore_thread_wake.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread-wake.dir/build.make CMakeFiles/semaphore-thread-wake.dir/semaphore_thread_wake.c.i
+.PHONY : semaphore_thread_wake.c.i
+
+semaphore_thread_wake.s: semaphore_thread_wake.c.s
+.PHONY : semaphore_thread_wake.s
+
+# target to generate assembly for a file
+semaphore_thread_wake.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/semaphore-thread-wake.dir/build.make CMakeFiles/semaphore-thread-wake.dir/semaphore_thread_wake.c.s
+.PHONY : semaphore_thread_wake.c.s
 
 seq.o: seq.c.o
 .PHONY : seq.o
@@ -4373,10 +4764,13 @@ help:
 	@echo "... dir-r"
 	@echo "... dir-sort"
 	@echo "... dir-test"
+	@echo "... dl"
+	@echo "... dl-file"
 	@echo "... doubly-link"
 	@echo "... echo-ip"
 	@echo "... embed-test"
 	@echo "... file-stat"
+	@echo "... fileserve"
 	@echo "... fork-test"
 	@echo "... generic-test1"
 	@echo "... getline-test"
@@ -4416,6 +4810,8 @@ help:
 	@echo "... matrix-test"
 	@echo "... maybe-test"
 	@echo "... merge_sort"
+	@echo "... mq-recv"
+	@echo "... mq-send"
 	@echo "... mx-encrypt"
 	@echo "... nodiscard-test"
 	@echo "... object-test"
@@ -4433,6 +4829,9 @@ help:
 	@echo "... restrict-test"
 	@echo "... rwlib"
 	@echo "... seek-test"
+	@echo "... semaphore-proc"
+	@echo "... semaphore-thread"
+	@echo "... semaphore-thread-wake"
 	@echo "... seq-test"
 	@echo "... set-ex"
 	@echo "... set-match"
@@ -4459,6 +4858,8 @@ help:
 	@echo "... trace-f"
 	@echo "... tree-test"
 	@echo "... typewriter"
+	@echo "... un_socket_client"
+	@echo "... un_socket_server"
 	@echo "... uname"
 	@echo "... auto.o"
 	@echo "... auto.i"
@@ -4664,9 +5065,24 @@ help:
 	@echo "... mergesort/mergesort.o"
 	@echo "... mergesort/mergesort.i"
 	@echo "... mergesort/mergesort.s"
+	@echo "... mq/mq-recv.o"
+	@echo "... mq/mq-recv.i"
+	@echo "... mq/mq-recv.s"
+	@echo "... mq/mq-send.o"
+	@echo "... mq/mq-send.i"
+	@echo "... mq/mq-send.s"
+	@echo "... network/dl/dl-file.o"
+	@echo "... network/dl/dl-file.i"
+	@echo "... network/dl/dl-file.s"
+	@echo "... network/dl/main.o"
+	@echo "... network/dl/main.i"
+	@echo "... network/dl/main.s"
 	@echo "... network/echo_ip/echo_ip.o"
 	@echo "... network/echo_ip/echo_ip.i"
 	@echo "... network/echo_ip/echo_ip.s"
+	@echo "... network/fileserve/fileserve.o"
+	@echo "... network/fileserve/fileserve.i"
+	@echo "... network/fileserve/fileserve.s"
 	@echo "... network/mx_socket.o"
 	@echo "... network/mx_socket.i"
 	@echo "... network/mx_socket.s"
@@ -4682,6 +5098,12 @@ help:
 	@echo "... network/socket_server_queue/main.o"
 	@echo "... network/socket_server_queue/main.i"
 	@echo "... network/socket_server_queue/main.s"
+	@echo "... network/uds_client/client.o"
+	@echo "... network/uds_client/client.i"
+	@echo "... network/uds_client/client.s"
+	@echo "... network/uds_server/server.o"
+	@echo "... network/uds_server/server.i"
+	@echo "... network/uds_server/server.s"
 	@echo "... no-discard.o"
 	@echo "... no-discard.i"
 	@echo "... no-discard.s"
@@ -4733,6 +5155,15 @@ help:
 	@echo "... seek-test.o"
 	@echo "... seek-test.i"
 	@echo "... seek-test.s"
+	@echo "... semaphore_proc.o"
+	@echo "... semaphore_proc.i"
+	@echo "... semaphore_proc.s"
+	@echo "... semaphore_thread.o"
+	@echo "... semaphore_thread.i"
+	@echo "... semaphore_thread.s"
+	@echo "... semaphore_thread_wake.o"
+	@echo "... semaphore_thread_wake.i"
+	@echo "... semaphore_thread_wake.s"
 	@echo "... seq.o"
 	@echo "... seq.i"
 	@echo "... seq.s"

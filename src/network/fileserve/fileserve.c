@@ -84,14 +84,15 @@ void send_file(MXSocket *sock, const char *filename) {
     close(ofd);
 }
 
+sig_atomic_t active_loop = 0;
+
 void *process_input(void *data) {
     char buffer[BUFFER_SIZE] = {};
     MXSocket *sock = (MXSocket *)data;
-    bool active = true;
-    while (active == true) {
+    while (active_loop == 1) {
         memset(buffer, 0, sizeof(buffer));
         ssize_t bytes = 0;
-        while ((bytes = mx_socket_read(sock, buffer, 4096, 0)) > 0) {
+        while ((bytes = mx_socket_read(sock, buffer, sizeof(buffer) - 1, 0)) > 0) {
             buffer[bytes] = 0;
             printf("fileserve: command: %s\n", buffer);
             const char *cmd = strstr(buffer, "ls");
@@ -113,14 +114,20 @@ void *process_input(void *data) {
             const char *exit_cmd = strstr(buffer, "exit:");
             if (exit_cmd != nullptr) {
                 printf("Exiting thread socket[%d]\n", sock->sockfd);
-                return 0;
+		mx_socket_close(sock);
+		free(sock);
+                return nullptr;
             }
-        }
-    }
-    return 0;
-}
+	} 
+	if(bytes <= 0)
+		break;
 
-sig_atomic_t active_loop = 0;
+    }
+    printf("Exiting thread socket[%d]", sock->sockfd);
+    mx_socket_close(sock);
+    free(sock);
+    return nullptr;
+}
 
 void listen_signal(int) {
     active_loop = 0;
@@ -173,26 +180,112 @@ static void listen_server(const char *port) {
 
 static void connect_client(const char *host, const char *port) {
     MXSocket sock;
+    active_loop = 1;
     if (mx_socket_connect(&sock, host, port, SOCK_STREAM)) {
         while (active_loop == 1) {
             char input[BUFFER_SIZE] = {};
-            printf("fserve> ");
-            if (fgets(input, BUFFER_SIZE)) {
+            char buffer[BUFFER_SIZE] = {};
+            printf("fileserve> ");
+            if (fgets(input, BUFFER_SIZE - 3, stdin)) {
                 size_t slen = strlen(input);
-                if (write_all(sock->sockfd, input, slen) != (ssizee_t)slen) {
-                    fprintf(stderr, "fserve: Error could not write data.\n");
+                input[slen - 1] = '\0';
+                if(slen + 2 < BUFFER_SIZE) {
+                    strncat(input, "\r\n", BUFFER_SIZE-1);
                 }
+                slen = strlen(input);
+                if (write_all(sock.sockfd, input, slen) != (ssize_t)slen) {
+                    fprintf(stderr, "fserve: Error could not write data.\n");
+                    break;
+                }
+                if (strncmp(input, "exit:", 5) == 0) {
+                    break;
+                }
+
                 memset(buffer, 0, sizeof(buffer));
-                // read until \r\n
-                // interpret if its a directory listing or a file
-                // if a directory listing echo until \r\n
-                // if a file open file stream
-                /// write to file
-                // close file
-                // go back to top
+                if (strncmp(input, "ls", 2) == 0) {
+                    while (1) {
+                        ssize_t bytes = mx_socket_read(&sock, buffer, sizeof(buffer) - 1, 0);
+                        if (bytes <= 0) {
+                            break;
+                        }
+                        buffer[bytes] = '\0';
+                        printf("%s", buffer);
+                        if (strstr(buffer, "\r\n") != nullptr) {
+                            break;
+                        }
+                        memset(buffer, 0, sizeof(buffer));
+                    }
+                } else if (strncmp(input, "get: ", 5) == 0) {
+                    ssize_t bytes = mx_socket_read(&sock, buffer, sizeof(buffer) - 1, 0);
+                    if (bytes <= 0)
+                        continue;
+                    buffer[bytes] = '\0';
+                    if (strncmp(buffer, "error:", 6) == 0) {
+                        fprintf(stderr, "fileserve: Server returned  %s\n", buffer);
+                        continue;
+                    }
+                    char *cl_ptr = strstr(buffer, "Content-Length: ");
+                    if (cl_ptr != nullptr) {
+                        cl_ptr += 16;
+                        size_t file_size = (size_t)strtoul(cl_ptr, nullptr, 10);
+                        char filename[PATH_MAX] = {};
+                        char fmt_string[32] = {};
+			snprintf(fmt_string, sizeof(fmt_string), "get: %%%zus", (size_t)PATH_MAX - 1);
+			if(sscanf(input, fmt_string, filename) == 1) {
+                        	nt fd = openat(AT_FDCWD, filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                	       if (fd == -1) {
+        	                   perror("openat");
+	                           continue;
+                        	}
+			} else {
+				fprintf(stderr, "fileserve: Error on interpreting get command.\n");
+				continue;
+			}
+
+                        char *data_start = strchr(cl_ptr, '\n');
+                        size_t bytes_written = 0;
+                        if (data_start != nullptr) {
+                            data_start++;
+                            size_t header_len = (size_t)(data_start - buffer);
+                            size_t init_data_len = (size_t)bytes - header_len;
+                            if (init_data_len > 0) {
+                                if (write_all(fd, data_start, init_data_len) != (ssize_t)init_data_len) {
+                                    fprintf(stderr, "fileserve: Error writing initial data.\n");
+                                } else {
+                                    bytes_written += init_data_len;
+                                }
+                            }
+                        }
+                        while (bytes_written < file_size) {
+                            memset(buffer, 0, sizeof(buffer));
+                            size_t to_read = BUFFER_SIZE;
+                            if (file_size - bytes_written < BUFFER_SIZE) {
+                                to_read = file_size - bytes_written;
+                            }
+                            bytes = mx_socket_read(&sock, buffer, to_read, 0);
+                            if (bytes <= 0) {
+                                fprintf(stderr, "fileserve: Error writing to file.\n");
+                                break;
+                            }
+
+                            if (write_all(fd, buffer, (size_t)bytes) != (ssize_t)bytes) {
+                                fprintf(stderr, "fileserve: Error writing to file.\n");
+                                break;
+                            }
+                            bytes_written += (size_t)bytes;
+                        }
+                        printf("fileserve:  Save %zu bytes to %s\n", bytes_written, filename);
+                        close(fd);
+                    }
+                }
+            } else {
+                break;
             }
         }
         mx_socket_close(&sock);
+    } else {
+        fprintf(stderr, "fileserve: Error could not connect");
+        perror("connect");
     }
 }
 
@@ -228,6 +321,7 @@ int main(int argc, char **argv) {
             fprintf(stderr, "fileserve: Error port out of range.\n");
             return EXIT_FAILURE;
         }
+        printf("Connecting...\n");
         connect_client(argv[1], argv[2]);
     }
     printf("fileserve: Exiting.\n");
