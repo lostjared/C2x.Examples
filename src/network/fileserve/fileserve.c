@@ -15,6 +15,15 @@
 static constexpr size_t PORT_MAX = 3002;
 static constexpr size_t BUFFER_SIZE = 4096;
 
+
+static void send_error(MXSocket *sock, const char *message) {
+    size_t len = strlen(message);
+    if(write_all(sock->sockfd, message, len) != (ssize_t)len) {
+        fprintf(stderr, "fileserve: Error could not send data.\n");
+        return;
+    }
+}
+
 void list_directory(MXSocket *sock) {
     DIR *d = opendir(".");
     if (d == nullptr) {
@@ -65,6 +74,7 @@ void send_file(MXSocket *sock, const char *filename) {
     if (ofd == -1) {
         perror("open");
         fprintf(stderr, "Could not open file: %s\n", filename);
+        send_error(sock, "error: 103\r\n");
         return;
     }
     struct stat dst;
@@ -112,6 +122,7 @@ void *process_input(void *data) {
                     send_file(sock, get_file);
                     continue;
                 }
+                send_error(sock, "error: 102\r\n");
             }
             const char *exit_cmd = strstr(buffer, "exit:");
             if (exit_cmd != nullptr) {
@@ -120,6 +131,9 @@ void *process_input(void *data) {
                 free(sock);
                 return nullptr;
             }
+            printf("fileserve: invalid command.\n");
+
+            continue;
         }
         if (bytes <= 0)
             break;
@@ -317,6 +331,8 @@ static void connect_client(const char *host, const char *port) {
                         printf("\nfileserve:  Saved %zu bytes to %s\n", bytes_written, filename);
                         close(fd);
                     }
+                } else {
+                    printf("fileserve: invalid command.\n");
                 }
             } else {
                 break;
