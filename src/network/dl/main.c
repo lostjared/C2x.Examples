@@ -8,7 +8,10 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
     MXSocket sock;
-    mx_socket_init(&sock);
+    if(!mx_socket_init(&sock)) {
+	    fprintf(stderr, "Error on init of socket.\n");
+	    return EXIT_FAILURE;
+    }
     if (mx_socket_connect(&sock, argv[1], argv[2], SOCK_STREAM)) {
         printf("dl: connected.\n");
         static constexpr int buffer_size = 4096;

@@ -59,7 +59,6 @@ int main(int argc, char **argv) {
     unsigned char buffer[8] = {};
     unsigned char output[8] = {};
     size_t bytes = 0;
-    size_t total = 0;
     if (mode == 1) {
         while ((bytes = fread(buffer, 1, 8, fptr)) > 0) {
             if (bytes < 8) {
@@ -68,13 +67,11 @@ int main(int argc, char **argv) {
             }
             des_encipher(buffer, output, (unsigned char *)argv[4]);
             fwrite(output, 1, 8, optr);
-            total += 8;
         }
         if (ftell(fptr) % 8 == 0) {
             memset(buffer, 8, 8);
             des_encipher(buffer, output, (unsigned char *)argv[4]);
             fwrite(output, 1, 8, optr);
-            total += 8;
         }
     } else {
         fseek(fptr, 0, SEEK_END);
@@ -85,13 +82,11 @@ int main(int argc, char **argv) {
             if (ftell(fptr) == file_size) {
                 unsigned char pad_val = output[7];
                 if (pad_val > 0 && pad_val <= 8) {
-                    fwrite(output, 1, 8 - pad_val, optr);
-                    total += (8 - pad_val);
+                    fwrite(output, 1, 8 - pad_val, optr);     
                     break;
                 }
             }
             fwrite(output, 1, 8, optr);
-            total += 8;
         }
     }
     fclose(fptr);
