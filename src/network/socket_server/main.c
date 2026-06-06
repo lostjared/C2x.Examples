@@ -21,10 +21,6 @@ void *process_input(void *p) {
 
 void socket_listen(const char *port) {
     MXSocket sock;
-    if (!mx_socket_init(&sock)) {
-        fprintf(stderr, "Error init Socket struct\n");
-        return;
-    }
     bool active = true;
     if (mx_socket_listen(&sock, port, 5)) {
         printf("Listening on port %s\n", port);

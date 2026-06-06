@@ -136,11 +136,7 @@ void *proc_queue(void *) {
 }
 
 bool socket_listen(const char *port) {
-    MXSocket sock;
-    if (!mx_socket_init(&sock)) {
-        fprintf(stderr, "Error init Socket struct\n");
-        return false;
-    }
+
     if (pthread_mutex_init(&mut, nullptr) != 0) {
         fprintf(stderr, "Error on mutex init\n");
         return false;
@@ -156,6 +152,7 @@ bool socket_listen(const char *port) {
         pthread_cond_destroy(&cond);
         return false;
     }
+    MXSocket sock;
     if (!mx_socket_listen(&sock, port, 5)) {
         fprintf(stderr, "Error on listen..\n");
         deque_free(queue);

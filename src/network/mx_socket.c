@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 [[nodiscard]] bool mx_socket_unix_listen(MXSocket *sock, const char *path, int backlog) {
-    if (sock == nullptr || path == nullptr)
+    if(path == nullptr)
         return false;
     if(!mx_socket_init(sock))
         return false;
@@ -37,7 +37,7 @@
 }
 
 [[nodiscard]] bool mx_socket_unix_connect(MXSocket *sock, const char *path) {
-    if (sock == nullptr || path == nullptr)
+    if (path == nullptr)
         return false;
     if(!mx_socket_init(sock))
         return false;
@@ -61,8 +61,12 @@
 }
 
 [[nodiscard]] bool mx_socket_listen(MXSocket *sock, const char *port, int backlog) {
-    if (sock == nullptr || port == nullptr)
+    if (port == nullptr)
         return false;
+
+    if(!mx_socket_init(sock))
+        return false;
+
     struct addrinfo hints;
     struct addrinfo *rt, *rp;
     int sfd = -1, optval, s;
@@ -189,8 +193,12 @@ void mx_socket_close(MXSocket *sock) {
 }
 
 [[nodiscard]] bool mx_socket_connect(MXSocket *sock, const char *host, const char *port, int type) {
-    if (sock == nullptr || host == nullptr || port == nullptr)
+    if (host == nullptr || port == nullptr)
         return false;
+
+    if(!mx_socket_init(sock))
+        return false;
+
     struct addrinfo hints;
     struct addrinfo *rt, *rp;
     int sfd = -1, s;

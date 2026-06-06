@@ -28,12 +28,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%s: <ip> <port>\n", argv[0]);
         return EXIT_SUCCESS;
     }
-
     MXSocket sock;
-    if (!mx_socket_init(&sock)) {
-        fprintf(stderr, "Error initializing socket.\n");
-        return EXIT_FAILURE;
-    }
     if (mx_socket_connect(&sock, argv[1], argv[2], SOCK_STREAM)) {
         printf("Connected to: %s:%s\n", argv[1], argv[2]);
         printf("Type exit to shutdown\n");
