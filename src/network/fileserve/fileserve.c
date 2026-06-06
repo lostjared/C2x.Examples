@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdatomic.h>
+#include <sys/ioctl.h>
 
 static constexpr size_t PORT_MAX = 3002;
 static constexpr size_t BUFFER_SIZE = 4096;
@@ -95,7 +96,7 @@ void *process_input(void *data) {
         ssize_t bytes = 0;
         while ((bytes = mx_socket_read(sock, buffer, sizeof(buffer) - 1, 0)) > 0) {
             buffer[bytes] = 0;
-            printf("fileserve: command: %s\n", buffer);
+            printf("fileserve: command: %s", buffer);
             const char *cmd = strstr(buffer, "ls");
             if (cmd != nullptr) {
                 list_directory(sock);
@@ -178,6 +179,41 @@ static void listen_server(const char *port) {
     mx_socket_close(&sock);
 }
 
+static int get_terminal_width() {
+    struct winsize w;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
+        return 80;
+    }
+    return w.ws_col;
+}
+
+static void print_progress(size_t length, size_t progress) {
+    if (length == 0) {
+        printf("\r\033[2K[ Downloading ] - 0%%\n");
+        return;
+    }
+    if (progress > length) {
+        progress = length;
+    }
+    int term_width = get_terminal_width();
+    int bar_width = term_width - 12;
+    double ratio = (double)progress / (double)length;
+    int num_equals = (int)(ratio * bar_width);
+    int percent = (int)(ratio * 100.0);
+    if (bar_width < 10)
+        bar_width = 10;
+    printf("\r\033[2K[");
+    for (int j = 0; j < bar_width; ++j) {
+        if (j < num_equals) {
+            putchar('=');
+        } else {
+            putchar(' ');
+        }
+    }
+    printf("] - %d%%", percent);
+    fflush(stdout);
+}
+
 static void connect_client(const char *host, const char *port) {
     MXSocket sock;
     atomic_store(&active_loop, true);
@@ -257,6 +293,7 @@ static void connect_client(const char *host, const char *port) {
                                 }
                             }
                         }
+                        print_progress(bytes_written, file_size);
                         while (bytes_written < file_size) {
                             memset(buffer, 0, sizeof(buffer));
                             size_t to_read = BUFFER_SIZE;
@@ -274,8 +311,10 @@ static void connect_client(const char *host, const char *port) {
                                 break;
                             }
                             bytes_written += (size_t)bytes;
+                            print_progress(bytes_written, file_size);
                         }
-                        printf("fileserve:  Save %zu bytes to %s\n", bytes_written, filename);
+                        print_progress(bytes_written, file_size);
+                        printf("\nfileserve:  Saved %zu bytes to %s\n", bytes_written, filename);
                         close(fd);
                     }
                 }
