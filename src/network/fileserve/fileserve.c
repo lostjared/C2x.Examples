@@ -230,8 +230,9 @@ static void connect_client(const char *host, const char *port) {
                         char filename[PATH_MAX] = {};
                         char fmt_string[32] = {};
                         snprintf(fmt_string, sizeof(fmt_string), "get: %%%zus", (size_t)PATH_MAX - 1);
+                        int fd = -1;
                         if (sscanf(input, fmt_string, filename) == 1) {
-                            int fd = openat(AT_FDCWD, filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                            fd = openat(AT_FDCWD, filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                             if (fd == -1) {
                                 perror("openat");
                                 continue;
