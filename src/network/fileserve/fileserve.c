@@ -406,6 +406,9 @@ int main(int argc, char **argv) {
         }
         printf("Connecting...\n");
         connect_client(argv[1], argv[2]);
+    } else {
+        fprintf(stderr, "Error use:\n%s <port>\t\tfor listen (server)\n%s <host> <port>\t\tfor connect (client)\n", argv[0], argv[0]);
+        return EXIT_SUCCESS;
     }
     printf("fileserve: Exiting.\n");
     return EXIT_SUCCESS;
