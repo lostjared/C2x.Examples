@@ -1,4 +1,3 @@
-#include "../../rwlib/rw.h"
 #include "../mx_socket.h"
 #include <dirent.h>
 #include <fcntl.h>
@@ -16,9 +15,26 @@ static constexpr size_t PORT_MAX = 3002;
 static constexpr size_t BUFFER_SIZE = 4096;
 
 
+ssize_t write_all(int fd, const void *buf, size_t bytes) {
+    const char *ptr = buf;
+    size_t left = bytes;
+    while (left > 0) {
+        ssize_t written = write(fd, ptr, left);
+        if (written == -1) {
+            if (errno == EINTR) {
+                continue;
+            }
+            return -1;
+        }
+        left -= (size_t)written;
+        ptr += written;
+    }
+    return (ssize_t)bytes;
+}
+
 static void send_error(MXSocket *sock, const char *message) {
     size_t len = strlen(message);
-    if(write_all(sock->sockfd, message, len) != (ssize_t)len) {
+    if(mx_socket_write_all(sock, message, len) != (ssize_t)len) {
         fprintf(stderr, "fileserve: Error could not send data.\n");
         return;
     }
@@ -30,7 +46,7 @@ void list_directory(MXSocket *sock) {
         fprintf(stderr, "fileserve: Error could not open directory.\n");
         const char *response = "error: 100\r\n";
         size_t rlen = strlen(response);
-        if (write_all(sock->sockfd, response, rlen) != (ssize_t)rlen) {
+        if (mx_socket_write_all(sock, response, rlen) != (ssize_t)rlen) {
             fprintf(stderr, "fileserve: Error could not send complete reponse.\n");
         }
         return;
@@ -43,7 +59,7 @@ void list_directory(MXSocket *sock) {
             char buffer[PATH_MAX + 25];
             snprintf(buffer, PATH_MAX + 25, "%s\n", e->d_name);
             size_t len = strlen(buffer);
-            if (write_all(sock->sockfd, buffer, len) != (ssize_t)len) {
+            if (mx_socket_write_all(sock, buffer, len) != (ssize_t)len) {
                 fprintf(stderr, "fileserve: could not write data.\n");
                 return;
             }
@@ -52,7 +68,7 @@ void list_directory(MXSocket *sock) {
     closedir(d);
     const char *end_list = "\r\n";
     size_t end_len = strlen(end_list);
-    if (write_all(sock->sockfd, end_list, end_len) != (ssize_t)end_len) {
+    if (mx_socket_write_all(sock, end_list, end_len) != (ssize_t)end_len) {
         fprintf(stderr, "fileserve: could not write data.\n");
         return;
     }
@@ -63,7 +79,7 @@ void send_file(MXSocket *sock, const char *filename) {
         fprintf(stderr, "fileserve: Error invalid path.");
         const char *response = "error: 101\r\n";
         size_t res_len = strlen(response);
-        if (write_all(sock->sockfd, response, res_len) != (ssize_t)res_len) {
+        if (mx_socket_write_all(sock, response, res_len) != (ssize_t)res_len) {
             fprintf(stderr, "fileserve: Error could not write data.\n");
             return;
         }
@@ -82,7 +98,7 @@ void send_file(MXSocket *sock, const char *filename) {
         char buffer[BUFFER_SIZE] = {};
         snprintf(buffer, BUFFER_SIZE, "Content-Length: %zu\n", (size_t)dst.st_size);
         size_t blen = strlen(buffer);
-        if (write_all(sock->sockfd, buffer, blen) != (ssize_t)blen) {
+        if (mx_socket_write_all(sock, buffer, blen) != (ssize_t)blen) {
             fprintf(stderr, "fileserve: Error could not write data.\n");
             close(ofd);
             return;
@@ -248,7 +264,7 @@ static void connect_client(const char *host, const char *port) {
                     strncat(input, "\r\n", BUFFER_SIZE - 1);
                 }
                 slen = strlen(input);
-                if (write_all(sock.sockfd, input, slen) != (ssize_t)slen) {
+                if (mx_socket_write_all(&sock, input, slen) != (ssize_t)slen) {
                     fprintf(stderr, "fserve: Error could not write data.\n");
                     break;
                 }
