@@ -273,7 +273,11 @@ static void connect_client(const char *host, const char *port) {
                 }
 
                 memset(buffer, 0, sizeof(buffer));
-                if (strncmp(input, "ls", 2) == 0) {
+
+                if(strncmp(input, "help", 4) == 0) {
+                    printf("program commands:\nhelp\t[this message]\nls\t[list files]\nget: <filename>\t[get file]\nexit:\t[exit program.]\n");
+                    continue;
+                } else if (strncmp(input, "ls", 2) == 0) {
                     while (1) {
                         ssize_t bytes = mx_socket_read(&sock, buffer, sizeof(buffer) - 1, 0);
                         if (bytes <= 0) {
