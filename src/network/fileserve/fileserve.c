@@ -11,7 +11,8 @@
 #include <stdatomic.h>
 #include <sys/ioctl.h>
 
-static constexpr size_t PORT_MAX = 3002;
+static constexpr size_t PORT_MAX = 4951;
+static constexpr size_t PORT_MIN = 1024;
 static constexpr size_t BUFFER_SIZE = 4096;
 
 
@@ -387,8 +388,8 @@ int main(int argc, char **argv) {
             fprintf(stderr, "fileserve: Error use:\n%s <port>\n", argv[0]);
             return EXIT_FAILURE;
         }
-        if (port <= 0 || port > PORT_MAX) {
-            fprintf(stderr, "fileserve: Error port out of range.\n");
+        if (port < PORT_MIN || port > PORT_MAX) {
+            fprintf(stderr, "fileserve: Error port out of range.\nUse: %zu - %zu\n (suggested: 3000)", PORT_MIN, PORT_MAX);
             return EXIT_FAILURE;
         }
         listen_server(argv[1]);
@@ -399,8 +400,8 @@ int main(int argc, char **argv) {
             fprintf(stderr, "fileserve: Error use:\n%s <hostname> <port>\n", argv[0]);
             return EXIT_FAILURE;
         }
-        if (port <= 0 || port > PORT_MAX) {
-            fprintf(stderr, "fileserve: Error port out of range.\n");
+        if (port < PORT_MIN || port > PORT_MAX) {
+            fprintf(stderr, "fileserve: Error port out of range.\nUse: %zu-%zu (suggested: 3000)\n", PORT_MIN, PORT_MAX);
             return EXIT_FAILURE;
         }
         printf("Connecting...\n");
