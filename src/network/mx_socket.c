@@ -350,3 +350,41 @@ ssize_t mx_socket_send(MXSocket *sock, const void *buf, size_t len, int flags) {
     *size = index;
     return true;
 }
+
+ssize_t mx_socket_write_all(MXSocket *sock, const void *buf, size_t bytes) {
+    const char *ptr = buf;
+    size_t left = bytes;
+    while (left > 0) {
+        ssize_t written = write(sock->sockfd, ptr, left);
+        if (written == -1) {
+            if (errno == EINTR) {
+                continue;
+            }
+            return -1;
+        }
+        left -= (size_t)written;
+        ptr += written;
+    }
+    return (ssize_t)bytes;
+}
+
+ssize_t mx_socket_read_all(MXSocket *sock, void *buf, size_t bytes) {
+    char *ptr = buf;
+    size_t left = bytes;
+    while (left > 0) {
+        ssize_t bytes_read = read(sock->sockfd, ptr, left);
+        if (bytes_read == -1) {
+            if (errno == EINTR) {
+                continue;
+            }
+            return -1;
+        }
+        if (bytes_read == 0)
+            break;
+        left -= (size_t)bytes_read;
+        ptr += bytes_read;
+    }
+    return (ssize_t)(bytes - left);
+}
+
+
