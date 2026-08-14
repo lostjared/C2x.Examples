@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
     int fd = open(FIFO_PATH, O_WRONLY);
-    if (!fd) {
+    if (fd == -1) {
         perror("open");
         return EXIT_FAILURE;
     }
