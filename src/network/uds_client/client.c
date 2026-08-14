@@ -17,7 +17,7 @@ int main(void) {
         mx_socket_close(&sock);
     } else {
         fprintf(stderr, "Error on connect.\n");
-        return false;
+        return EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
+    return EXIT_SUCCESS; 
 }
