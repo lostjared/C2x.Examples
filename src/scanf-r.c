@@ -18,9 +18,9 @@ int main(void) {
             } else
                 break;
             if (result == 0) {
-		printf("All together: %zd\n", total);
+                printf("All together: %zd\n", total);
                 return EXIT_SUCCESS;
-	    }
+            }
         }
         if (result == 0)
             break;
