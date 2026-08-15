@@ -25,7 +25,7 @@ add_link_options(
     "$<$<CONFIG:Debug>:-fsanitize=address;-no-pie>"
     "$<$<CONFIG:Release>:-flto>"
 )
-elseif (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+elseif (CMAKE_C_COMPILER_ID MATCHES "Clang")
 add_compile_options(-Wno-unknown-attributes)
 message(STATUS "using Clang")
 endif()
