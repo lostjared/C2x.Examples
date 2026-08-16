@@ -61,9 +61,9 @@ int main(void) {
     enable_raw_mode();
     fputs(clear_screen, stdout);
     fputs(hide_cursor, stdout);
-    draw_window(5, 10, 50, 12, "Configuration Menu");
+    draw_window(5, 10, 50, 12, "Menu");
     move_cursor(7, 12);
-    fputs("Welcome to the custom terminal window.", stdout);
+    fputs("Custom terminal window.", stdout);
     move_cursor(9, 12);
     fputs("Press 'q' to quit...", stdout);
     fflush(stdout);
@@ -78,6 +78,5 @@ int main(void) {
     fputs(cursor_home, stdout);
     fputs(show_cursor, stdout);
     fflush(stdout);
-
     return 0;
 }
